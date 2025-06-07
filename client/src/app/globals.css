@@ -17,59 +17,57 @@
   }
 }
 
-@layer base {
-  :root {
+@layer base {  :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 20%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 20%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 20%;
-    --primary: 24 95% 53%;
+    --primary: 40 45% 57%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 24 95% 53%;
+    --secondary: 351 89% 54%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 24 95% 53%;
+    --muted: 40 45% 95%;
+    --muted-foreground: 40 45% 35%;
+    --accent: 351 89% 54%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 351 89% 54%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 24 95% 53%;
-    --chart-1: 24 95% 53%;
-    --chart-2: 24 95% 53%;
-    --chart-3: 24 95% 53%;
-    --chart-4: 24 95% 53%;
-    --chart-5: 24 95% 53%;
+    --border: 40 45% 90%;
+    --input: 40 45% 90%;
+    --ring: 40 45% 57%;
+    --chart-1: 40 45% 57%;
+    --chart-2: 351 89% 54%;
+    --chart-3: 40 45% 77%;
+    --chart-4: 351 89% 74%;
+    --chart-5: 40 45% 37%;
     --radius: 0.5rem;
-  }
-  .dark {
+  }  .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 24 95% 53%;
+    --primary: 40 45% 57%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 24 95% 53%;
+    --secondary: 351 89% 54%;
     --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 24 95% 53%;
+    --muted: 40 45% 15%;
+    --muted-foreground: 40 45% 75%;
+    --accent: 351 89% 54%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 351 89% 54%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 24 95% 53%;
-    --chart-1: 24 95% 53%;
-    --chart-2: 24 95% 53%;
-    --chart-3: 24 95% 53%;
-    --chart-4: 24 95% 53%;
-    --chart-5: 24 95% 53%;
+    --border: 40 45% 25%;
+    --input: 40 45% 25%;
+    --ring: 40 45% 57%;
+    --chart-1: 40 45% 57%;
+    --chart-2: 351 89% 54%;
+    --chart-3: 40 45% 77%;
+    --chart-4: 351 89% 74%;
+    --chart-5: 40 45% 37%;
   }
 }
 
@@ -136,9 +134,8 @@
   .prose li {
     @apply mb-2;
   }
-
   .prose a {
-    @apply text-[#F47C20] hover:text-[#1C4E80] underline;
+    @apply text-[#C2A861] hover:text-[#F01C33] underline;
   }
 
   .prose blockquote {

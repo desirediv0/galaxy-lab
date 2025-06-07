@@ -79,9 +79,9 @@ const HeroCarousel = () => {
           loop
           playsInline
         >
-          <source src="/video.mp4" type="video/mp4" />
+          <source src="/bg.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#ce801f]/20 backdrop-blur-[2px] z-10" />
+        <div className="absolute inset-0 bg-[#0000]/20 backdrop-blur-[2px] z-10" />
       </div>
 
       <Carousel setApi={setApi} className="h-full relative z-20">
@@ -106,7 +106,7 @@ const HeroCarousel = () => {
                     <Link href={slide.ctaLink}>
                       <Button
                         size="lg"
-                        className="text-lg px-8 lg:px-12 py-7 font-bold bg-[#ce801f] text-white hover:bg-[#ce801f]/90 hover:scale-105 transition-transform duration-200"
+                        className="text-lg px-8 lg:px-12 py-7 font-bold bg-[#c4ab66] text-white hover:bg-[#cab476]/90  hover:scale-105 transition-transform duration-200"
                       >
                         {slide.cta}
                         <ChevronRight className="ml-2 h-5 w-5" />
