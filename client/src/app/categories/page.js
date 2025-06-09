@@ -5,11 +5,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { fetchApi } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { AlertCircle, ShoppingBag } from "lucide-react";
+import {
+  AlertCircle,
+  ShoppingBag,
+  ArrowRight,
+  Package,
+  Star,
+} from "lucide-react";
 
-// Category card component
 const CategoryCard = ({ category, index }) => {
-  // Function to get image URL
   const getImageUrl = (image) => {
     if (!image) return "/placeholder.svg?height=300&width=400";
     if (image.startsWith("http")) return image;
@@ -18,107 +22,87 @@ const CategoryCard = ({ category, index }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="flex flex-col items-center group"
+      className="group relative w-full"
     >
-      <div className="relative">
-        <motion.div
-          className="relative w-full h-[420px] rounded-[30px] overflow-hidden bg-gradient-to-br from-white to-gray-50 shadow-2xl"
-          whileHover={{ y: -10 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          {/* Main Image Container with Overlay */}
-          <div className="relative h-[250px] overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-            <Image
-              src={getImageUrl(category.image)}
-              alt={category.name}
-              width={800}
-              height={800}
-              className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-            />
-
-            {/* Floating Elements */}
-            <motion.div
-              className="absolute top-4 right-4 z-20"
-              initial={{ scale: 0.8 }}
-              whileHover={{ scale: 1.1 }}
-            >
-              <div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center space-x-2">
-                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-sm font-semibold bg-gradient-to-r from-yellow-500 to-[#ce801f] bg-clip-text text-transparent">
-                  {category._count?.products || 0} Products
-                </span>
-              </div>
-            </motion.div>
+      <div className="relative h-full rounded-xl overflow-hidden bg-white shadow-lg border border-gray-200 transition-all duration-300 group-hover:shadow-xl">
+        {/* Premium Badge */}
+        <div className="absolute top-4 left-4 z-10">
+          <div className="bg-gradient-to-r from-[#F01C33] to-[#ff4757] px-3 py-1 rounded-full text-white text-xs font-bold shadow-md flex items-center space-x-1">
+            <Star className="w-3 h-3 fill-current" />
+            <span>PREMIUM</span>
           </div>
+        </div>
 
-          {/* Content Section */}
-          <div className="p-6 relative">
-            {/* Category Name with Gradient */}
-            <h3 className="text-2xl font-bold mb-3 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              {category.name}
-            </h3>
-
-            {/* Description */}
-            <p className="text-gray-600 text-sm mb-6 line-clamp-2">
-              {category.description || "Explore our collection"}
-            </p>
-
-            {/* Interactive Footer */}
-            <div className="absolute bottom-6 left-6 right-6">
-              <motion.button
-                className="w-full bg-gradient-to-r from-yellow-500 via-yellow-400 to-[#ce801f] text-white py-3 rounded-2xl flex items-center justify-center group relative overflow-hidden shadow-xl"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                <span className="relative flex items-center space-x-2">
-                  <span className="font-medium">Explore Category</span>
-                  <svg
-                    className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 5l7 7m0 0l-7 7m7-7H3"
-                    />
-                  </svg>
-                </span>
-              </motion.button>
+        {/* Product Count Badge */}
+        <div className="absolute top-4 right-4 z-10">
+          <div className="bg-white/90 px-3 py-1 rounded-full shadow-md border border-gray-200">
+            <div className="flex items-center space-x-1">
+              <Package className="w-3 h-3 text-[#C2A861]" />
+              <span className="text-xs font-bold text-gray-700">
+                {category._count?.products || 0}
+              </span>
             </div>
           </div>
+        </div>
 
-          {/* Decorative Elements */}
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-yellow-500/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl" />
-        </motion.div>
+        {/* Image Container */}
+        <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10" />
+          <Image
+            src={getImageUrl(category.image)}
+            alt={category.name}
+            width={600}
+            height={600}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        </div>
+
+        {/* Content */}
+        <div className="p-5">
+          <h3 className="text-xl font-bold text-gray-900 mb-2">
+            {category.name}
+          </h3>
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            {category.description ||
+              "Discover premium quality products in this carefully curated category"}
+          </p>
+
+          <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+            <span className="flex items-center space-x-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full" />
+              <span>Available Now</span>
+            </span>
+            <span className="bg-gray-100 px-2 py-1 rounded-full">
+              {category._count?.products || 0} Items
+            </span>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-gradient-to-r from-[#C2A861] to-[#F01C33] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center space-x-2"
+          >
+            <span>Explore Collection</span>
+            <ArrowRight className="w-4 h-4" />
+          </motion.button>
+        </div>
       </div>
     </motion.div>
   );
 };
 
-// Category skeleton loader for loading state
 const CategoryCardSkeleton = () => {
   return (
-    <div className="flex flex-col items-center animate-pulse">
-      <div className="w-full h-[420px] rounded-[30px] bg-gray-200 relative overflow-hidden">
-        <div className="h-[250px] bg-gray-300" />
-        <div className="p-6">
-          <div className="h-8 bg-gray-300 rounded-lg w-3/4 mb-3" />
-          <div className="h-4 bg-gray-300 rounded w-full mb-2" />
-          <div className="h-4 bg-gray-300 rounded w-2/3 mb-6" />
-          <div className="absolute bottom-6 left-6 right-6">
-            <div className="h-12 bg-gray-300 rounded-2xl w-full" />
-          </div>
-        </div>
+    <div className="animate-pulse bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 w-full">
+      <div className="h-48 sm:h-56 md:h-64 bg-gray-300" />
+      <div className="p-5">
+        <div className="h-6 bg-gray-300 rounded mb-3 w-3/4" />
+        <div className="h-4 bg-gray-300 rounded mb-4 w-full" />
+        <div className="h-4 bg-gray-300 rounded mb-4 w-2/3" />
+        <div className="h-10 bg-gray-300 rounded-lg w-full" />
       </div>
     </div>
   );
@@ -147,103 +131,132 @@ export default function CategoriesPage() {
   }, []);
 
   return (
-    <section className="min-h-screen py-24 bg-gradient-to-b from-yellow-50 via-white to-pink-50 overflow-hidden">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="text-center mb-16 relative">
+        <div className="text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative z-10"
+            transition={{ duration: 0.5 }}
+            className="inline-block mb-4"
           >
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-500 to-[#ce801f] rounded-full mb-8">
-              <ShoppingBag className="h-10 w-10 text-white" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              All Categories
-            </h1>
-            <div className="flex items-center justify-center text-sm text-gray-600 mb-6">
-              <Link href="/" className="hover:text-yellow-600 transition-colors">
-                Home
-              </Link>
-              <span className="mx-2">•</span>
-              <span className="text-yellow-600 font-medium">Categories</span>
-            </div>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Discover our complete range of premium fitness supplements and
-              equipment
-            </p>
+            <span className="bg-gradient-to-r from-[#C2A861] to-[#F01C33] bg-clip-text text-transparent text-sm font-bold tracking-wider uppercase">
+              Premium Categories
+            </span>
           </motion.div>
 
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-yellow-300/20 to-pink-300/20 rounded-full blur-3xl -z-10" />
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+          >
+            Explore Our Categories
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-lg text-gray-600 max-w-3xl mx-auto"
+          >
+            Discover our complete range of premium fitness supplements and
+            equipment
+          </motion.p>
         </div>
 
+        {/* Error Display */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50/50 backdrop-blur-sm border border-red-200 p-8 rounded-[30px] mb-12 flex items-start max-w-2xl mx-auto shadow-lg"
+            className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 max-w-2xl mx-auto"
           >
-            <AlertCircle className="text-red-500 mr-4 mt-0.5 flex-shrink-0 h-6 w-6" />
-            <div>
-              <h3 className="font-semibold text-red-800 mb-1">
-                Error Loading Categories
-              </h3>
-              <p className="text-red-700">{error}</p>
+            <div className="flex items-center">
+              <AlertCircle className="text-red-500 mr-3 h-5 w-5" />
+              <div>
+                <h3 className="font-medium text-red-800">
+                  Error Loading Categories
+                </h3>
+                <p className="text-red-700 text-sm">{error}</p>
+              </div>
             </div>
           </motion.div>
         )}
 
-        <div className="relative">
-          {/* Background Decorations */}
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-yellow-300/10 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -right-40 w-80 h-80 bg-pink-300/10 rounded-full blur-3xl" />
-
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[...Array(6)].map((_, index) => (
-                <CategoryCardSkeleton key={index} />
-              ))}
+        {/* Categories Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, index) => (
+              <CategoryCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : categories.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center py-12 bg-white rounded-xl shadow-md border border-gray-200 max-w-lg mx-auto"
+          >
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#C2A861] to-[#F01C33] rounded-full mb-6">
+              <ShoppingBag className="h-8 w-8 text-white" />
             </div>
-          ) : categories.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-[30px] shadow-xl border border-white/20 max-w-md mx-auto"
-            >
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-500 to-pink-500 rounded-full mb-8">
-                <ShoppingBag className="h-10 w-10 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                No Categories Found
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Please check back later for our exciting categories.
-              </p>
-              <Link href="/products">
-                <motion.button
-                  className="bg-gradient-to-r from-yellow-500 via-yellow-400 to-pink-500 text-white px-8 py-3 rounded-full font-medium hover:shadow-lg transition-shadow relative overflow-hidden group"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span className="absolute inset-0 bg-white/30 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                  <span className="relative">Browse All Products</span>
-                </motion.button>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">
+              No Categories Found
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Please check back later for our exciting categories.
+            </p>
+            <Link href="/products">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-[#C2A861] to-[#F01C33] text-white px-6 py-2 rounded-lg font-medium"
+              >
+                Browse All Products
+              </motion.button>
+            </Link>
+          </motion.div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category, index) => (
+              <Link
+                key={category.id}
+                href={`/category/${category.slug}`}
+                className="w-full"
+              >
+                <CategoryCard category={category} index={index} />
               </Link>
-            </motion.div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {categories.map((category, index) => (
-                <Link key={category.id} href={`/category/${category.slug}`}>
-                  <CategoryCard category={category} index={index} />
-                </Link>
-              ))}
+            ))}
+          </div>
+        )}
+
+        {/* Bottom CTA */}
+        {!loading && categories.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-center mt-16"
+          >
+            <div className="bg-white rounded-xl p-8 shadow-md border border-gray-200 max-w-2xl mx-auto">
+              <h3 className="text-xl font-bold text-gray-900 mb-3">
+                Need Help Choosing?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Our experts are here to help you find the perfect products
+              </p>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-gradient-to-r from-[#C2A861] to-[#F01C33] text-white px-6 py-2 rounded-lg font-medium"
+              >
+                Contact Support
+              </motion.button>
             </div>
-          )}
-        </div>
+          </motion.div>
+        )}
       </div>
-    </section>
+    </div>
   );
 }

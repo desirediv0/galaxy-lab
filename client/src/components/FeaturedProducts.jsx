@@ -15,13 +15,13 @@ import { Star, Eye, Heart, ShoppingCart } from "lucide-react";
 import ProductQuickView from "./ProductQuickView";
 
 const ProductSkeleton = () => (
-  <div className="bg-white rounded-lg shadow-sm overflow-hidden animate-pulse">
-    <div className="relative h-64 bg-gray-200"></div>
+  <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
+    <div className="aspect-square bg-gray-100 w-full"></div>
     <div className="p-4 space-y-3">
       <div className="h-4 bg-gray-200 rounded w-3/4"></div>
       <div className="h-3 bg-gray-200 rounded w-1/2"></div>
       <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-      <div className="h-10 bg-gray-200 rounded"></div>
+      <div className="h-10 bg-gray-200 rounded-xl"></div>
     </div>
   </div>
 );
@@ -40,9 +40,9 @@ const FeaturedProducts = ({
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {[...Array(4)].map((_, index) => (
               <ProductSkeleton key={index} />
             ))}
@@ -54,7 +54,7 @@ const FeaturedProducts = ({
 
   if (error) {
     return (
-      <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <p className="text-red-500">Failed to load products</p>
@@ -65,21 +65,19 @@ const FeaturedProducts = ({
   }
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-12 md:py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-[#2C3E50] to-[#ce801f] bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-10 md:mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
             Featured Products
           </h2>
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-12 h-1 bg-gradient-to-r from-[#2C3E50] to-[#ce801f] rounded-full"></div>
-            <div className="w-3 h-3 bg-[#ce801f] rounded-full"></div>
-            <div className="w-12 h-1 bg-gradient-to-r from-[#ce801f] to-[#2C3E50] rounded-full"></div>
-          </div>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Discover our premium selection of products
+          </p>
         </div>
 
         {/* Products Carousel */}
-        <div className="relative px-8">
+        <div className="relative px-2 md:px-8">
           <Carousel
             opts={{
               align: "start",
@@ -91,81 +89,61 @@ const FeaturedProducts = ({
               {products.map((product) => (
                 <CarouselItem
                   key={product.id || product.slug || Math.random().toString()}
-                  className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                  className="pl-2 md:pl-4 basis-1/2 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
                 >
-                  <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group relative transform hover:-translate-y-2 h-full flex flex-col">
+                  <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group relative h-full flex flex-col border border-gray-100">
                     {/* Product Image */}
-                    <div className="relative h-72 bg-gradient-to-br from-gray-50 to-white overflow-hidden flex-shrink-0">
+                    <div className="relative aspect-square bg-gray-50 overflow-hidden">
                       <Link href={`/products/${product.slug || ""}`}>
-                        {product.image ? (
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.name || "Product"}
-                            fill
-                            className="object-contain p-6 transition-transform duration-700 group-hover:scale-110"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                          />
-                        ) : (
-                          <Image
-                            src="/product-placeholder.jpg"
-                            alt={product.name || "Product"}
-                            fill
-                            className="object-contain p-6 transition-transform duration-700 group-hover:scale-110"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                          />
-                        )}
+                        <Image
+                          src={product.image || "/product-placeholder.jpg"}
+                          alt={product.name || "Product"}
+                          fill
+                          className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        />
                       </Link>
 
                       {/* Sale Badge */}
                       {product.hasSale && (
-                        <span className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-[#F47C20] text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg transform -rotate-12">
+                        <span className="absolute top-3 left-3 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md">
                           SALE
                         </span>
                       )}
 
                       {/* Action Icons */}
-                      <div className="absolute top-4 right-4 flex flex-col space-y-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-500">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-10 h-10 p-0 bg-white hover:bg-gradient-to-r hover:from-[#F47C20] hover:to-[#E06A1A] hover:text-white rounded-full shadow-lg backdrop-blur-sm bg-opacity-90 transform hover:scale-110 transition-all duration-300"
+                      <div className="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <button
+                          className="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-full shadow-sm transition-colors"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            console.log("Wishlist:", product);
+                          }}
                         >
-                          <Heart className="h-5 w-5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-10 h-10 p-0 bg-white hover:bg-gradient-to-r hover:from-[#F47C20] hover:to-[#E06A1A] hover:text-white rounded-full shadow-lg backdrop-blur-sm bg-opacity-90 transform hover:scale-110 transition-all duration-300"
+                          <Heart className="h-4 w-4 text-gray-700" />
+                        </button>
+                        <button
+                          className="w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 rounded-full shadow-sm transition-colors"
                           onClick={(e) => {
                             e.preventDefault();
                             setQuickViewProduct(product);
                             setQuickViewOpen(true);
                           }}
                         >
-                          <Eye className="h-5 w-5" />
-                        </Button>
+                          <Eye className="h-4 w-4 text-gray-700" />
+                        </button>
                       </div>
                     </div>
 
                     {/* Product Info */}
-                    <div className="p-6 flex-grow flex flex-col">
-                      {/* Product Name */}
-                      <Link
-                        href={`/products/${product.slug || ""}`}
-                        className="block transition-colors flex-grow"
-                      >
-                        <h3 className="font-semibold text-gray-800 mb-2 text-lg line-clamp-2 group-hover:text-[#F47C20] transition-colors">
-                          {product.name || "Product"}
-                        </h3>
-                      </Link>
-
+                    <div className="p-4 flex-grow flex flex-col">
                       {/* Rating */}
-                      <div className="flex items-center mb-3">
+                      <div className="flex items-center mb-2">
                         <div className="flex text-yellow-400">
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className="h-4 w-4"
+                              className="h-3 w-3"
                               fill={
                                 i < Math.round(product.avgRating || 0)
                                   ? "currentColor"
@@ -174,45 +152,54 @@ const FeaturedProducts = ({
                             />
                           ))}
                         </div>
-                        <span className="text-sm text-gray-500 ml-2">
+                        <span className="text-xs text-gray-500 ml-1">
                           ({product.reviewCount || 0})
                         </span>
                       </div>
 
+                      {/* Product Name */}
+                      <Link
+                        href={`/products/${product.slug || ""}`}
+                        className="block mb-2"
+                      >
+                        <h3 className="font-medium text-gray-900 text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors">
+                          {product.name || "Product"}
+                        </h3>
+                      </Link>
+
                       {/* Price */}
-                      <div className="mb-4">
+                      <div className="mt-auto">
                         {product.hasSale ? (
                           <div className="flex items-center space-x-2">
-                            <span className="font-bold text-2xl bg-gradient-to-r from-[#50432c] to-[#ce801f] bg-clip-text text-transparent">
+                            <span className="font-bold text-primary text-lg">
                               ₹{product.basePrice || 0}
                             </span>
-                            <span className="text-gray-400 line-through text-base">
+                            <span className="text-gray-400 line-through text-sm">
                               ₹{product.regularPrice || 0}
                             </span>
+                            {product.discountPercentage && (
+                              <span className="text-xs bg-red-50 text-red-500 px-1.5 py-0.5 rounded">
+                                {product.discountPercentage}% OFF
+                              </span>
+                            )}
                           </div>
                         ) : (
-                          <span className="font-bold text-2xl bg-gradient-to-r from-[#50432c] to-[#ce801f] bg-clip-text text-transparent">
+                          <span className="font-bold text-primary text-lg">
                             ₹{product.basePrice || 0}
                           </span>
                         )}
                       </div>
 
-                      {/* Variants Info */}
-                      {(product.flavors || 0) > 1 && (
-                        <p className="text-sm text-gray-500 mb-4">
-                          {product.flavors} variants available
-                        </p>
-                      )}
-
                       {/* Add to Cart Button */}
                       <Button
-                        className="w-full bg-gradient-to-r from-[#ce801f] to-[#ce801f] hover:from-[#ce801f] hover:to-[#ce801f] text-white font-medium py-3 rounded-xl transition-all duration-500 shadow-md hover:shadow-xl transform hover:-translate-y-0.5 group mt-auto"
+                        size="sm"
+                        className="w-full mt-3 bg-primary hover:bg-primary/90 text-white rounded-lg transition-all"
                         onClick={(e) => {
                           e.preventDefault();
                           console.log("Add to cart:", product);
                         }}
                       >
-                        <ShoppingCart className="h-5 w-5 mr-2 transition-transform duration-500 group-hover:rotate-12" />
+                        <ShoppingCart className="h-4 w-4 mr-2" />
                         Add to Cart
                       </Button>
                     </div>
@@ -220,25 +207,19 @@ const FeaturedProducts = ({
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-4 w-12 h-12 bg-white border-2 border-[#ce801f] text-[#ce801f] hover:bg-gradient-to-r hover:from-[#ce801f] hover:to-[#ce801f] hover:text-white transition-all duration-300 transform hover:scale-110" />
-            <CarouselNext className="hidden md:flex -right-4 w-12 h-12 bg-white border-2 border-[#ce801f] text-[#ce801f] hover:bg-gradient-to-r hover:from-[#ce801f] hover:to-[#ce801f] hover:text-white transition-all duration-300 transform hover:scale-110" />
+            <CarouselPrevious className="hidden md:flex -left-4 w-10 h-10 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-primary transition-all" />
+            <CarouselNext className="hidden md:flex -right-4 w-10 h-10 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-primary transition-all" />
           </Carousel>
         </div>
 
         {/* View All Products Button */}
-        <div className="text-center mt-16">
+        <div className="text-center mt-10">
           <Link href="/products">
             <Button
               variant="outline"
-              size="lg"
-              className="font-medium border-2 border-[#ce801f] text-[#ce801f] hover:bg-gradient-to-r hover:from-[#ce801f] hover:to-[#ce801f] hover:text-white px-12 py-6 rounded-full transition-all duration-500 transform hover:-translate-y-1 hover:shadow-2xl group"
+              className="border-primary text-primary hover:bg-primary/10 px-8 py-4 rounded-lg transition-all"
             >
-              <span className="mr-2 transition-transform duration-500 group-hover:translate-x-1">
-                View All Products
-              </span>
-              <span className="relative top-[1px] transition-transform duration-500 group-hover:translate-x-2">
-                →
-              </span>
+              View All Products
             </Button>
           </Link>
         </div>

@@ -94,89 +94,143 @@ const BenefitsSec = () => {
   ];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
-      <div className="container mx-auto px-4">
+    <section className="py-24 bg-slate-50 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, black 1px, transparent 0)",
+            backgroundSize: "40px 40px",
+          }}
+        ></div>
+      </div>
+
+      <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="text-center mb-20">
-          <Headtext text="WHY CHOOSE US" />
-          <p className="text-gray-600 mt-6 max-w-2xl mx-auto text-lg">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-bold text-black mb-6"
+          >
+            Why Choose Us
+          </motion.h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="flex items-center justify-center gap-2 mb-8"
+          >
+            <div className="w-12 h-1 bg-black rounded-full"></div>
+            <div className="w-3 h-3 bg-black rounded-full"></div>
+            <div className="w-12 h-1 bg-black rounded-full"></div>
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="text-gray-600 max-w-2xl mx-auto text-lg"
+          >
             We&apos;re committed to providing you with the best fitness
             supplements
-          </p>
+          </motion.p>
         </div>
 
-        {/* Main content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-          {/* Left side - image */}
-          <motion.div
-            className="relative overflow-hidden hidden md:block h-full"
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-900/80 to-yellow-800/90 z-10 flex items-center justify-center">
-              <div className="text-white p-12 max-w-md">
-                <h3 className="text-3xl font-bold mb-6 leading-tight">
-                  The highest quality for your fitness journey
-                </h3>
-                <p className="mb-6 text-yellow-100">
-                  We carefully source and formulate each product to ensure you
-                  get the best results for your fitness goals.
-                </p>
-                <Link href="/about">
-                  <button className="px-8 py-4 bg-white text-yellow-600 font-semibold rounded-xl hover:bg-yellow-50 transition-all duration-300 transform hover:scale-105">
-                    LEARN MORE
-                  </button>
-                </Link>
-              </div>
-            </div>
-            <Image
-              width={1000}
-              height={1000}
-              src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1000"
-              alt="Fitness supplements"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-
-          {/* Right side - benefits */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left Side - Benefits Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {benefits.map((benefit, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="p-8 bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 group"
+                className="group"
               >
-                <div className="flex items-start">
-                  <div className="mr-5 mt-1">
+                <div className="p-6 bg-white border-2 border-[#c4ab67] rounded-2xl transition-all duration-300 hover:shadow-[8px_8px_0_0_#c4ab67] hover:-translate-x-1 hover:-translate-y-1">
+                  <div className="flex items-start space-x-4">
                     <motion.div
-                      className="text-yellow-500 bg-yellow-100 p-3 rounded-xl"
+                      className="text-black p-3 rounded-xl bg-gray-100 group-hover:bg-[#E2231A] group-hover:text-white transition-all duration-300"
                       whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 500 }}
                     >
                       {benefit.icon}
                     </motion.div>
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-yellow-600 transition-colors">
-                      {benefit.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      {benefit.description}
-                    </p>
+                    <div>
+                      <h3 className="text-xl font-bold mb-2 text-black">
+                        {benefit.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed text-sm">
+                        {benefit.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+
+          {/* Right Side - Image and Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="aspect-[4/3] rounded-2xl overflow-hidden border-2 border-black relative transform hover:-translate-x-2 hover:-translate-y-2 transition-transform duration-300 shadow-[8px_8px_0_0_#c4ab67]">
+              <div className="absolute inset-0 bg-black/60 z-10" />
+              <Image
+                width={1000}
+                height={1000}
+                src="https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1000"
+                alt="Fitness supplements"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 z-20 p-8 flex flex-col justify-center">
+                <h3 className="text-3xl font-bold text-white mb-4">
+                  The Highest Quality for Your Fitness Journey
+                </h3>
+                <p className="text-gray-200 mb-6">
+                  We carefully source and formulate each product to ensure you
+                  get the best results for your fitness goals.
+                </p>
+                <Link href="/about">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="px-8 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition-all duration-300 inline-flex items-center group w-fit"
+                  >
+                    Learn More
+                    <svg
+                      className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </motion.button>
+                </Link>
+              </div>
+            </div>
+          </motion.div>
         </div>
 
-        {/* Stats section */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* Stats Section */}
+        <div className="mt-24 grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { number: "100%", label: "Quality Tested" },
             { number: "1000+", label: "Happy Customers" },
@@ -185,14 +239,14 @@ const BenefitsSec = () => {
           ].map((stat, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="text-center p-6 bg-white rounded-2xl shadow-lg border border-gray-100"
+              className="p-6 bg-white border-2 border-[#c4ab67] rounded-2xl transition-all duration-300 hover:shadow-[4px_4px_0_0_#c4ab67] hover:-translate-x-1 hover:-translate-y-1 group"
             >
               <motion.h4
-                className="text-4xl font-bold text-yellow-600 mb-2"
+                className="text-4xl font-bold text-black mb-2"
                 initial={{ y: 20 }}
                 whileInView={{ y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
@@ -200,7 +254,7 @@ const BenefitsSec = () => {
               >
                 {stat.number}
               </motion.h4>
-              <p className="text-gray-600 uppercase tracking-wide text-sm font-medium">
+              <p className="text-gray-600 uppercase tracking-wide text-sm font-medium group-hover:text-black transition-colors">
                 {stat.label}
               </p>
             </motion.div>

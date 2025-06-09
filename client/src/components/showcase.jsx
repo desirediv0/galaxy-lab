@@ -1,195 +1,273 @@
 "use client";
-
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
-
-export default function GymSupplementBanner() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
-  // Colors extracted from the Natural Supps logo
-  const colors = {
-    brown: "#5D4037", // Dark brown from mountains
-    gold: "#D68C16", // Gold/yellow from text
-    cream: "#F5F5DC", // Cream background
-    darkBrown: "#3E2723", // Darker brown for accents
-  };
-
+export default function HeroBanner() {
   return (
-    <div className="w-full bg-gradient-to-b from-[#F5F5DC] to-[#EDEBD7] text-[#3E2723] overflow-hidden">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          className="flex flex-col md:flex-row"
-          initial={{ opacity: 0 }}
-          animate={isVisible ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Left Side - Text Content */}
-          <motion.div
-            className="w-full md:w-1/2 p-6 md:p-12 flex flex-col justify-center"
-            initial={{ opacity: 0, x: -30 }}
-            animate={isVisible ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.2 }}
-          >
-            {/* <div className="mb-6 max-w-[200px] md:max-w-[240px]">
-              <Image
-                src="/logo (2).png"
-                alt="Natural Supps Logo"
-                width={240}
-                height={120}
-                className="w-full h-auto"
-              />
-            </div> */}
+    <section className="relative overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white min-h-screen">
+      {/* Enhanced Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] bg-[length:60px_60px]"></div>
+      </div>
 
+      {/* Animated Background Gradients */}
+      <motion.div
+        animate={{
+          background: [
+            "radial-gradient(circle at 20% 80%, rgba(202, 180, 118, 0.15) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 20%, rgba(240, 28, 51, 0.15) 0%, transparent 50%)",
+            "radial-gradient(circle at 40% 40%, rgba(202, 180, 118, 0.15) 0%, transparent 50%)",
+          ],
+        }}
+        transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
+        className="absolute inset-0"
+      />
+
+      {/* Floating Supplement Elements */}
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{
+          y: [0, -20, 0],
+          opacity: [0.3, 0.5, 0.3],
+          rotate: [0, 10, 0],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+        className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-[#CAB476] to-[#F01C33] rounded-2xl shadow-2xl flex items-center justify-center"
+      >
+        <span className="text-2xl">💪</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ y: -30, opacity: 0 }}
+        animate={{
+          y: [0, -15, 0],
+          opacity: [0.4, 0.6, 0.4],
+          rotate: [0, -15, 0],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 0.3,
+        }}
+        className="absolute top-1/4 right-20 w-16 h-16 bg-gradient-to-br from-[#F01C33] to-[#CAB476] rounded-xl shadow-xl flex items-center justify-center"
+      >
+        <span className="text-xl">🏋️</span>
+      </motion.div>
+
+      <motion.div
+        initial={{ y: -40, opacity: 0 }}
+        animate={{
+          y: [0, -25, 0],
+          opacity: [0.2, 0.4, 0.2],
+          rotate: [0, 20, 0],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          delay: 0.6,
+        }}
+        className="absolute bottom-1/3 left-1/4 w-12 h-12 bg-gradient-to-br from-[#CAB476]/70 to-[#F01C33]/70 rounded-lg shadow-lg flex items-center justify-center backdrop-blur-sm"
+      >
+        <span className="text-sm">⚡</span>
+      </motion.div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32">
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Text Content */}
+          <div className="text-center lg:text-left">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.4 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <h2 className="text-lg font-bold text-[#5D4037] tracking-widest uppercase">
-                Premium Collection
-              </h2>
-              <h1 className="text-4xl md:text-5xl font-extrabold mt-2 tracking-tight">
-                PURE <span className="text-[#ce801f]">NATURE</span>
-              </h1>
-              <div className="h-1 w-16 bg-[#ce801f] mt-4 mb-6"></div>
+              <span className="inline-block bg-gradient-to-r from-[#F01C33] to-[#CAB476] text-xs font-semibold px-4 py-2 rounded-full mb-6 shadow-lg backdrop-blur-sm border border-white/20">
+                🔥 LIMITED TIME OFFER
+              </span>
             </motion.div>
 
-            <motion.p
-              className="text-[#5D4037] leading-relaxed max-w-lg mb-6"
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold mb-6 leading-tight"
             >
-              Advanced natural protein formula with 25g protein per serving.
-              Sourced from the mountains, our supplements are designed for
-              maximum performance and rapid recovery. Fuel your ambition with
-              our naturally formulated supplements.
+              <span className="bg-gradient-to-r from-[#CAB476] to-[#CAB476]/80 bg-clip-text text-transparent">
+                Transform
+              </span>{" "}
+              Your{" "}
+              <span className="bg-gradient-to-r from-[#F01C33] to-[#F01C33]/80 bg-clip-text text-transparent">
+                Workout
+              </span>
+              <br />
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+                className="text-2xl sm:text-3xl md:text-4xl text-white/90"
+              >
+                Unleash Your Potential
+              </motion.span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed"
+            >
+              Premium supplements engineered to maximize your gains, boost
+              performance, and accelerate recovery. Fueled by science, proven by
+              results.
             </motion.p>
 
             <motion.div
-              className="flex flex-wrap gap-3 mb-8"
               initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.7 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8"
+            >
+              <Link href="/shop" className="inline-block">
+                <motion.button
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-gradient-to-r from-[#CAB476] to-[#F01C33] text-white font-bold py-4 px-8 rounded-2xl shadow-2xl hover:shadow-[#CAB476]/25 transition-all duration-300 border border-white/10"
+                >
+                  SHOP BESTSELLERS
+                </motion.button>
+              </Link>
+              <Link href="/deals" className="inline-block">
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                    y: -2,
+                    backgroundColor: "rgba(202, 180, 118, 0.1)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-transparent border-2 border-[#CAB476] text-[#CAB476] font-bold py-4 px-8 rounded-2xl hover:bg-[#CAB476] hover:text-gray-900 transition-all duration-300 backdrop-blur-sm"
+                >
+                  VIEW DEALS
+                </motion.button>
+              </Link>
+            </motion.div>
+
+            {/* Enhanced Supplement Badges */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="flex flex-wrap justify-center lg:justify-start gap-3"
             >
               {[
-                "100% Natural",
-                "25g Protein",
-                "Mountain Sourced",
-                "No Additives",
-              ].map((feature, index) => (
-                <div
+                { name: "Muscle Growth", icon: "💪" },
+                { name: "Pre-Workout", icon: "⚡" },
+                { name: "Recovery", icon: "🔄" },
+                { name: "Fat Burner", icon: "🔥" },
+              ].map((item, index) => (
+                <motion.div
                   key={index}
-                  className="border border-[#5D4037]/30 bg-[#5D4037]/10 px-4 py-2 rounded-md text-sm font-medium text-[#3E2723]"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.8 + index * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  className="bg-gray-800/60 backdrop-blur-sm px-4 py-3 rounded-2xl border border-[#CAB476]/30 text-sm text-[#CAB476] shadow-lg hover:border-[#CAB476]/50 transition-all duration-300 flex items-center gap-2"
                 >
-                  {feature}
-                </div>
+                  <span>{item.icon}</span>
+                  {item.name}
+                </motion.div>
               ))}
             </motion.div>
+          </div>
 
-            <motion.div
-              className="flex flex-col sm:flex-row gap-4 mt-2"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.8 }}
-            >
-              <motion.button
-                className="bg-[#D68C16] text-white hover:bg-[#D68C16]/80 font-bold py-3 px-8 rounded-md shadow-lg"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                SHOP NOW
-              </motion.button>
-
-              <motion.button
-                className="bg-transparent border border-[#5D4037] hover:bg-[#5D4037]/10 text-[#5D4037] font-bold py-3 px-8 rounded-md shadow-lg"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-              >
-                LEARN MORE
-              </motion.button>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Side - Product Image with Effects */}
+          {/* Product Image */}
           <motion.div
-            className="w-full md:w-1/2 relative"
-            initial={{ opacity: 0, x: 30 }}
-            animate={isVisible ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.3 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[500px]"
           >
-            <div className="h-full min-h-[400px] md:min-h-[500px] relative overflow-hidden bg-gradient-to-b from-[#F5F5DC] to-[#EDEBD7]">
-              {/* Mountain-inspired Shapes */}
-              <motion.div
-                className="absolute top-1/4 left-1/4 w-32 h-32 border border-[#5D4037]/20 rotate-45"
-                animate={{
-                  rotate: [45, 90, 45],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  repeat: Number.POSITIVE_INFINITY,
-                  duration: 8,
-                  ease: "easeInOut",
-                }}
+            <div className="relative w-full h-full bg-gradient-to-br from-[#CAB476]/10 to-[#F01C33]/10 rounded-3xl backdrop-blur-sm border border-white/10 shadow-2xl overflow-hidden">
+              <Image
+                src="/c3.jpg"
+                alt="Supplement Stack"
+                fill
+                className="object-contain p-8"
+                priority
               />
 
+              {/* Enhanced Discount Badge */}
               <motion.div
-                className="absolute bottom-1/3 right-1/3 w-40 h-40 border border-[#D68C16]/20 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  repeat: Number.POSITIVE_INFINITY,
-                  duration: 6,
-                  ease: "easeInOut",
-                }}
-              />
-
-              {/* Product Image */}
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center z-10"
-                initial={{ y: 30, opacity: 0 }}
-                animate={isVisible ? { y: 0, opacity: 1 } : {}}
-                transition={{ delay: 0.5, duration: 0.8 }}
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", delay: 1, duration: 0.8 }}
+                className="absolute top-4 right-4 sm:right-8 bg-gradient-to-r from-[#F01C33] to-[#F01C33]/90 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center backdrop-blur-sm border border-white/20"
               >
-                <div className="relative w-[280px] h-[400px] md:w-[350px] md:h-[500px]">
-                  <Image
-                    src="/c3.jpg"
-                    alt="Natural Protein Supplement"
-                    fill
-                    className="object-contain"
-                  />
-                </div>
+                <motion.span
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="mr-2 text-lg"
+                >
+                  🔥
+                </motion.span>
+                FLASH SALE
               </motion.div>
 
-              {/* Mountain silhouette inspired by the logo */}
+              {/* Floating Price Tag */}
               <motion.div
-                className="absolute bottom-0 left-0 right-0 h-24 opacity-10"
-                initial={{ y: 30, opacity: 0 }}
-                animate={isVisible ? { y: 0, opacity: 0.1 } : {}}
-                transition={{ delay: 0.7, duration: 0.8 }}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.2 }}
+                className="absolute bottom-4 right-4 bg-gradient-to-r from-[#CAB476] to-[#CAB476]/90 text-white font-bold px-4 py-2 rounded-xl shadow-lg"
               >
-                <svg
-                  viewBox="0 0 1200 200"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-full h-full"
-                >
-                  <path
-                    d="M0,200 L200,100 L300,150 L400,50 L500,120 L600,20 L700,80 L800,30 L900,90 L1000,40 L1100,70 L1200,10 L1200,200 Z"
-                    fill="#5D4037"
-                  />
-                </svg>
+                From $29.99
               </motion.div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
-    </div>
+
+      {/* Enhanced Stats Bar */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 1 }}
+        className="bg-gradient-to-r from-gray-800/80 via-gray-900/80 to-gray-800/80 backdrop-blur-lg py-6 border-t border-[#CAB476]/20 shadow-2xl"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            {[
+              { value: "Lab Tested", label: "Quality Assurance", icon: "🧪" },
+              { value: "Fast Shipping", label: "Free Over $50", icon: "🚀" },
+              { value: "24/7", label: "Expert Support", icon: "💬" },
+              { value: "60-Day", label: "Money Back Guarantee", icon: "✅" },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="p-4 rounded-xl bg-gradient-to-br from-white/5 to-white/10 backdrop-blur-sm border border-[#CAB476]/10 hover:border-[#CAB476]/30 transition-all duration-300"
+                whileHover={{ scale: 1.05, y: -2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2 + index * 0.1 }}
+              >
+                <div className="text-2xl mb-2">{stat.icon}</div>
+                <div className="text-lg font-bold bg-gradient-to-r from-[#CAB476] to-[#F01C33] bg-clip-text text-transparent">
+                  {stat.value}
+                </div>
+                <div className="text-xs text-gray-300 uppercase tracking-wider mt-1">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </section>
   );
 }
