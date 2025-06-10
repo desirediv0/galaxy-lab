@@ -69,8 +69,8 @@ const HeroCarousel = () => {
   }, [api]);
 
   return (
-    <div className="relative overflow-hidden h-[500px] md:h-[700px]">
-      {/* Single background video that stays consistent across all slides */}
+    <div className="relative h-screen overflow-hidden">
+      {/* Video Background with Gradient Overlay */}
       <div className="absolute inset-0 w-full h-full z-0">
         <video
           className="w-full h-full object-cover"
@@ -81,83 +81,151 @@ const HeroCarousel = () => {
         >
           <source src="/bg.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[#0000]/20 backdrop-blur-[2px] z-10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10" />
       </div>
 
       <Carousel setApi={setApi} className="h-full relative z-20">
-        <CarouselContent className="h-full">
+        <CarouselContent className="h-screen">
           {slides.map((slide, index) => (
-            <CarouselItem key={index} className="h-full p-0">
-              <div className="relative h-full w-full overflow-hidden flex items-center justify-center">
-                {/* Content */}
-                <div className="container mx-auto px-4">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="max-w-2xl mx-auto text-center"
-                  >
-                    <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold mt-32 lg:mt-48 text-white mb-6 uppercase tracking-wider leading-tight">
-                      {slide.title}
-                    </h1>
-                    <p className="text-xl md:text-2xl text-white/90 mb-10 font-light">
-                      {slide.subtitle}
-                    </p>
-                    <Link href={slide.ctaLink}>
-                      <Button
-                        size="lg"
-                        className="text-lg px-8 lg:px-12 py-7 font-bold bg-[#c4ab66] text-white hover:bg-[#cab476]/90  hover:scale-105 transition-transform duration-200"
+            <CarouselItem key={index} className="p-0">
+              <div className="relative h-full w-full overflow-hidden flex items-center">
+                <div className="container mx-auto px-6 lg:px-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                    <motion.div
+                      initial={{ opacity: 0, x: -50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, delay: 0.2 }}
+                      className="text-left"
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="mb-8"
                       >
-                        {slide.cta}
-                        <ChevronRight className="ml-2 h-5 w-5" />
-                      </Button>
-                    </Link>
-                  </motion.div>
+                        <span className="inline-block px-4 py-2 bg-[#C2A861]/10 text-[#C2A861] text-sm font-semibold rounded-full mb-4">
+                          PREMIUM QUALITY
+                        </span>
+                        <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-6 leading-tight">
+                          {slide.title}
+                        </h1>
+                        <p className="text-xl md:text-2xl text-white/80 font-light max-w-xl">
+                          {slide.subtitle}
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                        className="flex flex-wrap gap-4"
+                      >
+                        <Link href={slide.ctaLink}>
+                          <Button
+                            size="lg"
+                            className="text-lg px-8 py-7 font-bold bg-[#C2A861] text-white hover:bg-[#CAB476] hover:scale-105 transition-all duration-300 rounded-full shadow-lg shadow-[#C2A861]/20"
+                          >
+                            {slide.cta}
+                            <ChevronRight className="ml-2 h-5 w-5" />
+                          </Button>
+                        </Link>
+                        <Link href="/products">
+                          <Button
+                            size="lg"
+                            variant="outline"
+                            className="text-lg bg-black px-8 py-7 font-bold text-white border-white/20 hover:bg-white/10 hover:border-white transition-all duration-300 rounded-full backdrop-blur-sm"
+                          >
+                            VIEW ALL
+                            <ArrowRight className="ml-2 h-5 w-5" />
+                          </Button>
+                        </Link>
+                      </motion.div>
+
+                  
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                        className="mt-12 grid grid-cols-3 gap-8"
+                      >
+                        {[
+                          { label: "Active Users", value: "50K+" },
+                          { label: "Products", value: "100+" },
+                          { label: "Reviews", value: "5000+" },
+                        ].map((stat, idx) => (
+                          <div key={idx} className="text-center">
+                            <div className="text-2xl font-bold text-[#C2A861]">
+                              {stat.value}
+                            </div>
+                            <div className="text-sm text-white/60">
+                              {stat.label}
+                            </div>
+                          </div>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+
+                    
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 1 }}
+                      className="hidden lg:block relative"
+                    >
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-gradient-to-r from-[#C2A861]/20 to-[#F01C33]/20 blur-3xl" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full border-2 border-[#C2A861]/20 animate-spin-slow" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border-2 border-[#F01C33]/20 animate-spin-slower" />
+                    </motion.div>
+                  </div>
                 </div>
               </div>
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        {/* Navigation Controls
-        <CarouselPrevious
-          className="left-8 h-10 w-10 z-30 opacity-70 hover:opacity-100"
-          variant="secondary"
-        />
-        <CarouselNext
-          className="right-8 h-10 w-10 z-30 opacity-70 hover:opacity-100"
-          variant="secondary"
-        /> */}
-
-        {/* Dot Indicators */}
-        <div className="absolute bottom-8 left-0 right-0 z-30 flex justify-center space-x-3">
+        {/* Custom Navigation Dots */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-4">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => api?.scrollTo(index)}
-              className={`w-4 h-4 rounded-full transition-all transform ${
-                index === currentSlide
-                  ? "bg-white scale-100"
-                  : "bg-white/40 hover:bg-white/60"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
+              className="group relative"
+            >
+              <div
+                className={`w-16 h-1 rounded-full transition-all duration-300 ${
+                  index === currentSlide
+                    ? "bg-[#C2A861]"
+                    : "bg-white/20 group-hover:bg-white/40"
+                }`}
+              />
+              <div
+                className={`absolute -top-8 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#C2A861] rounded-full text-xs text-white opacity-0 transform -translate-y-2 transition-all duration-300 ${
+                  index === currentSlide ? "opacity-100 translate-y-0" : ""
+                } group-hover:opacity-100 group-hover:translate-y-0`}
+              >
+                {index + 1}
+              </div>
+            </button>
           ))}
         </div>
 
-        {/* Autoplay Toggle */}
-        <div className="absolute bottom-8 right-8 z-30">
+        {/* Autoplay Control */}
+        <div className="absolute bottom-12 right-12 z-30">
           <Button
             variant="outline"
             size="sm"
-            className="h-10 w-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full"
+            className="w-12 h-12 rounded-full border-2 border-[#C2A861] bg-black/20 hover:bg-[#C2A861]/20 backdrop-blur-sm transition-all duration-300"
             onClick={() => setAutoplay(!autoplay)}
             aria-label={autoplay ? "Pause slideshow" : "Play slideshow"}
           >
             {autoplay ? (
-              <span className="block w-3 h-3 bg-white"></span>
+              <span className="w-4 h-4 bg-[#C2A861]" />
             ) : (
-              <span className="block w-0 h-0 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent border-l-[8px] border-l-white ml-0.5"></span>
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-12 border-l-[#C2A861]"
+              />
             )}
           </Button>
         </div>
@@ -169,19 +237,33 @@ const HeroCarousel = () => {
 // Announcement Banner
 const AnnouncementBanner = () => {
   return (
-    <div className="bg-gradient-to-r from-[#ce801f]/5 via-[#ce801f]/10 to-[#ce801f]/5 py-4 overflow-hidden border-b border-[#ce801f]/10">
+    <div className="relative bg-gradient-to-r from-black via-[#1a1a1a] to-black py-6 overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 opacity-30">
+        <div
+          className="absolute top-0 left-0 w-full h-full"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, #C2A861 1px, transparent 0)",
+            backgroundSize: "40px 40px",
+          }}
+        />
+      </div>
+
       <div className="container mx-auto px-4">
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 text-center">
+        <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center space-x-2"
+            className="group flex items-center space-x-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/10 transition-all duration-300"
           >
-            <div className="w-8 h-8 rounded-full bg-[#ce801f]/10 flex items-center justify-center">
-              ⚡
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C2A861] to-[#F01C33] p-0.5">
+              <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
+                ⚡
+              </div>
             </div>
-            <span className="text-sm md:text-base font-medium">
+            <span className="text-sm md:text-base font-medium text-white group-hover:text-[#C2A861] transition-colors">
               FREE SHIPPING ON ORDERS ABOVE ₹999
             </span>
           </motion.div>
@@ -190,13 +272,15 @@ const AnnouncementBanner = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="hidden md:flex items-center space-x-2"
+            className="group hidden md:flex items-center space-x-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/10 transition-all duration-300"
           >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              🎁
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C2A861] to-[#F01C33] p-0.5">
+              <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
+                🎁
+              </div>
             </div>
-            <span className="text-sm md:text-base font-medium">
-              GET A FREE SHAKER WITH PROTEIN PURCHASES
+            <span className="text-sm md:text-base font-medium text-white group-hover:text-[#C2A861] transition-colors">
+              FREE SHAKER WITH PROTEIN PURCHASES
             </span>
           </motion.div>
 
@@ -204,14 +288,19 @@ const AnnouncementBanner = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex items-center space-x-2"
+            className="group flex items-center space-x-3 bg-white/5 backdrop-blur-sm px-6 py-3 rounded-full hover:bg-white/10 transition-all duration-300"
           >
-            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-              🔥
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C2A861] to-[#F01C33] p-0.5">
+              <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
+                🔥
+              </div>
             </div>
-            <span className="text-sm md:text-base font-medium">
+            <span className="text-sm md:text-base font-medium text-white group-hover:text-[#C2A861] transition-colors">
               USE CODE{" "}
-              <strong className="text-[#ce801f]">FIT10</strong> FOR 10% OFF
+              <strong className="text-[#F01C33] ml-1">FIT10</strong>{" "}
+              <span className="bg-[#F01C33] text-white text-xs px-2 py-0.5 rounded-full ml-2">
+                10% OFF
+              </span>
             </span>
           </motion.div>
         </div>
@@ -219,8 +308,6 @@ const AnnouncementBanner = () => {
     </div>
   );
 };
-
-
 
 // Testimonials Section
 const TestimonialsSection = () => {
@@ -252,11 +339,21 @@ const TestimonialsSection = () => {
   ];
 
   return (
-    <section className="py-32 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-[#ce801f]/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#ce801f]/5 rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
+    <section className="py-32 bg-gradient-to-b from-black via-[#1a1a1a] to-black relative overflow-hidden">
+      {/* Animated background pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" 
+          style={{
+            backgroundImage: "radial-gradient(circle at 1px 1px, #C2A861 1px, transparent 0)",
+            backgroundSize: "50px 50px"
+          }}
+        />
+      </div>
+
+      {/* Gradient effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[#C2A861] rounded-full mix-blend-multiply filter blur-5xl opacity-10 animate-blob" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#F01C33] rounded-full mix-blend-multiply filter blur-5xl opacity-10 animate-blob animation-delay-2000" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -267,13 +364,18 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <Headtext text="WHAT OUR CUSTOMERS SAY" />
-          <p className="text-gray-600 mt-6 max-w-2xl mx-auto text-lg">
+          <span className="inline-block px-4 py-2 bg-[#C2A861]/10 text-[#C2A861] text-sm font-semibold rounded-full mb-4">
+            TESTIMONIALS
+          </span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            What Our Customers Say
+          </h2>
+          <p className="text-gray-400 mt-6 max-w-2xl mx-auto text-lg">
             Real experiences from people who trust our products
           </p>
         </motion.div>
 
-        <div className="relative max-w-6xl mx-auto">
+        <div className="relative max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             {testimonials.map((testimonial, index) => (
               <motion.div
@@ -282,60 +384,55 @@ const TestimonialsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.2 }}
-                className="relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+                className="group relative bg-white/5 backdrop-blur-md rounded-2xl p-8 hover:bg-white/10 transition-all duration-500"
               >
-                {/* Decorative elements */}
-                <div className="absolute top-0 left-0 w-24 h-24 bg-primary/5 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+                {/* Highlight effect */}
+                <div className="absolute inset-x-0 -top-px h-px w-full bg-gradient-to-r from-transparent via-[#C2A861] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-x-0 -bottom-px h-px w-full bg-gradient-to-r from-transparent via-[#F01C33] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* Quote mark */}
-                <div className="absolute top-6 right-6 text-6xl text-[#ce801f]/10 font-serif">
-                  &quot;
-                </div>
-
-                {/* Content */}
                 <div className="relative">
-                  {/* Avatar and info */}
                   <div className="flex items-center mb-6">
-                    <div className="w-16 h-16 relative rounded-full overflow-hidden border-2 border-[#ce801f]/20 shadow-md">
-                      <div className="w-full h-full bg-gradient-to-br from-[#ce801f] to-[#ce801f]/80 flex items-center justify-center text-white font-bold text-xl">
-                        {testimonial.name.substring(0, 2).toUpperCase()}
+                    <div className="relative">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#C2A861] to-[#F01C33] p-0.5">
+                        <div className="w-full h-full rounded-full bg-black flex items-center justify-center text-white font-bold text-xl">
+                          {testimonial.name.substring(0, 2).toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#C2A861] rounded-full flex items-center justify-center">
+                        <Star className="w-4 h-4 text-black fill-current" />
                       </div>
                     </div>
                     <div className="ml-4">
-                      <h3 className="font-bold text-gray-900 text-lg">
+                      <h3 className="font-bold text-white text-lg group-hover:text-[#C2A861] transition-colors">
                         {testimonial.name}
                       </h3>
-                      <p className="text-sm text-[#ce801f] font-medium">
+                      <p className="text-sm text-[#C2A861]">
                         {testimonial.role}
                       </p>
                     </div>
                   </div>
 
-                  {/* Rating */}
-                  <div className="flex mb-4">
+                  <div className="flex mb-4 space-x-1">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`h-5 w-5 ${
                           i < testimonial.rating
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
+                            ? "text-[#C2A861]"
+                            : "text-gray-600"
                         }`}
+                        fill={i < testimonial.rating ? "currentColor" : "none"}
                       />
                     ))}
                   </div>
 
-                  {/* Quote */}
-                  <p className="text-gray-700 text-lg leading-relaxed">
-                    &quot;{testimonial.quote}&quot;
+                  <p className="text-gray-300 text-lg leading-relaxed">
+                    "{testimonial.quote}"
                   </p>
 
-                  {/* Bottom design element */}
                   <div className="mt-8 flex justify-center">
                     <motion.div
-                      className="h-1 w-12 bg-[#ce801f]/30 rounded-full"
-                      whileHover={{ width: 60 }}
-                      transition={{ duration: 0.3 }}
+                      className="h-1 w-12 bg-gradient-to-r from-[#C2A861] to-[#F01C33] rounded-full opacity-30 group-hover:w-full transition-all duration-700"
                     />
                   </div>
                 </div>
@@ -386,36 +483,142 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
+    <div className="bg-black text-white">
       <HeroCarousel />
-      {/* <AnnouncementBanner /> */}
+      <AnnouncementBanner />
 
-      {/* Featured Categories Section */}
+      {/* Quick Links Section
+      <section className="py-16 relative overflow-hidden">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              {
+                icon: "💪",
+                title: "Proteins",
+                desc: "Build & Recover",
+                link: "/category/protein",
+                color: "from-[#C2A861]/20 to-[#C2A861]/5"
+              },
+              {
+                icon: "⚡",
+                title: "Pre-Workout",
+                desc: "Energy & Focus",
+                link: "/category/pre-workout",
+                color: "from-[#F01C33]/20 to-[#F01C33]/5"
+              },
+              {
+                icon: "🎯",
+                title: "Weight Loss",
+                desc: "Burn & Define",
+                link: "/category/weight-loss",
+                color: "from-[#C2A861]/20 to-[#C2A861]/5"
+              },
+              {
+                icon: "🔄",
+                title: "Recovery",
+                desc: "Rest & Restore",
+                link: "/category/recovery",
+                color: "from-[#F01C33]/20 to-[#F01C33]/5"
+              }
+            ].map((item, index) => (
+              <Link href={item.link} key={index}>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  className="group relative bg-gradient-to-br ${item.color} backdrop-blur-sm rounded-2xl p-6 hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl">{item.icon}</span>
+                    <div>
+                      <h3 className="font-bold text-lg group-hover:text-[#C2A861] transition-colors">
+                        {item.title}
+                      </h3>
+                      <p className="text-sm text-gray-400">{item.desc}</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="absolute bottom-4 right-4 w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+                </motion.div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section> */}
+
+      {/* Featured Categories with modern design */}
       <FeaturedCategoriesSection />
 
-      {/* Featured Products Section */}
-      {featuredProducts.length && (
-        <section className="py-10 bg-gray-50">
-          <div className="container mx-auto px-4">
-            {/* <div className="text-center mb-12">
-              <Headtext text="FEATURED PRODUCTS" />
-              <p className="text-gray-600 my-6 max-w-2xl mx-auto">
+      {/* Featured Products Section with new styling */}
+      {featuredProducts.length > 0 && (
+        <section className="py-20 bg-gradient-to-b from-black via-[#1a1a1a] to-black relative">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" 
+              style={{
+                backgroundImage: "radial-gradient(circle at 1px 1px, #C2A861 1px, transparent 0)",
+                backgroundSize: "40px 40px"
+              }}
+            />
+          </div>
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <span className="inline-block px-4 py-2 bg-[#C2A861]/10 text-[#C2A861] text-sm font-semibold rounded-full mb-4">
+                NEW ARRIVALS
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                Featured Products
+              </h2>
+              <p className="text-gray-400 max-w-2xl mx-auto text-lg">
                 High-quality supplements to enhance your fitness journey
               </p>
-            </div> */}
+            </div>
 
             <FeaturedProducts
               products={featuredProducts}
               isLoading={productsLoading}
               error={error}
             />
+
+            <div className="text-center mt-12">
+              <Link href="/products">
+                <Button
+                  size="lg"
+                  className="bg-transparent border-2 border-[#C2A861] text-[#C2A861] hover:bg-[#C2A861] hover:text-white transition-all duration-300 rounded-full px-8 py-6 text-lg font-bold"
+                >
+                  View All Products
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
       )}
 
-      <GymSupplementShowcase />
-      <BenefitsSec />
+      {/* Supplement Showcase with parallax effect */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <GymSupplementShowcase />
+      </motion.div>
+
+      {/* Benefits Section with enhanced animations */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <BenefitsSec />
+      </motion.div>
+
+      {/* Enhanced Testimonials */}
       <TestimonialsSection />
+
+    
     </div>
   );
 }
