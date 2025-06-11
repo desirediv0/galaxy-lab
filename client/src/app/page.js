@@ -142,7 +142,7 @@ const HeroCarousel = () => {
                       </motion.div>
 
                   
-                      <motion.div
+                      {/* <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5, delay: 0.4 }}
@@ -162,7 +162,7 @@ const HeroCarousel = () => {
                             </div>
                           </div>
                         ))}
-                      </motion.div>
+                      </motion.div> */}
                     </motion.div>
 
                     
@@ -483,96 +483,22 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-black text-white">
+
+    <>
       <HeroCarousel />
       <AnnouncementBanner />
 
-      {/* Quick Links Section
-      <section className="py-16 relative overflow-hidden">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              {
-                icon: "💪",
-                title: "Proteins",
-                desc: "Build & Recover",
-                link: "/category/protein",
-                color: "from-[#C2A861]/20 to-[#C2A861]/5"
-              },
-              {
-                icon: "⚡",
-                title: "Pre-Workout",
-                desc: "Energy & Focus",
-                link: "/category/pre-workout",
-                color: "from-[#F01C33]/20 to-[#F01C33]/5"
-              },
-              {
-                icon: "🎯",
-                title: "Weight Loss",
-                desc: "Burn & Define",
-                link: "/category/weight-loss",
-                color: "from-[#C2A861]/20 to-[#C2A861]/5"
-              },
-              {
-                icon: "🔄",
-                title: "Recovery",
-                desc: "Rest & Restore",
-                link: "/category/recovery",
-                color: "from-[#F01C33]/20 to-[#F01C33]/5"
-              }
-            ].map((item, index) => (
-              <Link href={item.link} key={index}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  className="group relative bg-gradient-to-br ${item.color} backdrop-blur-sm rounded-2xl p-6 hover:scale-105 transition-all duration-300"
-                >
-                  <div className="flex items-center space-x-4">
-                    <span className="text-3xl">{item.icon}</span>
-                    <div>
-                      <h3 className="font-bold text-lg group-hover:text-[#C2A861] transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-gray-400">{item.desc}</p>
-                    </div>
-                  </div>
-                  <ArrowRight className="absolute bottom-4 right-4 w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
-                </motion.div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section> */}
-
-      {/* Featured Categories with modern design */}
       <FeaturedCategoriesSection />
-
-      {/* Featured Products Section with new styling */}
       {featuredProducts.length > 0 && (
-        <section className="py-20 bg-gradient-to-b from-black via-[#1a1a1a] to-black relative">
+        <section className="py-20  relative">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute inset-0" 
-              style={{
-                backgroundImage: "radial-gradient(circle at 1px 1px, #C2A861 1px, transparent 0)",
-                backgroundSize: "40px 40px"
-              }}
+             
             />
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-16">
-              <span className="inline-block px-4 py-2 bg-[#C2A861]/10 text-[#C2A861] text-sm font-semibold rounded-full mb-4">
-                NEW ARRIVALS
-              </span>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Featured Products
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                High-quality supplements to enhance your fitness journey
-              </p>
-            </div>
+          
 
             <FeaturedProducts
               products={featuredProducts}
@@ -580,17 +506,7 @@ export default function Home() {
               error={error}
             />
 
-            <div className="text-center mt-12">
-              <Link href="/products">
-                <Button
-                  size="lg"
-                  className="bg-transparent border-2 border-[#C2A861] text-[#C2A861] hover:bg-[#C2A861] hover:text-white transition-all duration-300 rounded-full px-8 py-6 text-lg font-bold"
-                >
-                  View All Products
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
+           
           </div>
         </section>
       )}
@@ -617,8 +533,7 @@ export default function Home() {
 
       {/* Enhanced Testimonials */}
       <TestimonialsSection />
-
-    
-    </div>
+    </>
+   
   );
 }

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/carousel";
 import { Star, Eye, Heart, ShoppingCart } from "lucide-react";
 import ProductQuickView from "./ProductQuickView";
+import { motion } from "framer-motion";
 
 const ProductSkeleton = () => (
   <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-pulse">
@@ -65,16 +66,23 @@ const FeaturedProducts = ({
   }
 
   return (
-    <section className="py-12 md:py-16 bg-gray-50">
+    <section className="py-12 md:py-16 ">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-10 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-            Featured Products
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <span className="inline-block text-primary font-medium text-sm uppercase tracking-wider mb-3">
+            Shop By Category
+          </span>
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Discover Our Collections
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
-            Discover our premium selection of products
-          </p>
-        </div>
+          <div className="w-20 h-1 bg-primary rounded-full mx-auto" />
+        </motion.div>
 
         {/* Products Carousel */}
         <div className="relative px-2 md:px-8">

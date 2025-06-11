@@ -248,8 +248,8 @@ export default function CartPage() {
         <div className="container mx-auto px-4 py-12">
           <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Cart</h1>
           <div className="bg-white p-12 rounded-2xl shadow-lg text-center border border-gray-100 max-w-md mx-auto">
-            <div className="inline-flex justify-center items-center bg-yellow-100 p-6 rounded-full mb-6">
-              <ShoppingBag className="h-12 w-12 text-yellow-500" />
+            <div className="inline-flex justify-center items-center bg- p-6 rounded-full mb-6">
+              <ShoppingBag className="h-12 w-12 text-[#f54e45]" />
             </div>
             <h2 className="text-2xl font-bold mb-3 text-gray-800">
               Your cart is empty

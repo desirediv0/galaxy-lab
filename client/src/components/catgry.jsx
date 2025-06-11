@@ -49,7 +49,7 @@ const CategoryCard = ({ category, index }) => {
           )}
 
           {/* Product Count Bubble */}
-          <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md text-sm font-medium flex items-center">
+          <div className="absolute bottom-4 right-4 bg-black/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md text-sm font-medium flex items-center">
             <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse" />
             {category._count?.products || 0} items
           </div>
@@ -93,13 +93,7 @@ const CategoryCard = ({ category, index }) => {
           </Link>
         </div>
 
-        {/* Hover Effect Elements */}
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-1 bg-primary animate-[pulse_2s_infinite]" />
-          <div className="absolute top-0 left-0 w-1 h-full bg-primary animate-[pulse_3s_infinite]" />
-          <div className="absolute bottom-0 right-0 w-full h-1 bg-primary animate-[pulse_2.5s_infinite]" />
-          <div className="absolute top-0 right-0 w-1 h-full bg-primary animate-[pulse_3.5s_infinite]" />
-        </div>
+    
       </div>
     </motion.div>
   );
