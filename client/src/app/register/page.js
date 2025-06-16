@@ -6,9 +6,20 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, ShoppingBag, UserPlus, CheckCircle } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ShoppingBag,
+  UserPlus,
+  CheckCircle,
+  User,
+  Mail,
+  Phone,
+  Lock,
+} from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { AuthRedirect } from "@/components/auth-redirect";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -100,52 +111,48 @@ export default function RegisterPage() {
 
   return (
     <AuthRedirect>
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
+      <div className="min-h-screen bg-gradient-to-br from-white via-white to-white relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#f01c33]/20 to-[#c4ab66]/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[#c4ab66]/20 to-[#f01c33]/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        </div>
+
         <Toaster position="top-center" />
 
         {/* Header with logo */}
-        <div className="bg-white shadow-sm border-b">
+        <div className="relative z-10  backdrop-blur-md shadow-sm border-b border-white/20">
           <div className="container mx-auto px-4 py-4">
             <Link href="/" className="flex items-center justify-center">
-              <div className="flex items-center space-x-2">
-                <div className="bg-yellow-500 p-2 rounded-lg">
-                  <ShoppingBag className="h-6 w-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold text-gray-800">
-                  Power Fitness
-                </span>
-              </div>
+             <Image
+                src="/logo.png"
+                alt="Power Fitness Logo"
+                width={200}
+                height={200}
+                className="h-20 w-auto"
+              />  
             </Link>
           </div>
         </div>
 
-        <div className="flex items-center justify-center px-4 py-8">
+        <div className="relative z-10 flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-lg">
             {/* Registration Card */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-              {/* Header Section */}
-              <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 px-8 py-8 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
-                  <UserPlus className="h-8 w-8 text-white" />
-                </div>
-                <h1 className="text-2xl font-bold text-white mb-2">
-                  Join Power Fitness
-                </h1>
-                <p className="text-yellow-100">
-                  Start your fitness journey today
-                </p>
-              </div>
+            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+             
 
               {/* Form Section */}
-              <div className="px-8 py-8">
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
+              <div className="px-8 py-10">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="space-y-5">
+                    <div>
                       <label
                         htmlFor="name"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="flex items-center text-sm font-semibold text-gray-700 mb-3"
                       >
-                        Full Name <span className="text-red-500">*</span>
+                        <User className="h-4 w-4 mr-2 text-[#f01c33]" />
+                        Full Name <span className="text-[#f01c33] ml-1">*</span>
                       </label>
                       <Input
                         id="name"
@@ -156,16 +163,18 @@ export default function RegisterPage() {
                         value={formData.name}
                         onChange={handleChange}
                         placeholder="Enter your full name"
-                        className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-yellow-500 transition-colors"
+                        className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] focus:ring-[#f01c33] transition-all duration-200 bg-white/50 backdrop-blur-sm"
                       />
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div>
                       <label
                         htmlFor="email"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="flex items-center text-sm font-semibold text-gray-700 mb-3"
                       >
-                        Email Address <span className="text-red-500">*</span>
+                        <Mail className="h-4 w-4 mr-2 text-[#f01c33]" />
+                        Email Address{" "}
+                        <span className="text-[#f01c33] ml-1">*</span>
                       </label>
                       <Input
                         id="email"
@@ -176,15 +185,16 @@ export default function RegisterPage() {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="Enter your email"
-                        className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-yellow-500 transition-colors"
+                        className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] focus:ring-[#f01c33] transition-all duration-200 bg-white/50 backdrop-blur-sm"
                       />
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div>
                       <label
                         htmlFor="phone"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="flex items-center text-sm font-semibold text-gray-700 mb-3"
                       >
+                        <Phone className="h-4 w-4 mr-2 text-[#f01c33]" />
                         Phone Number
                       </label>
                       <Input
@@ -195,76 +205,82 @@ export default function RegisterPage() {
                         value={formData.phone}
                         onChange={handleChange}
                         placeholder="Enter your phone number"
-                        className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-yellow-500 transition-colors"
+                        className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] focus:ring-[#f01c33] transition-all duration-200 bg-white/50 backdrop-blur-sm"
                       />
                     </div>
 
-                    <div>
-                      <label
-                        htmlFor="password"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
-                      >
-                        Password <span className="text-red-500">*</span>
-                      </label>
-                      <div className="relative">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="flex items-center text-sm font-semibold text-gray-700 mb-3"
+                        >
+                          <Lock className="h-4 w-4 mr-2 text-[#f01c33]" />
+                          Password{" "}
+                          <span className="text-[#f01c33] ml-1">*</span>
+                        </label>
+                        <div className="relative">
+                          <Input
+                            id="password"
+                            name="password"
+                            type={showPassword ? "text" : "password"}
+                            autoComplete="new-password"
+                            required
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="Create password"
+                            className="w-full h-14 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] focus:ring-[#f01c33] transition-all duration-200 bg-white/50 backdrop-blur-sm"
+                          />
+                          <button
+                            type="button"
+                            className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#f01c33] transition-colors"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? (
+                              <EyeOff className="h-5 w-5" />
+                            ) : (
+                              <Eye className="h-5 w-5" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="confirmPassword"
+                          className="flex items-center text-sm font-semibold text-gray-700 mb-3"
+                        >
+                          <Lock className="h-4 w-4 mr-2 text-[#f01c33]" />
+                          Confirm <span className="text-[#f01c33] ml-1">*</span>
+                        </label>
                         <Input
-                          id="password"
-                          name="password"
+                          id="confirmPassword"
+                          name="confirmPassword"
                           type={showPassword ? "text" : "password"}
                           autoComplete="new-password"
                           required
-                          value={formData.password}
+                          value={formData.confirmPassword}
                           onChange={handleChange}
-                          placeholder="Create password"
-                          className="w-full h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-yellow-500 transition-colors"
+                          placeholder="Confirm password"
+                          className="w-full h-14 px-4 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] focus:ring-[#f01c33] transition-all duration-200 bg-white/50 backdrop-blur-sm"
                         />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
-                            <Eye className="h-5 w-5" />
-                          )}
-                        </button>
                       </div>
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="confirmPassword"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
-                      >
-                        Confirm Password <span className="text-red-500">*</span>
-                      </label>
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type={showPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        required
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Confirm password"
-                        className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:ring-yellow-500 transition-colors"
-                      />
                     </div>
                   </div>
 
                   {/* Password Requirements */}
-                  <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
-                    <p className="text-sm text-yellow-800 font-medium mb-2">
+                  <div className="bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 p-5 rounded-xl border border-[#f01c33]/20 backdrop-blur-sm">
+                    <p className="text-sm text-[#f01c33] font-semibold mb-3 flex items-center">
+                      <CheckCircle className="h-4 w-4 mr-2" />
                       Password Requirements:
                     </p>
-                    <ul className="text-xs text-yellow-700 space-y-1">
+                    <ul className="text-xs text-gray-700 space-y-2">
                       <li className="flex items-center space-x-2">
-                        <CheckCircle className="h-3 w-3" />
+                        <div className="w-1.5 h-1.5 bg-[#f01c33] rounded-full"></div>
                         <span>At least 8 characters long</span>
                       </li>
                       <li className="flex items-center space-x-2">
-                        <CheckCircle className="h-3 w-3" />
+                        <div className="w-1.5 h-1.5 bg-[#c4ab66] rounded-full"></div>
                         <span>Mix of letters and numbers recommended</span>
                       </li>
                     </ul>
@@ -272,24 +288,27 @@ export default function RegisterPage() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
+                    className="w-full h-14 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#f01c33]/90 hover:to-[#c4ab66]/90 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
                       <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                         <span>Creating Account...</span>
                       </div>
                     ) : (
-                      "Create Account"
+                      <>
+                        <UserPlus className="h-5 w-5 mr-2" />
+                        Create Account
+                      </>
                     )}
                   </Button>
                 </form>
 
                 {/* Divider */}
-                <div className="my-6 flex items-center">
+                <div className="my-8 flex items-center">
                   <div className="flex-1 border-t border-gray-200"></div>
-                  <span className="px-4 text-sm text-gray-500 bg-white">
+                  <span className="px-4 text-sm text-gray-500 bg-white/50 backdrop-blur-sm rounded-full">
                     Already have an account?
                   </span>
                   <div className="flex-1 border-t border-gray-200"></div>
@@ -300,7 +319,7 @@ export default function RegisterPage() {
                   <Link href="/login">
                     <Button
                       variant="outline"
-                      className="w-full h-12 border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50 hover:border-yellow-300 font-semibold rounded-xl transition-all duration-200"
+                      className="w-full h-14 border-2 border-[#f01c33]/30 text-[#f01c33] hover:bg-[#f01c33]/5 hover:border-[#f01c33] font-semibold rounded-xl transition-all duration-200 backdrop-blur-sm"
                     >
                       Sign In Instead
                     </Button>
@@ -311,18 +330,18 @@ export default function RegisterPage() {
 
             {/* Footer */}
             <div className="text-center mt-8">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-600 bg-white/50 backdrop-blur-sm rounded-xl p-4">
                 By creating an account, you agree to our{" "}
                 <Link
                   href="/terms"
-                  className="text-yellow-600 hover:text-yellow-700 font-medium"
+                  className="text-[#f01c33] hover:text-[#c4ab66] font-medium"
                 >
                   Terms of Service
                 </Link>{" "}
                 and{" "}
                 <Link
                   href="/privacy"
-                  className="text-yellow-600 hover:text-yellow-700 font-medium"
+                  className="text-[#f01c33] hover:text-[#c4ab66] font-medium"
                 >
                   Privacy Policy
                 </Link>

@@ -16,6 +16,8 @@ import {
   CheckCircle,
   AlertCircle,
   Shield,
+  Sparkles,
+  Star,
 } from "lucide-react";
 
 export default function ChangePasswordPage() {
@@ -130,56 +132,75 @@ export default function ChangePasswordPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
+      <div className="min-h-screen bg-gradient-to-br from-[#f01c33]/5 via-white to-[#c4ab66]/5">
         <div className="container mx-auto py-10 flex justify-center">
-          <div className="w-12 h-12 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#f01c33]/5 via-white to-[#c4ab66]/5 relative overflow-hidden">
+      {/* Floating Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#f01c33]/20 to-[#c4ab66]/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[#c4ab66]/20 to-[#f01c33]/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
       <ClientOnly>
-        <div className="container mx-auto py-10 px-4">
+        <div className="container mx-auto py-10 px-4 relative z-10">
           <div className="flex items-center mb-8">
             <Link
               href="/account"
-              className="inline-flex items-center text-sm text-gray-600 hover:text-yellow-600 mr-6 font-medium transition-colors"
+              className="inline-flex items-center text-sm text-gray-600 hover:text-[#f01c33] mr-6 font-medium transition-colors"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Account
             </Link>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               Change Password
             </h1>
           </div>
 
           <div className="max-w-md mx-auto">
             {/* Header Card */}
-            <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-2xl p-8 text-white mb-8">
-              <div className="flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-3xl p-8 text-white mb-8 shadow-2xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+              <div className="flex items-center justify-between relative z-10">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">Security Settings</h2>
-                  <p className="text-yellow-100">
-                    Update your account password
-                  </p>
+                  <p className="text-white/90">Update your account password</p>
+                  <div className="flex items-center mt-3 space-x-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 text-white/80 fill-current"
+                      />
+                    ))}
+                    <span className="text-white/80 text-sm ml-2">
+                      Bank-level Security
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-white/20 p-4 rounded-xl">
+                <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm relative">
                   <Shield className="h-8 w-8" />
+                  <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-[#c4ab66] to-white rounded-full flex items-center justify-center">
+                    <Sparkles className="h-3 w-3 text-[#f01c33]" />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Form Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 px-8 py-6 border-b border-yellow-200">
+            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+              <div className="bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 px-8 py-6 border-b border-white/20">
                 <div className="flex items-center">
-                  <div className="bg-yellow-500 p-3 rounded-xl mr-4">
+                  <div className="bg-gradient-to-br from-[#f01c33] to-[#c4ab66] p-4 rounded-2xl mr-4 shadow-lg">
                     <Lock className="h-6 w-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800">
+                    <h3 className="text-xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
                       Change Password
                     </h3>
                     <p className="text-gray-600">
@@ -192,7 +213,7 @@ export default function ChangePasswordPage() {
               <div className="p-8">
                 {message.text && (
                   <div
-                    className={`mb-6 p-4 rounded-xl border-2 flex items-center ${
+                    className={`mb-6 p-4 rounded-2xl border-2 flex items-center ${
                       message.type === "success"
                         ? "bg-green-50 text-green-800 border-green-200"
                         : "bg-red-50 text-red-800 border-red-200"
@@ -213,7 +234,7 @@ export default function ChangePasswordPage() {
                       htmlFor="currentPassword"
                       className="flex items-center text-sm font-semibold text-gray-700 mb-2"
                     >
-                      <Lock className="h-4 w-4 mr-2 text-yellow-500" />
+                      <Lock className="h-4 w-4 mr-2 text-[#f01c33]" />
                       Current Password
                     </label>
                     <div className="relative">
@@ -224,12 +245,12 @@ export default function ChangePasswordPage() {
                         value={formData.currentPassword}
                         onChange={handleChange}
                         required
-                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-yellow-500 transition-colors"
+                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] transition-all duration-300 bg-white/50 backdrop-blur-sm"
                         placeholder="Enter your current password"
                       />
                       <button
                         type="button"
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#f01c33] transition-colors"
                         onClick={() => togglePasswordVisibility("current")}
                       >
                         {showPassword.current ? (
@@ -246,7 +267,7 @@ export default function ChangePasswordPage() {
                       htmlFor="newPassword"
                       className="flex items-center text-sm font-semibold text-gray-700 mb-2"
                     >
-                      <Lock className="h-4 w-4 mr-2 text-yellow-500" />
+                      <Lock className="h-4 w-4 mr-2 text-[#f01c33]" />
                       New Password
                     </label>
                     <div className="relative">
@@ -258,12 +279,12 @@ export default function ChangePasswordPage() {
                         onChange={handleChange}
                         required
                         minLength={8}
-                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-yellow-500 transition-colors"
+                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] transition-all duration-300 bg-white/50 backdrop-blur-sm"
                         placeholder="Enter your new password"
                       />
                       <button
                         type="button"
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#f01c33] transition-colors"
                         onClick={() => togglePasswordVisibility("new")}
                       >
                         {showPassword.new ? (
@@ -284,7 +305,7 @@ export default function ChangePasswordPage() {
                       htmlFor="confirmPassword"
                       className="flex items-center text-sm font-semibold text-gray-700 mb-2"
                     >
-                      <Lock className="h-4 w-4 mr-2 text-yellow-500" />
+                      <Lock className="h-4 w-4 mr-2 text-[#f01c33]" />
                       Confirm New Password
                     </label>
                     <div className="relative">
@@ -295,12 +316,12 @@ export default function ChangePasswordPage() {
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         required
-                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-yellow-500 transition-colors"
+                        className="h-12 px-4 pr-12 border-2 border-gray-200 rounded-xl focus:border-[#f01c33] transition-all duration-300 bg-white/50 backdrop-blur-sm"
                         placeholder="Confirm your new password"
                       />
                       <button
                         type="button"
-                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-[#f01c33] transition-colors"
                         onClick={() => togglePasswordVisibility("confirm")}
                       >
                         {showPassword.confirm ? (
@@ -314,9 +335,10 @@ export default function ChangePasswordPage() {
 
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
+                    className="w-full h-12 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#f01c33]/90 hover:to-[#c4ab66]/90 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl relative overflow-hidden group"
                     disabled={isSubmitting}
                   >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>

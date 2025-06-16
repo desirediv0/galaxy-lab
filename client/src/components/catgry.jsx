@@ -12,6 +12,14 @@ import {
   CarouselNext,
 } from "@/components/ui/carousel";
 import Image from "next/image";
+import {
+  Sparkles,
+  ArrowRight,
+  Star,
+  Zap,
+  ShoppingBag,
+  Crown,
+} from "lucide-react";
 
 const CategoryCard = ({ category, index }) => {
   return (
@@ -19,18 +27,22 @@ const CategoryCard = ({ category, index }) => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="h-full px-2"
+      className="h-full px-3"
     >
-      <div className="group relative h-full rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white z-0" />
+      <div className="group relative h-full rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-700 transform hover:scale-105">
+        {/* Enhanced Background with Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-[#c4ab66]/5 to-[#f01c33]/5 z-0" />
 
-        {/* Image with Parallax Effect */}
-        <div className="relative h-64 overflow-hidden">
+        {/* Animated Border */}
+        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-[#f01c33]/20 via-[#c4ab66]/20 to-[#f01c33]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm"></div>
+        <div className="absolute inset-0.5 rounded-3xl bg-white z-10"></div>
+
+        {/* Image with Enhanced Effects */}
+        <div className="relative h-72 overflow-hidden rounded-t-3xl z-20">
           <motion.div
-            className="h-full w-full"
-            whileHover={{ scale: 1.05 }}
-            transition={{ duration: 0.5 }}
+            className="h-full w-full relative"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
             <Image
               src={category.image || "/category-placeholder.jpg"}
@@ -39,61 +51,85 @@ const CategoryCard = ({ category, index }) => {
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
           </motion.div>
 
-          {/* Premium Ribbon */}
+          {/* Enhanced Premium Ribbon */}
           {category.isPremium && (
-            <div className="absolute -right-8 top-6 w-32 bg-primary text-white text-xs font-bold py-1 text-center transform rotate-45 shadow-lg z-10">
-              PREMIUM
-            </div>
+            <motion.div
+              initial={{ x: 100, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="absolute -right-10 top-8 w-40 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm font-bold py-2 text-center transform rotate-45 shadow-xl z-30"
+            >
+              <div className="flex items-center justify-center gap-1">
+                <Crown className="w-4 h-4" />
+                PREMIUM
+              </div>
+            </motion.div>
           )}
 
-          {/* Product Count Bubble */}
-          <div className="absolute bottom-4 right-4 bg-black/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md text-sm font-medium flex items-center">
-            <span className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse" />
+          {/* Enhanced Product Count Bubble */}
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.4, type: "spring" }}
+            className="absolute bottom-4 right-4 bg-gradient-to-r from-[#f01c33]/90 to-[#c4ab66]/90 backdrop-blur-md px-4 py-2 rounded-2xl shadow-xl text-white text-sm font-bold flex items-center gap-2 border border-white/20"
+          >
+            <div className="w-3 h-3 bg-white rounded-full animate-pulse"></div>
             {category._count?.products || 0} items
-          </div>
+          </motion.div>
+
+          {/* Floating Icons */}
+          <motion.div
+            animate={{ y: [-5, 5, -5] }}
+            transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
+            className="absolute top-4 left-4 w-8 h-8 bg-gradient-to-r from-[#c4ab66] to-[#f01c33] rounded-full flex items-center justify-center shadow-lg opacity-80"
+          >
+            <Sparkles className="w-4 h-4 text-white" />
+          </motion.div>
         </div>
 
-        {/* Content */}
-        <div className="p-6 relative z-10">
-          <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors">
+        {/* Enhanced Content Section */}
+        <div className="p-8 relative z-20 bg-gradient-to-b from-white to-gray-50/50">
+          {/* Category Name with Gradient */}
+          <motion.h3
+            className="text-2xl font-bold mb-3 bg-gradient-to-r from-gray-900 via-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent group-hover:from-[#f01c33] group-hover:to-[#c4ab66] transition-all duration-500"
+            whileHover={{ scale: 1.05 }}
+          >
             {category.name}
-          </h3>
+          </motion.h3>
 
-          <p className="text-gray-600 text-sm mb-5 line-clamp-2">
-            {category.description || "Explore our premium collection"}
+          {/* Description */}
+          <p className="text-gray-600 text-base mb-6 line-clamp-2 leading-relaxed">
+            {category.description ||
+              "Explore our premium collection of high-quality products"}
           </p>
 
+          {/* Enhanced CTA Button */}
           <Link
             href={`/category/${category.slug || ""}`}
-            className="inline-block"
+            className="inline-block w-full"
           >
             <motion.button
-              whileHover={{ x: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              className="flex items-center text-primary font-medium text-sm"
+              whileHover={{ x: 5, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              className="group/btn w-full flex items-center justify-between bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white font-bold py-4 px-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500 relative overflow-hidden"
             >
-              Shop now
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 ml-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
+              <span className="relative flex items-center gap-2">
+                <ShoppingBag className="w-5 h-5" />
+                Shop Now
+              </span>
+              <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform duration-300" />
             </motion.button>
           </Link>
-        </div>
 
-    
+          {/* Decorative Elements */}
+          <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        </div>
       </div>
     </motion.div>
   );
@@ -101,13 +137,15 @@ const CategoryCard = ({ category, index }) => {
 
 const SkeletonLoader = () => {
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden h-full animate-pulse">
-      <div className="h-64 bg-gray-200" />
-      <div className="p-6">
-        <div className="h-6 bg-gray-200 rounded w-3/4 mb-3" />
-        <div className="h-4 bg-gray-200 rounded w-full mb-2" />
-        <div className="h-4 bg-gray-200 rounded w-2/3 mb-5" />
-        <div className="h-5 bg-gray-200 rounded w-20" />
+    <div className="bg-white rounded-3xl shadow-xl overflow-hidden h-full animate-pulse border border-gray-100">
+      <div className="h-72 bg-gradient-to-br from-gray-200 to-gray-300 relative">
+        <div className="absolute inset-0 bg-gradient-to-t from-gray-300/50 to-transparent"></div>
+      </div>
+      <div className="p-8">
+        <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-3/4 mb-4" />
+        <div className="h-5 bg-gray-200 rounded-lg w-full mb-3" />
+        <div className="h-5 bg-gray-200 rounded-lg w-2/3 mb-6" />
+        <div className="h-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl w-full" />
       </div>
     </div>
   );
@@ -130,8 +168,11 @@ const FeaturedCategoriesCarousel = ({ categories }) => {
 
   if (!categories || categories.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No categories available</p>
+      <div className="text-center py-16">
+        <div className="w-24 h-24 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <ShoppingBag className="w-12 h-12 text-[#f01c33]" />
+        </div>
+        <p className="text-gray-500 text-lg">No categories available</p>
       </div>
     );
   }
@@ -147,33 +188,43 @@ const FeaturedCategoriesCarousel = ({ categories }) => {
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-4">
+        <CarouselContent className="-ml-6">
           {categories.map((category, index) => (
             <CarouselItem
               key={category.id || index}
-              className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+              className="pl-6 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
             >
               <CategoryCard category={category} index={index} />
             </CarouselItem>
           ))}
         </CarouselContent>
 
-        {/* Custom Navigation Buttons */}
-        <CarouselPrevious className="hidden md:flex absolute left-0 -translate-y-1/2 top-1/2 w-12 h-12 bg-white shadow-xl border-none text-primary hover:bg-primary hover:text-white transition-all" />
-        <CarouselNext className="hidden md:flex absolute right-0 -translate-y-1/2 top-1/2 w-12 h-12 bg-white shadow-xl border-none text-primary hover:bg-primary hover:text-white transition-all" />
+        {/* Enhanced Navigation Buttons */}
+        <CarouselPrevious className="hidden md:flex absolute -left-6 -translate-y-1/2 top-1/2 w-16 h-16 bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-[#c4ab66]/20 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white hover:border-transparent transition-all duration-500 hover:scale-110" />
+        <CarouselNext className="hidden md:flex absolute -right-6 -translate-y-1/2 top-1/2 w-16 h-16 bg-white/90 backdrop-blur-sm shadow-2xl border-2 border-[#c4ab66]/20 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white hover:border-transparent transition-all duration-500 hover:scale-110" />
       </Carousel>
 
-      {/* Progress Indicator */}
-      <div className="mt-8 flex justify-center">
-        <div className="relative h-1 bg-gray-200 rounded-full w-full max-w-md">
+      {/* Enhanced Progress Indicator */}
+      <div className="mt-12 flex justify-center">
+        <div className="relative h-2 bg-gray-200 rounded-full w-full max-w-md shadow-inner">
           <motion.div
-            className="absolute top-0 left-0 h-full bg-primary rounded-full"
+            className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full shadow-lg"
             animate={{
               width: `${((currentIndex + 1) / categories.length) * 100}%`,
             }}
-            transition={{ type: "spring", stiffness: 300 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
           />
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-[#f01c33]/20 to-[#c4ab66]/20 -translate-y-1/2 rounded-full"></div>
         </div>
+      </div>
+
+      {/* Progress Numbers */}
+      <div className="mt-4 text-center">
+        <span className="text-sm font-medium text-gray-600">
+          <span className="text-[#f01c33] font-bold">{currentIndex + 1}</span>
+          {" of "}
+          <span className="text-[#c4ab66] font-bold">{categories.length}</span>
+        </span>
       </div>
     </div>
   );
@@ -200,39 +251,97 @@ const FeaturedCategoriesSection = () => {
   }, []);
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute top-0 left-0 w-1/3 h-full bg-gradient-to-r from-primary/5 to-transparent -skew-x-12 -translate-x-1/3" />
-      <div className="absolute bottom-0 right-0 w-1/3 h-full bg-gradient-to-l from-primary/5 to-transparent skew-x-12 translate-x-1/3" />
+    <section className="py-20 bg-gradient-to-b from-white via-gray-50/30 to-white relative overflow-hidden">
+      {/* Enhanced Decorative Elements */}
+      <div className="absolute top-0 left-0 w-1/2 h-full">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-40 left-20 w-24 h-24 bg-gradient-to-r from-[#c4ab66]/10 to-[#f01c33]/10 rounded-full blur-2xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="absolute top-0 right-0 w-1/2 h-full">
+        <div className="absolute top-40 right-16 w-28 h-28 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute bottom-20 right-10 w-36 h-36 bg-gradient-to-r from-[#c4ab66]/10 to-[#f01c33]/10 rounded-full blur-3xl animate-pulse delay-1500"></div>
+      </div>
+
+      {/* Geometric Patterns */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-[#f01c33] rounded-full animate-ping"></div>
+        <div className="absolute top-3/4 right-1/4 w-2 h-2 bg-[#c4ab66] rounded-full animate-ping delay-1000"></div>
+        <div className="absolute top-1/2 left-1/3 w-1 h-1 bg-[#f01c33] rounded-full animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-[#c4ab66] rounded-full animate-pulse delay-500"></div>
+      </div>
 
       <div className="container mx-auto px-4 relative z-10">
+        {/* Enhanced Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <span className="inline-block text-primary font-medium text-sm uppercase tracking-wider mb-3">
-            Shop By Category
-          </span>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Discover Our Collections
-          </h2>
-          <div className="w-20 h-1 bg-primary rounded-full mx-auto" />
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-3 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 backdrop-blur-sm px-6 py-3 rounded-full border border-[#c4ab66]/20 mb-6"
+          >
+            <Star className="w-5 h-5 text-[#f01c33]" />
+            <span className="text-[#f01c33] font-bold text-sm uppercase tracking-wider">
+              Shop By Category
+            </span>
+            <Zap className="w-5 h-5 text-[#c4ab66]" />
+          </motion.div>
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-4xl md:text-5xl font-bold mb-6"
+          >
+            <span className="bg-gradient-to-r from-gray-900 via-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+              Discover Our {}
+            </span>
+         
+            <span className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+              Collections
+            </span>
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-gray-600 text-lg max-w-2xl mx-auto mb-8"
+          >
+            Explore our carefully curated categories featuring premium products
+            designed to elevate your lifestyle
+          </motion.p>
+
+          {/* Enhanced Decorative Line */}
+          <motion.div
+            initial={{ width: 0 }}
+            whileInView={{ width: "5rem" }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="h-1 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full mx-auto shadow-lg"
+          />
         </motion.div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
             {[...Array(4)].map((_, i) => (
               <SkeletonLoader key={i} />
             ))}
           </div>
         ) : error ? (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16"
+          >
+            <div className="w-24 h-24 bg-gradient-to-r from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
               <svg
-                className="w-8 h-8 text-red-500"
+                className="w-12 h-12 text-red-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -245,49 +354,41 @@ const FeaturedCategoriesSection = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Something went wrong
             </h3>
-            <p className="text-gray-500">{error}</p>
+            <p className="text-gray-600 text-lg mb-6">{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="mt-4 text-sm text-primary font-medium"
+              className="px-8 py-3 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               Try again
             </button>
-          </div>
+          </motion.div>
         ) : (
           <FeaturedCategoriesCarousel categories={categories} />
         )}
 
+        {/* Enhanced Browse All Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           viewport={{ once: true }}
-          className="text-center mt-16"
+          className="text-center mt-20"
         >
           <Link href="/categories">
             <motion.button
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-3 bg-primary text-white rounded-lg shadow-lg hover:shadow-xl transition-all font-medium flex items-center mx-auto"
+              className="group relative overflow-hidden px-12 py-5 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 font-bold text-lg flex items-center mx-auto border-2 border-white/20"
             >
-              Browse All Categories
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 ml-2"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              <span className="relative flex items-center gap-3">
+                <ShoppingBag className="w-6 h-6" />
+                Browse All Categories
+                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+              </span>
             </motion.button>
           </Link>
         </motion.div>

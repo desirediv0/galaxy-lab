@@ -16,7 +16,7 @@ import {
   MapPin,
   LogIn,
   ShoppingBag,
-  Star,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -154,115 +154,154 @@ export function Navbar() {
 
     return (
       <div
-        className="md:hidden fixed inset-0 z-50 bg-white/98 backdrop-blur-md overflow-y-auto"
+        className="md:hidden fixed inset-0 z-50 bg-gradient-to-br from-white via-white to-[#c4ab66]/5 backdrop-blur-md overflow-y-auto"
         style={{ maxHeight: "100vh" }}
       >
         <div className="flex flex-col h-full">
           {/* Mobile Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-[#C2A861] to-[#C2A861]/90 shadow-lg flex justify-between items-center px-6 py-4 z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-[#f01c33] via-[#f01c33] to-[#c4ab66] shadow-xl flex justify-between items-center px-6 py-5 z-10">
             <Link
               href="/"
               className="flex items-center"
               onClick={() => setIsMenuOpen(false)}
             >
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-                  <Star className="h-6 w-6 text-[#C2A861]" />
+                <div className="w-12 h-12 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg border border-white/20">
+                  <Sparkles className="h-7 w-7 text-[#f01c33]" />
                 </div>
-                <span className="text-white font-bold text-xl">Brand</span>
+                <div>
+                  <span className="text-white font-bold text-2xl tracking-wide">
+                    Brand
+                  </span>
+                  <div className="w-full h-0.5 bg-gradient-to-r from-white to-transparent rounded-full"></div>
+                </div>
               </div>
             </Link>
             <button
               onClick={() => setIsMenuOpen(false)}
-              className="p-2 text-white hover:text-[#F01C33] rounded-xl hover:bg-white/20 focus:outline-none transition-all duration-200"
+              className="p-3 text-white hover:text-[#c4ab66] rounded-2xl hover:bg-white/20 focus:outline-none transition-all duration-300 hover:rotate-90"
               aria-label="Close menu"
             >
               <X className="h-6 w-6" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto py-6 px-6 space-y-6">
+          <div className="flex-1 overflow-y-auto py-8 px-6 space-y-8">
             {/* Search Section */}
             <form onSubmit={handleMobileSearch} className="sticky top-0 z-10">
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#C2A861]" />
-                <Input
-                  ref={mobileSearchInputRef}
-                  type="text"
-                  placeholder="Search products..."
-                  className="w-full pl-12 pr-12 py-4 text-base border-2 border-[#C2A861]/30 focus:border-[#C2A861] focus:ring-[#C2A861] rounded-2xl bg-white shadow-sm"
-                  value={searchQuery}
-                  onChange={handleSearchInputChange}
-                  autoComplete="off"
-                  onClick={(e) => e.stopPropagation()}
-                />
-                {searchQuery && (
+                <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
+                <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl border border-white/50 shadow-xl">
+                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-[#f01c33]" />
+                  <Input
+                    ref={mobileSearchInputRef}
+                    type="text"
+                    placeholder="Search amazing products..."
+                    className="w-full pl-16 pr-16 py-6 text-lg border-0 focus:ring-2 focus:ring-[#f01c33] rounded-3xl bg-transparent placeholder:text-gray-500"
+                    value={searchQuery}
+                    onChange={handleSearchInputChange}
+                    autoComplete="off"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      className="absolute right-16 top-1/2 transform -translate-y-1/2 p-2 text-[#c4ab66] hover:text-[#f01c33] transition-colors"
+                      onClick={() => {
+                        setSearchQuery("");
+                        mobileSearchInputRef.current?.focus();
+                      }}
+                      aria-label="Clear search"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
                   <button
-                    type="button"
-                    className="absolute right-12 top-1/2 transform -translate-y-1/2 p-2 text-[#C2A861] hover:text-[#F01C33]"
-                    onClick={() => {
-                      setSearchQuery("");
-                      mobileSearchInputRef.current?.focus();
-                    }}
-                    aria-label="Clear search"
+                    type="submit"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3 rounded-2xl bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white hover:shadow-lg transition-all duration-300 hover:scale-105"
+                    aria-label="Search"
                   >
-                    <X className="h-5 w-5" />
+                    <Search className="h-5 w-5" />
                   </button>
-                )}
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-xl bg-[#C2A861] text-white hover:bg-[#F01C33] transition-colors shadow-md"
-                  aria-label="Search"
-                >
-                  <Search className="h-5 w-5" />
-                </button>
+                </div>
               </div>
             </form>
 
             {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               <Link
                 href="/products"
-                className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#C2A861]/10 to-[#C2A861]/5 rounded-2xl hover:from-[#C2A861]/20 hover:to-[#C2A861]/10 transition-all duration-200 shadow-sm"
+                className="group relative overflow-hidden"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <ShoppingBag className="h-8 w-8 text-[#C2A861] mb-2" />
-                <span className="font-semibold text-[#C2A861]">
-                  All Products
-                </span>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#c4ab66]/20 to-[#c4ab66]/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative flex flex-col items-center justify-center p-8 bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#c4ab66] to-[#c4ab66]/80 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:rotate-12 transition-transform duration-300">
+                    <ShoppingBag className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="font-bold text-[#c4ab66] text-lg">
+                    All Products
+                  </span>
+                </div>
               </Link>
               <Link
                 href="/categories"
-                className="flex flex-col items-center justify-center p-6 bg-gradient-to-br from-[#F01C33]/10 to-[#F01C33]/5 rounded-2xl hover:from-[#F01C33]/20 hover:to-[#F01C33]/10 transition-all duration-200 shadow-sm"
+                className="group relative overflow-hidden"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <Menu className="h-8 w-8 text-[#F01C33] mb-2" />
-                <span className="font-semibold text-[#F01C33]">Categories</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#f01c33]/20 to-[#f01c33]/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                <div className="relative flex flex-col items-center justify-center p-8 bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#f01c33]/80 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:rotate-12 transition-transform duration-300">
+                    <Menu className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="font-bold text-[#f01c33] text-lg">
+                    Categories
+                  </span>
+                </div>
               </Link>
             </div>
 
             {/* Navigation Links */}
-            <div className="space-y-3">
-              <h3 className="font-bold text-[#C2A861] uppercase text-sm tracking-wider px-2">
+            <div className="space-y-4">
+              <h3 className="font-bold text-[#f01c33] uppercase text-sm tracking-wider px-4 flex items-center gap-2">
+                <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
                 Navigation
               </h3>
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
                 {[
-                  { href: "/", label: "Home", icon: "🏠" },
-                  { href: "/about", label: "About Us", icon: "ℹ️" },
-                  { href: "/blog", label: "Blog", icon: "📝" },
-                  { href: "/contact", label: "Contact", icon: "📞" },
+                  {
+                    href: "/",
+                    label: "Home",
+                    gradient: "from-blue-500 to-purple-500",
+                  },
+                  {
+                    href: "/about",
+                    label: "About Us",
+                    gradient: "from-green-500 to-teal-500",
+                  },
+                  {
+                    href: "/blog",
+                    label: "Blog",
+                    gradient: "from-orange-500 to-red-500",
+                  },
+                  {
+                    href: "/contact",
+                    label: "Contact",
+                    gradient: "from-pink-500 to-rose-500",
+                  },
                 ].map((item, index) => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center px-6 py-4 hover:bg-[#C2A861]/5 transition-colors ${
-                      index !== 3 ? "border-b border-gray-100" : ""
+                    className={`flex items-center px-8 py-5 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group ${
+                      index !== 3 ? "border-b border-white/30" : ""
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                   
-                    <span className="text-gray-700 font-medium">
+                    <div
+                      className={`w-3 h-3 bg-gradient-to-r ${item.gradient} rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
+                    ></div>
+                    <span className="text-gray-700 font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
                       {item.label}
                     </span>
                   </Link>
@@ -272,26 +311,41 @@ export function Navbar() {
 
             {/* Account Section */}
             {isAuthenticated ? (
-              <div className="space-y-3">
-                <h3 className="font-bold text-[#C2A861] uppercase text-sm tracking-wider px-2">
+              <div className="space-y-4">
+                <h3 className="font-bold text-[#f01c33] uppercase text-sm tracking-wider px-4 flex items-center gap-2">
+                  <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
                   My Account
                 </h3>
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
                   {[
-                    { href: "/account", label: "Profile", icon: "👤" },
-                    { href: "/account/orders", label: "My Orders", icon: "📦" },
-                    { href: "/wishlist", label: "My Wishlist", icon: "❤️" },
+                    {
+                      href: "/account",
+                      label: "Profile",
+                      color: "text-blue-600",
+                    },
+                    {
+                      href: "/account/orders",
+                      label: "My Orders",
+                      color: "text-green-600",
+                    },
+                    {
+                      href: "/wishlist",
+                      label: "My Wishlist",
+                      color: "text-pink-600",
+                    },
                   ].map((item, index) => (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center px-6 py-4 hover:bg-[#C2A861]/5 transition-colors ${
-                        index !== 2 ? "border-b border-gray-100" : ""
+                      className={`flex items-center px-8 py-5 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group ${
+                        index !== 2 ? "border-b border-white/30" : ""
                       }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      {/* <span className="text-xl mr-3">{item.icon}</span> */}
-                      <span className="text-gray-700 font-medium">
+                      <div
+                        className={`w-3 h-3 bg-current rounded-full mr-4 ${item.color} group-hover:scale-125 transition-transform duration-300`}
+                      ></div>
+                      <span className="text-gray-700 font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
                         {item.label}
                       </span>
                     </Link>
@@ -301,53 +355,72 @@ export function Navbar() {
                       handleLogout();
                       setIsMenuOpen(false);
                     }}
-                    className="w-full text-left flex items-center px-6 py-4 text-[#F01C33] hover:bg-[#F01C33]/5 transition-colors border-t border-gray-100"
+                    className="w-full text-left flex items-center px-8 py-5 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#f01c33]/5 transition-all duration-300 border-t border-white/30 group"
                   >
-                   
-                    <span className="font-medium">Logout</span>
+                    <div className="w-3 h-3 bg-[#f01c33] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
+                    <span className="font-semibold text-lg">Logout</span>
                   </button>
                 </div>
               </div>
             ) : (
-              <div className="space-y-4 p-6 bg-gradient-to-br from-[#C2A861]/5 to-white rounded-2xl shadow-sm border border-[#C2A861]/20">
-                <h3 className="font-bold text-[#C2A861] text-center mb-4">
-                  Join Us Today!
-                </h3>
-                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full py-3 bg-[#C2A861] hover:bg-[#F01C33] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200">
-                    Login
-                  </Button>
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button
-                    variant="outline"
-                    className="w-full py-3 border-2 border-[#C2A861] text-[#C2A861] hover:bg-[#C2A861] hover:text-white rounded-xl font-semibold transition-all duration-200"
-                  >
-                    Register
-                  </Button>
-                </Link>
+              <div className="relative overflow-hidden rounded-3xl">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#f01c33]/10 via-[#c4ab66]/10 to-[#f01c33]/5 blur-xl"></div>
+                <div className="relative space-y-6 p-8 bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <Sparkles className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-[#f01c33] text-xl mb-2">
+                      Join Our Community!
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      Unlock exclusive deals and premium features
+                    </p>
+                  </div>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                    <Button
+                      variant="outline"
+                      className="w-full py-4 border-2 border-[#f01c33] text-[#f01c33] hover:bg-[#f01c33] hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105"
+                    >
+                      Register
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
 
             {/* Contact Info */}
-            <div className="bg-gradient-to-br from-[#C2A861]/10 to-[#C2A861]/5 rounded-2xl p-6 shadow-sm">
-              <h3 className="font-bold text-[#C2A861] mb-4">Get in Touch</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#C2A861] rounded-xl flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-white" />
+            <div className="relative overflow-hidden rounded-3xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#c4ab66]/20 to-[#f01c33]/10 blur-xl"></div>
+              <div className="relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
+                <h3 className="font-bold text-[#f01c33] mb-6 text-xl flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-xl flex items-center justify-center">
+                    <Phone className="h-4 w-4 text-white" />
                   </div>
-                  <span className="font-semibold text-gray-700">
-                    +91 8800199820
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#F01C33] rounded-xl flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-white" />
+                  Get in Touch
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#c4ab66] to-[#c4ab66]/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <Phone className="h-6 w-6 text-white" />
+                    </div>
+                    <span className="font-bold text-gray-700 text-lg">
+                      +91 8800199820
+                    </span>
                   </div>
-                  <span className="font-semibold text-gray-700">
-                    Store Locator
-                  </span>
+                  <div className="flex items-center gap-4 group">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#f01c33]/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <MapPin className="h-6 w-6 text-white" />
+                    </div>
+                    <span className="font-bold text-gray-700 text-lg">
+                      Store Locator
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -358,24 +431,25 @@ export function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-lg" ref={navbarRef}>
+    <header
+      className="sticky top-0 z-50 bg-white shadow-2xl border-b border-gray-100"
+      ref={navbarRef}
+    >
       <Toaster position="top-center" />
 
-    
-
       {/* Main Header */}
-      <div className="bg-white border-b border-gray-100">
+      <div className="bg-gradient-to-r from-white via-white to-[#c4ab66]/5">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-24">
             {/* Left: Mobile Menu + Logo */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
               {/* Mobile menu button */}
               <button
-                className="md:hidden p-2 text-[#C2A861] hover:text-[#F01C33] hover:bg-[#C2A861]/10 rounded-xl transition-all duration-200 focus:outline-none"
+                className="md:hidden p-3 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 focus:outline-none hover:scale-110"
                 onClick={() => setIsMenuOpen(true)}
                 aria-label="Open menu"
               >
-                <Menu className="h-6 w-6" />
+                <Menu className="h-7 w-7" />
               </button>
 
               {/* Logo */}
@@ -384,68 +458,70 @@ export function Navbar() {
                   src="/logo.png"
                   alt="Brand Logo"
                   width={150}
-                  height={80}
-                  className="   transition-all duration-200"
+                  height={100}
+                  className="object-cover group-hover:rotate-12 transition-transform duration-300"
                 />
-              
               </Link>
             </div>
 
             {/* Center: Search Bar (Desktop) */}
-            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+            <div className="hidden md:flex flex-1 max-w-3xl mx-12">
               <form onSubmit={handleSearch} className="relative w-full">
                 <div className="relative">
-                  <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 h-5 w-5 text-[#C2A861]" />
-                  <Input
-                    type="search"
-                    placeholder="Search for products, brands, categories..."
-                    className="w-full pl-14 pr-6 py-4 border-2 border-[#C2A861]/30 focus:border-[#C2A861] focus:ring-[#C2A861] rounded-2xl text-base bg-white shadow-sm hover:shadow-md transition-all duration-200"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoComplete="off"
-                  />
-                  <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="bg-[#C2A861] hover:bg-[#F01C33] text-white px-4 py-2 rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                    >
-                      Search
-                    </Button>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
+                  <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl border border-white/50 shadow-xl">
+                    <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-[#f01c33]" />
+                    <Input
+                      type="search"
+                      placeholder="Search for products, brands, categories..."
+                      className="w-full pl-16 pr-32 py-5 border-0 focus:ring-2 focus:ring-[#f01c33] rounded-3xl text-lg bg-transparent placeholder:text-gray-500"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      autoComplete="off"
+                    />
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      <Button
+                        type="submit"
+                        size="sm"
+                        className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
+                      >
+                        Search
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </form>
             </div>
 
             {/* Right: Action Buttons */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-3 md:gap-6">
               {/* Mobile Search Button */}
               <button
                 onClick={() => setIsSearchExpanded(true)}
-                className="md:hidden p-3 text-[#C2A861] hover:text-[#F01C33] hover:bg-[#C2A861]/10 rounded-xl transition-all duration-200 focus:outline-none"
+                className="md:hidden p-3 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 focus:outline-none hover:scale-110"
                 aria-label="Search"
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-6 w-6" />
               </button>
 
               {/* Wishlist */}
               <Link
                 href="/wishlist"
-                className="hidden sm:flex p-3 text-[#C2A861] hover:text-[#F01C33] hover:bg-[#C2A861]/10 rounded-xl transition-all duration-200 relative group"
+                className="hidden sm:flex p-4 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 relative group hover:scale-110"
               >
-                <Heart className="h-5 w-5" />
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-[#F01C33] rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                <Heart className="h-6 w-6" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full opacity-0 group-hover:opacity-100 transition-opacity animate-pulse"></span>
               </Link>
 
               {/* Cart */}
               <ClientOnly>
                 <Link
                   href="/cart"
-                  className="p-3 text-[#C2A861] hover:text-[#F01C33] hover:bg-[#C2A861]/10 rounded-xl transition-all duration-200 relative group"
+                  className="p-4 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 relative group hover:scale-110"
                 >
-                  <ShoppingCart className="h-5 w-5" />
+                  <ShoppingCart className="h-6 w-6" />
                   {cart && cart.items?.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#F01C33] text-white rounded-full text-xs w-6 h-6 flex items-center justify-center font-bold shadow-md">
+                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white rounded-full text-sm w-7 h-7 flex items-center justify-center font-bold shadow-lg animate-bounce">
                       {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
                     </span>
                   )}
@@ -460,21 +536,21 @@ export function Navbar() {
               >
                 <ClientOnly>
                   <button
-                    className={`p-3 ${
+                    className={`p-4 ${
                       activeDropdown === "account"
-                        ? "text-[#F01C33] bg-[#F01C33]/10"
-                        : "text-[#C2A861] hover:bg-[#C2A861]/10"
-                    } hover:text-[#F01C33] transition-all duration-200 flex items-center focus:outline-none group rounded-xl`}
+                        ? "text-[#c4ab66] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
+                        : "text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10"
+                    } hover:text-[#c4ab66] transition-all duration-300 flex items-center focus:outline-none group rounded-2xl hover:scale-110`}
                     onClick={() => toggleDropdown("account")}
                     aria-expanded={activeDropdown === "account"}
                   >
                     {isAuthenticated ? (
-                      <User className="h-5 w-5" />
+                      <User className="h-6 w-6" />
                     ) : (
-                      <LogIn className="h-5 w-5" />
+                      <LogIn className="h-6 w-6" />
                     )}
                     <ChevronDown
-                      className={`ml-1 h-4 w-4 transition-transform duration-200 ${
+                      className={`ml-2 h-5 w-5 transition-transform duration-300 ${
                         activeDropdown === "account" ? "rotate-180" : ""
                       } group-hover:rotate-180`}
                     />
@@ -482,82 +558,94 @@ export function Navbar() {
 
                   {/* Account Dropdown Content */}
                   <div
-                    className={`absolute right-0 top-full mt-2 w-72 bg-white shadow-2xl rounded-2xl py-3 border border-gray-100 z-50 transition-all duration-300 ease-in-out transform origin-top ${
+                    className={`absolute right-0 top-full mt-4 w-80 bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl py-4 border border-white/50 z-50 transition-all duration-300 ease-in-out transform origin-top ${
                       activeDropdown === "account"
                         ? "opacity-100 scale-100 translate-y-0"
-                        : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+                        : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
                     }`}
                   >
                     {isAuthenticated ? (
                       <>
-                        <div className="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-[#C2A861]/5 to-[#C2A861]/10 rounded-t-2xl">
-                          <p className="font-bold text-gray-800 text-lg">
-                            Hi, {user?.name || "User"}! 👋
-                          </p>
-                          <p className="text-sm text-gray-600 truncate">
-                            {user?.email}
-                          </p>
+                        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 rounded-t-3xl">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center shadow-lg">
+                              <User className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-bold text-gray-800 text-xl">
+                                Hi, {user?.name || "User"}! 👋
+                              </p>
+                              <p className="text-sm text-gray-600 truncate">
+                                {user?.email}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                        <div className="py-2">
+                        <div className="py-3">
                           {[
                             {
                               href: "/account",
                               label: "My Account",
-                              icon: "👤",
+                              color: "from-blue-500 to-purple-500",
                             },
                             {
                               href: "/account/orders",
                               label: "My Orders",
-                              icon: "📦",
+                              color: "from-green-500 to-teal-500",
                             },
                             {
                               href: "/wishlist",
                               label: "My Wishlist",
-                              icon: "❤️",
+                              color: "from-pink-500 to-rose-500",
                             },
                           ].map((item) => (
                             <Link
                               key={item.href}
                               href={item.href}
-                              className="flex items-center px-6 py-3 hover:bg-[#C2A861]/5 transition-all duration-200"
+                              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group"
                               onClick={() => setActiveDropdown(null)}
                             >
-                              <span className="text-lg mr-3">{item.icon}</span>
-                              <span className="font-medium text-gray-700">
+                              <div
+                                className={`w-4 h-4 bg-gradient-to-r ${item.color} rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
+                              ></div>
+                              <span className="font-semibold text-gray-700 text-lg group-hover:text-[#f01c33] transition-colors">
                                 {item.label}
                               </span>
                             </Link>
                           ))}
                         </div>
-                        <div className="border-t border-gray-100 pt-2">
+                        <div className="border-t border-gray-100 pt-3">
                           <button
                             onClick={() => {
                               handleLogout();
                               setActiveDropdown(null);
                             }}
-                            className="flex items-center w-full px-6 py-3 text-[#F01C33] hover:bg-[#F01C33]/5 transition-all duration-200 font-medium"
+                            className="flex items-center w-full px-8 py-4 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#f01c33]/10 transition-all duration-300 font-semibold text-lg group"
                           >
-                            <span className="text-lg mr-3">🚪</span>
+                            <div className="w-4 h-4 bg-[#f01c33] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
                             Logout
                           </button>
                         </div>
                       </>
                     ) : (
-                      <div className="p-6">
-                        <div className="text-center mb-4">
-                          <h3 className="font-bold text-[#C2A861] text-lg mb-2">
+                      <div className="p-8">
+                        <div className="text-center mb-6">
+                          <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <Sparkles className="h-8 w-8 text-white" />
+                          </div>
+                          <h3 className="font-bold text-[#f01c33] text-2xl mb-3">
                             Welcome!
                           </h3>
-                          <p className="text-gray-600 text-sm">
-                            Join us for exclusive deals and offers
+                          <p className="text-gray-600 text-base">
+                            Join us for exclusive deals and premium features
                           </p>
                         </div>
-                        <div className="space-y-3">
+                        <div className="space-y-4">
                           <Link
                             href="/login"
                             onClick={() => setActiveDropdown(null)}
                           >
-                            <Button className="w-full py-3 bg-[#C2A861] hover:bg-[#F01C33] text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-200">
+                            <Button className="w-full py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                               Login
                             </Button>
                           </Link>
@@ -567,7 +655,7 @@ export function Navbar() {
                           >
                             <Button
                               variant="outline"
-                              className="w-full py-3 border-2 border-[#C2A861] text-[#C2A861] hover:bg-[#C2A861] hover:text-white rounded-xl font-semibold transition-all duration-200"
+                              className="w-full py-4 border-2 border-[#f01c33] text-[#f01c33] hover:bg-[#f01c33] hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105"
                             >
                               Register
                             </Button>
@@ -578,29 +666,36 @@ export function Navbar() {
                   </div>
                 </ClientOnly>
               </div>
-
-           
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation Bar */}
-      <div className="hidden md:block bg-gradient-to-r from-[#C2A869] to-[#C2A869]/95 text-white shadow-md">
+      <div className="hidden md:block bg-gradient-to-r h-16  from-[#f01c33] via-[#f01c33] to-[#c4ab66] text-white ">
         <div className="container mx-auto px-4">
-          <nav className="flex items-center justify-center space-x-8 ">
+          <nav className="flex items-center justify-center space-x-12 py-1">
             <Link
               href="/"
-              className="font-semibold  hover:text-[#F01C33] transition-all duration-200 px-4 py-1 rounded-xl hover:bg-white/10"
+              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
             >
               Home
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
             </Link>
 
             <Link
               href="/about"
-              className="font-semibold hover:text-[#F01C33] transition-all duration-200 px-4 py-1 rounded-xl hover:bg-white/10"
+              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
             >
               About
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
+            </Link>
+            <Link
+              href="/products"
+              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
+            >
+              Products
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
             </Link>
 
             {/* Products Dropdown */}
@@ -610,57 +705,74 @@ export function Navbar() {
               onMouseLeave={handleDropdownLeave}
             >
               <button
-                className={`font-semibold ${
+                className={`font-bold text-lg ${
                   activeDropdown === "products"
-                    ? "text-[#F01C33] bg-white/10"
+                    ? "text-[#c4ab66] bg-white/20"
                     : "text-white"
-                } hover:text-[#F01C33] transition-all duration-200 flex items-center focus:outline-none group px-4 py-1 rounded-xl hover:bg-white/10`}
+                } hover:text-[#c4ab66] transition-all duration-300 flex items-center focus:outline-none group px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative`}
                 onClick={() => toggleDropdown("products")}
                 aria-expanded={activeDropdown === "products"}
               >
-                Products
+                Categories
                 <ChevronDown
-                  className={`ml-2 h-4 w-4 transition-transform duration-200 ${
+                  className={`ml-3 h-5 w-5 transition-transform duration-300 ${
                     activeDropdown === "products" ? "rotate-180" : ""
                   } group-hover:rotate-180`}
                 />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
               </button>
               <div
-                className={`absolute left-0 top-full mt-2 w-80 bg-white shadow-2xl rounded-2xl py-3 border border-gray-100 z-50 transition-all duration-300 ease-in-out transform origin-top ${
+                className={`absolute left-0 top-full mt-4 w-96 bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl py-4 border border-white/50 z-50 transition-all duration-300 ease-in-out transform origin-top ${
                   activeDropdown === "products"
                     ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 -translate-y-2 pointer-events-none"
+                    : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
                 }`}
               >
-                <div className="px-6 py-3 border-b border-gray-100 bg-gradient-to-r from-[#C2A861]/5 to-[#C2A861]/10">
-                  <h3 className="font-bold text-[#C2A861] text-lg">
-                    Our Products
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Discover our amazing collection
-                  </p>
+                <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 rounded-t-3xl">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center shadow-lg">
+                      <ShoppingBag className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-[#f01c33] text-2xl">
+                        Our Products
+                      </h3>
+                      <p className="text-base text-gray-600">
+                        Discover our amazing collection
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="py-2">
-                 
-                  {categories.map((category) => (
+                <div className="py-3">
+                  {categories.map((category, index) => (
                     <Link
                       key={category.id}
                       href={`/category/${category.slug}`}
-                      className="flex items-center px-6 py-3 hover:bg-[#C2A861]/5 transition-all duration-200 text-gray-700"
+                      className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 text-gray-700 group"
                       onClick={() => setActiveDropdown(null)}
                     >
-                      <span className="w-2 h-2 bg-[#C2A861] rounded-full mr-4"></span>
-                      {category.name}
+                      <div
+                        className={`w-4 h-4 bg-gradient-to-r ${
+                          index % 3 === 0
+                            ? "from-blue-500 to-purple-500"
+                            : index % 3 === 1
+                            ? "from-green-500 to-teal-500"
+                            : "from-pink-500 to-rose-500"
+                        } rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
+                      ></div>
+                      <span className="font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
+                        {category.name}
+                      </span>
                     </Link>
                   ))}
                 </div>
-                <div className="pt-2 mt-2 border-t border-gray-100">
+                <div className="pt-3 mt-3 border-t border-gray-100">
                   <Link
                     href="/categories"
-                    className="flex items-center px-6 py-3 text-[#F01C33] font-bold hover:bg-[#F01C33]/5 transition-all duration-200"
+                    className="flex items-center px-8 py-4 text-[#f01c33] font-bold hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#f01c33]/10 transition-all duration-300 text-lg group"
                     onClick={() => setActiveDropdown(null)}
                   >
-                    <span className="mr-2">🔥</span>
+                    <div className="w-4 h-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
                     View All Categories
                   </Link>
                 </div>
@@ -669,9 +781,10 @@ export function Navbar() {
 
             <Link
               href="/contact"
-              className="font-semibold hover:text-[#F01C33] transition-all duration-200 px-4 py-1 rounded-xl hover:bg-white/10"
+              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
             >
               Contact
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
             </Link>
           </nav>
         </div>
@@ -681,58 +794,62 @@ export function Navbar() {
       {isSearchExpanded && (
         <>
           <div
-            className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm"
             onClick={() => setIsSearchExpanded(false)}
           />
-          <div className="fixed inset-x-0 top-0 z-50 w-full animate-in slide-in-from-top duration-300 p-4">
+          <div className="fixed inset-x-0 top-0 z-50 w-full animate-in slide-in-from-top duration-300 p-6">
             <form
               onSubmit={handleSearch}
-              className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden max-h-[90vh] md:max-w-[600px] mx-auto"
+              className="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 overflow-hidden max-h-[90vh] md:max-w-[700px] mx-auto"
             >
-              <div className="flex items-center px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-[#C2A861] to-[#C2A861]/90">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-white rounded-xl flex items-center justify-center">
-                    <Search className="h-5 w-5 text-[#C2A861]" />
+              <div className="flex items-center px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33] to-[#c4ab66]">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
+                    <Search className="h-6 w-6 text-[#f01c33]" />
                   </div>
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-2xl font-bold text-white">
                     Search Products
                   </h3>
                 </div>
                 <button
                   type="button"
-                  className="ml-auto p-2 rounded-xl hover:bg-white/20 transition-all duration-200"
+                  className="ml-auto p-3 rounded-2xl hover:bg-white/20 transition-all duration-300 hover:rotate-90"
                   onClick={() => setIsSearchExpanded(false)}
                   aria-label="Close search"
                 >
-                  <X className="h-6 w-6 text-white" />
+                  <X className="h-7 w-7 text-white" />
                 </button>
               </div>
 
-              <div className="p-6">
+              <div className="p-8">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-[#C2A861]" />
-                  <Input
-                    ref={searchInputRef}
-                    type="search"
-                    placeholder="Search for products, brands, categories..."
-                    className="w-full pl-14 pr-6 py-4 border-2 border-[#C2A861]/30 focus:border-[#C2A861] focus:ring-[#C2A861] rounded-2xl text-lg bg-gray-50"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    autoComplete="off"
-                  />
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
+                  <div className="relative">
+                    <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-7 w-7 text-[#f01c33]" />
+                    <Input
+                      ref={searchInputRef}
+                      type="search"
+                      placeholder="Search for products, brands, categories..."
+                      className="w-full pl-16 pr-8 py-6 border-2 border-[#f01c33]/30 focus:border-[#f01c33] focus:ring-[#f01c33] rounded-3xl text-xl bg-white/80 backdrop-blur-sm placeholder:text-gray-500"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      autoComplete="off"
+                    />
+                  </div>
                 </div>
 
-                <div className="mt-6">
-                  <h4 className="text-sm font-bold text-[#C2A861] mb-3 uppercase tracking-wider">
+                <div className="mt-8">
+                  <h4 className="text-lg font-bold text-[#f01c33] mb-4 uppercase tracking-wider flex items-center gap-3">
+                    <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
                     Popular Searches
                   </h4>
-                  <div className="flex flex-wrap gap-3">
+                  <div className="flex flex-wrap gap-4">
                     {[
                       "Protein Powder",
                       "Dumbbells",
                       "Resistance Bands",
                       "Pre-Workout",
-                    ].map((term) => (
+                    ].map((term, index) => (
                       <button
                         key={term}
                         type="button"
@@ -740,7 +857,11 @@ export function Navbar() {
                           setSearchQuery(term);
                           handleSearch({ preventDefault: () => {} });
                         }}
-                        className="px-4 py-2 text-sm bg-gradient-to-r from-[#C2A861]/10 to-[#C2A861]/5 hover:from-[#C2A861]/20 hover:to-[#C2A861]/10 text-[#C2A861] hover:text-[#F01C33] rounded-xl transition-all duration-200 font-medium border border-[#C2A861]/20"
+                        className={`px-6 py-3 text-base bg-gradient-to-r ${
+                          index % 2 === 0
+                            ? "from-[#f01c33]/10 to-[#f01c33]/5 hover:from-[#f01c33]/20 hover:to-[#f01c33]/10 text-[#f01c33] border-[#f01c33]/30"
+                            : "from-[#c4ab66]/10 to-[#c4ab66]/5 hover:from-[#c4ab66]/20 hover:to-[#c4ab66]/10 text-[#c4ab66] border-[#c4ab66]/30"
+                        } hover:scale-105 rounded-2xl transition-all duration-300 font-semibold border-2`}
                       >
                         {term}
                       </button>
@@ -749,19 +870,19 @@ export function Navbar() {
                 </div>
               </div>
 
-              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between">
+              <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-t border-gray-100 flex justify-between">
                 <button
                   type="button"
                   onClick={() => setIsSearchExpanded(false)}
-                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 transition-all duration-200 font-semibold"
+                  className="px-8 py-4 bg-gray-200 text-gray-700 rounded-2xl hover:bg-gray-300 transition-all duration-300 font-bold text-lg hover:scale-105"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-gradient-to-r from-[#C2A861] to-[#C2A861]/90 text-white rounded-xl hover:from-[#F01C33] hover:to-[#F01C33]/90 transition-all duration-200 flex items-center gap-2 font-semibold shadow-md hover:shadow-lg"
+                  className="px-8 py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white rounded-2xl hover:from-[#c4ab66] hover:to-[#f01c33] transition-all duration-300 flex items-center gap-3 font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105"
                 >
-                  <Search className="h-5 w-5" />
+                  <Search className="h-6 w-6" />
                   Search
                 </button>
               </div>

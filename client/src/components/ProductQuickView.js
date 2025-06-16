@@ -20,8 +20,12 @@ import {
   AlertCircle,
   Heart,
   Share2,
+  Sparkles,
+  X,
+  Zap,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
+import { motion } from "framer-motion";
 
 export default function ProductQuickView({ product, open, onOpenChange }) {
   const [selectedFlavor, setSelectedFlavor] = useState(null);
@@ -319,7 +323,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
       if (selectedVariant.salePrice && selectedVariant.salePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-[#F47C20]">
+            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               {formatCurrency(selectedVariant.salePrice)}
             </span>
             <span className="text-xl text-gray-500 line-through">
@@ -329,7 +333,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
         );
       }
       return (
-        <span className="text-3xl font-bold text-[#2C3E50]">
+        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
           {formatCurrency(selectedVariant.price || 0)}
         </span>
       );
@@ -340,7 +344,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
       if (productDetails.hasSale && productDetails.basePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-[#F47C20]">
+            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               {formatCurrency(productDetails.basePrice)}
             </span>
             <span className="text-xl text-gray-500 line-through">
@@ -350,7 +354,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
         );
       }
       return (
-        <span className="text-3xl font-bold text-[#2C3E50]">
+        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
           {formatCurrency(productDetails.basePrice || 0)}
         </span>
       );
@@ -361,7 +365,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
       if (product.hasSale && product.basePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold text-[#F47C20]">
+            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               {formatCurrency(product.basePrice)}
             </span>
             <span className="text-xl text-gray-500 line-through">
@@ -371,7 +375,7 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
         );
       }
       return (
-        <span className="text-3xl font-bold text-[#2C3E50]">
+        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
           {formatCurrency(product.basePrice || 0)}
         </span>
       );
@@ -387,112 +391,142 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[900px] max-h-[90vh] overflow-y-auto p-0 bg-white">
-        {/* Header */}
-        <DialogHeader className="px-6 py-4 border-b border-gray-100">
+      <DialogContent className="sm:max-w-[1000px] max-h-[95vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-md border-2 border-white/50 shadow-2xl rounded-3xl">
+        {/* Enhanced Header */}
+        <DialogHeader className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-white to-gray-50/50">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl font-bold text-[#2C3E50] pr-8">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent pr-8">
               {displayProduct.name}
             </DialogTitle>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-10 h-10 p-0 hover:bg-gray-100 rounded-full"
-              >
-                <Heart className="h-5 w-5 text-gray-600" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-10 h-10 p-0 hover:bg-gray-100 rounded-full"
-              >
-                <Share2 className="h-5 w-5 text-gray-600" />
-              </Button>
+            <div className="flex items-center space-x-3">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-12 h-12 p-0 hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300"
+                >
+                  <Heart className="h-5 w-5 text-[#f01c33]" />
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-12 h-12 p-0 hover:bg-gradient-to-r hover:from-[#c4ab66]/10 hover:to-[#f01c33]/10 rounded-2xl transition-all duration-300"
+                >
+                  <Share2 className="h-5 w-5 text-[#c4ab66]" />
+                </Button>
+              </motion.div>
             </div>
           </div>
         </DialogHeader>
 
         {loading && !productDetails ? (
-          <div className="py-16 flex justify-center">
-            <div className="w-12 h-12 border-4 border-[#F47C20] border-t-transparent rounded-full animate-spin"></div>
+          <div className="py-20 flex justify-center">
+            <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
-            {/* Product Image */}
-            <div className="relative">
-              <div className="relative h-96 lg:h-[500px] rounded-xl overflow-hidden bg-gray-50 shadow-sm">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 p-8">
+            {/* Enhanced Product Image */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative h-96 lg:h-[550px] rounded-3xl overflow-hidden bg-gradient-to-br from-gray-50 to-white shadow-xl border border-white/50">
                 <Image
                   src={imgSrc || "/placeholder.svg"}
                   alt={displayProduct.name}
                   fill
-                  className="object-contain p-6"
+                  className="object-contain p-8 transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 450px"
                   onError={() => setImgSrc("/product-placeholder.jpg")}
                 />
                 {displayProduct.hasSale && (
-                  <div className="absolute top-4 left-4 bg-[#F47C20] text-white text-sm font-bold px-3 py-2 rounded-lg shadow-lg">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -45 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    className="absolute top-6 left-6 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm font-bold px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2"
+                  >
+                    <Zap className="w-4 h-4" />
                     SALE
-                  </div>
+                  </motion.div>
                 )}
+                {/* Floating elements */}
+                <motion.div
+                  animate={{ y: [-5, 5, -5] }}
+                  transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
+                  className="absolute bottom-6 right-6 w-8 h-8 bg-gradient-to-r from-[#c4ab66] to-[#f01c33] rounded-full opacity-20 blur-sm"
+                ></motion.div>
               </div>
             </div>
 
-            {/* Product Info */}
-            <div className="flex flex-col space-y-6">
+            {/* Enhanced Product Info */}
+            <div className="flex flex-col space-y-8">
               {/* Success Message */}
               {success && (
-                <div className="p-4 bg-green-50 border border-green-200 text-green-700 text-sm rounded-lg flex items-center">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-200 text-green-700 text-sm rounded-2xl flex items-center shadow-lg"
+                >
                   <CheckCircle className="h-5 w-5 mr-3 flex-shrink-0" />
-                  <span className="font-medium">
+                  <span className="font-bold">
                     Item added to cart successfully!
                   </span>
-                </div>
+                </motion.div>
               )}
 
               {/* Error message */}
               {error && (
-                <div className="p-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg flex items-center">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-gradient-to-r from-red-50 to-red-100 border-2 border-red-200 text-red-700 text-sm rounded-2xl flex items-center shadow-lg"
+                >
                   <AlertCircle className="h-5 w-5 mr-3 flex-shrink-0" />
-                  <span className="font-medium">{error}</span>
-                </div>
+                  <span className="font-bold">{error}</span>
+                </motion.div>
               )}
 
-              {/* Price */}
-              <div className="border-b border-gray-100 pb-4">
-                {getPriceDisplay()}
+              {/* Enhanced Price */}
+              <div className="border-b border-gray-100 pb-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 rounded-2xl blur-xl"></div>
+                  <div className="relative p-6 bg-white/80 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg">
+                    {getPriceDisplay()}
+                  </div>
+                </div>
               </div>
 
-              {/* Rating */}
+              {/* Enhanced Rating */}
               {displayProduct.avgRating > 0 && (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100">
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
                         key={star}
-                        className={`h-5 w-5 ${
+                        className={`h-6 w-6 transition-all duration-300 ${
                           star <= Math.round(displayProduct.avgRating || 0)
-                            ? "text-yellow-400 fill-yellow-400"
+                            ? "text-[#c4ab66] fill-[#c4ab66]"
                             : "text-gray-300"
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="text-sm text-gray-600 font-medium">
+                  <span className="text-sm text-gray-600 font-bold">
                     {displayProduct.avgRating?.toFixed(1)} (
                     {displayProduct.reviewCount || 0} reviews)
                   </span>
                 </div>
               )}
 
-              {/* Flavor selection */}
+              {/* Enhanced Flavor selection */}
               {productDetails?.flavorOptions &&
                 productDetails.flavorOptions.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-semibold text-[#2C3E50] mb-3">
+                  <div className="space-y-4">
+                    <label className="block text-lg font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-[#f01c33]" />
                       Choose Flavor
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3">
                       {productDetails.flavorOptions.map((flavor) => {
                         const availableWeightIds = getAvailableWeightsForFlavor(
                           flavor.id
@@ -500,35 +534,38 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                         const isAvailable = availableWeightIds.length > 0;
 
                         return (
-                          <button
+                          <motion.button
                             key={flavor.id}
                             type="button"
                             onClick={() => handleFlavorChange(flavor)}
                             disabled={!isAvailable}
-                            className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                            whileHover={{ scale: isAvailable ? 1.05 : 1 }}
+                            whileTap={{ scale: isAvailable ? 0.95 : 1 }}
+                            className={`px-6 py-3 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${
                               selectedFlavor?.id === flavor.id
-                                ? "border-[#F47C20] bg-[#F47C20] text-white shadow-md"
+                                ? "border-[#f01c33] bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white shadow-lg"
                                 : isAvailable
-                                ? "border-gray-300 hover:border-[#F47C20] hover:text-[#F47C20]"
-                                : "border-gray-200 text-gray-400 cursor-not-allowed"
+                                ? "border-gray-300 hover:border-[#f01c33] hover:text-[#f01c33] bg-white"
+                                : "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50"
                             }`}
                           >
                             {flavor.name}
-                          </button>
+                          </motion.button>
                         );
                       })}
                     </div>
                   </div>
                 )}
 
-              {/* Weight selection */}
+              {/* Enhanced Weight selection */}
               {productDetails?.weightOptions &&
                 productDetails.weightOptions.length > 0 && (
-                  <div>
-                    <label className="block text-sm font-semibold text-[#2C3E50] mb-3">
+                  <div className="space-y-4">
+                    <label className="block text-lg font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-[#c4ab66]" />
                       Choose Weight
                     </label>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3">
                       {productDetails.weightOptions.map((weight) => {
                         const availableFlavorIds = getAvailableFlavorsForWeight(
                           weight.id
@@ -542,64 +579,81 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                           : availableFlavorIds.length > 0;
 
                         return (
-                          <button
+                          <motion.button
                             key={weight.id}
                             type="button"
                             onClick={() => handleWeightChange(weight)}
                             disabled={!isAvailable}
-                            className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                            whileHover={{ scale: isAvailable ? 1.05 : 1 }}
+                            whileTap={{ scale: isAvailable ? 0.95 : 1 }}
+                            className={`px-6 py-3 rounded-2xl border-2 text-sm font-bold transition-all duration-300 ${
                               selectedWeight?.id === weight.id
-                                ? "border-[#F47C20] bg-[#F47C20] text-white shadow-md"
+                                ? "border-[#c4ab66] bg-gradient-to-r from-[#c4ab66] to-[#f01c33] text-white shadow-lg"
                                 : isAvailable
-                                ? "border-gray-300 hover:border-[#F47C20] hover:text-[#F47C20]"
-                                : "border-gray-200 text-gray-400 cursor-not-allowed"
+                                ? "border-gray-300 hover:border-[#c4ab66] hover:text-[#c4ab66] bg-white"
+                                : "border-gray-200 text-gray-400 cursor-not-allowed bg-gray-50"
                             }`}
                           >
                             {weight.value} {weight.unit}
-                          </button>
+                          </motion.button>
                         );
                       })}
                     </div>
                   </div>
                 )}
 
-              {/* Stock Availability */}
+              {/* Enhanced Stock Availability */}
               {selectedVariant && (
-                <div className="bg-gray-50 p-3 rounded-lg">
-                  <span
-                    className={`text-sm font-medium ${
-                      selectedVariant.quantity > 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {selectedVariant.quantity > 0
-                      ? `✓ In Stock (${selectedVariant.quantity} available)`
-                      : "✗ Out of Stock"}
-                  </span>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-green-100 rounded-2xl blur-sm"></div>
+                  <div className="relative p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-green-200 shadow-lg">
+                    <span
+                      className={`text-sm font-bold flex items-center gap-2 ${
+                        selectedVariant.quantity > 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {selectedVariant.quantity > 0 ? (
+                        <>
+                          <CheckCircle className="w-5 h-5" />
+                          In Stock ({selectedVariant.quantity} available)
+                        </>
+                      ) : (
+                        <>
+                          <X className="w-5 h-5" />
+                          Out of Stock
+                        </>
+                      )}
+                    </span>
+                  </div>
                 </div>
               )}
 
-              {/* Quantity */}
-              <div>
-                <label className="block text-sm font-semibold text-[#2C3E50] mb-3">
+              {/* Enhanced Quantity */}
+              <div className="space-y-4">
+                <label className="block text-lg font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
                   Quantity
                 </label>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
-                    <button
+                <div className="flex items-center space-x-6">
+                  <div className="flex items-center bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => handleQuantityChange(-1)}
-                      className="p-3 bg-gray-50 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={quantity <= 1 || loading}
                     >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <span className="px-6 py-3 bg-white font-semibold text-[#2C3E50] min-w-[4rem] text-center">
+                      <Minus className="h-5 w-5 text-[#f01c33]" />
+                    </motion.button>
+                    <span className="px-8 py-4 bg-white font-bold text-xl text-gray-800 min-w-[5rem] text-center">
                       {quantity}
                     </span>
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => handleQuantityChange(1)}
-                      className="p-3 bg-gray-50 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-[#c4ab66]/10 hover:to-[#f01c33]/10 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       disabled={
                         loading ||
                         (selectedVariant &&
@@ -607,49 +661,64 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                           quantity >= selectedVariant.quantity)
                       }
                     >
-                      <Plus className="h-4 w-4" />
-                    </button>
+                      <Plus className="h-5 w-5 text-[#c4ab66]" />
+                    </motion.button>
                   </div>
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex space-x-3 pt-4">
-                <Button
-                  onClick={handleAddToCart}
-                  className="flex-1 py-4 bg-[#F47C20] hover:bg-[#E06A1A] text-white font-semibold text-lg rounded-lg shadow-lg hover:shadow-xl transition-all"
-                  disabled={
-                    loading ||
-                    addingToCart ||
-                    (!selectedVariant &&
-                      (!productDetails?.variants ||
-                        productDetails.variants.length === 0)) ||
-                    (selectedVariant && selectedVariant.quantity < 1)
-                  }
+              {/* Enhanced Actions */}
+              <div className="flex space-x-4 pt-6">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="flex-1"
                 >
-                  {addingToCart ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3"></div>
-                      Adding to Cart...
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="h-5 w-5 mr-3" />
-                      Add to Cart
-                    </>
-                  )}
-                </Button>
+                  <Button
+                    onClick={handleAddToCart}
+                    className="group w-full py-6 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 relative overflow-hidden"
+                    disabled={
+                      loading ||
+                      addingToCart ||
+                      (!selectedVariant &&
+                        (!productDetails?.variants ||
+                          productDetails.variants.length === 0)) ||
+                      (selectedVariant && selectedVariant.quantity < 1)
+                    }
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    <span className="relative flex items-center justify-center gap-3">
+                      {addingToCart ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Adding to Cart...
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="h-6 w-6" />
+                          Add to Cart
+                        </>
+                      )}
+                    </span>
+                  </Button>
+                </motion.div>
 
                 <Link
                   href={`/products/${displayProduct.slug}`}
                   className="flex-1"
                 >
-                  <Button
-                    variant="outline"
-                    className="w-full py-4 border-2 border-[#2C3E50] text-[#2C3E50] hover:bg-[#2C3E50] hover:text-white font-semibold text-lg rounded-lg transition-all"
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full"
                   >
-                    View Full Details
-                  </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full py-6 border-2 border-[#f01c33] text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white hover:border-transparent font-bold text-lg rounded-2xl transition-all duration-500 shadow-lg hover:shadow-xl"
+                    >
+                      View Full Details
+                    </Button>
+                  </motion.div>
                 </Link>
               </div>
             </div>
