@@ -459,7 +459,7 @@ export function Navbar() {
                   alt="Brand Logo"
                   width={150}
                   height={100}
-                  className="object-cover group-hover:rotate-12 transition-transform duration-300"
+                  className="object-cover  transition-transform duration-300"
                 />
               </Link>
             </div>
@@ -486,7 +486,7 @@ export function Navbar() {
                         className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
                       >
                         Search
-                      </Button>
+                      </Button> 
                     </div>
                   </div>
                 </div>
