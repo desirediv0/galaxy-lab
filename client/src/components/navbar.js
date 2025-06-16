@@ -459,7 +459,7 @@ export function Navbar() {
                   alt="Brand Logo"
                   width={150}
                   height={100}
-                  className="object-cover  transition-transform duration-300"
+                  className="object-cover transition-transform duration-300"
                 />
               </Link>
             </div>
