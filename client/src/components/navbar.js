@@ -1,70 +1,85 @@
 "use client";
 
-import Link from "next/link";
-import { useAuth } from "@/lib/auth-context";
-import { useCart } from "@/lib/cart-context";
 import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
-  ShoppingCart,
-  User,
   Menu,
   X,
-  Search,
-  Heart,
+  LogIn,
+  User,
   ChevronDown,
+  ShoppingCart,
+  Heart,
+  Search,
   Phone,
   MapPin,
-  LogIn,
-  ShoppingBag,
+  Star,
   Sparkles,
 } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import Image from "next/image";
+import { useAuth } from "@/lib/auth-context";
+import { useCart } from "@/lib/cart-context";
 import { useRouter, usePathname } from "next/navigation";
 import { fetchApi } from "@/lib/utils";
-import { ClientOnly } from "./client-only";
+import { ClientOnly } from "@/components/client-only";
 import { toast, Toaster } from "sonner";
-import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
+const menuItems = [
+  { name: "Home", href: "/" },
+  { name: "Products", href: "/products" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+  { name: "Blog", href: "/blog" },
+];
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { cart } = useCart();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isCategoriesDropdownOpen, setIsCategoriesDropdownOpen] =
+    useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [isHoveringDropdown, setIsHoveringDropdown] = useState(null);
-  const searchInputRef = useRef(null);
-  const navbarRef = useRef(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [navPosition, setNavPosition] = useState({
+    left: 0,
+    width: 0,
+    opacity: 0,
+  });
+  const [activeIndex, setActiveIndex] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
-    setIsMenuOpen(false);
-    setIsSearchExpanded(false);
-    setActiveDropdown(null);
-  }, [pathname]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
-        setIsSearchExpanded(false);
-        setActiveDropdown(null);
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+        setIsMobileMenuOpen(false);
+      } else {
+        setIsScrolled(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
-    if (isSearchExpanded && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [isSearchExpanded]);
+    const handleRouteChange = () => {
+      setIsMobileMenuOpen(false);
+      setIsProfileDropdownOpen(false);
+      setIsCategoriesDropdownOpen(false);
+      setIsSearchExpanded(false);
+    };
+
+    handleRouteChange();
+  }, [pathname]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -73,839 +88,659 @@ export function Navbar() {
         setCategories(response.data.categories || []);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
+        setCategories([]);
       }
     };
 
     fetchCategories();
   }, []);
 
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Logged out successfully");
+    setIsProfileDropdownOpen(false);
+    window.location.href = "/";
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
       setIsSearchExpanded(false);
-      setIsMenuOpen(false);
+      setIsMobileMenuOpen(false);
       setSearchQuery("");
     }
   };
 
-  const handleLogout = async () => {
-    await logout();
-    toast.success("Logged out successfully");
-    window.location.href = "/";
-  };
-
-  const toggleDropdown = (dropdown) => {
-    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
-  };
-
-  const handleDropdownHover = (dropdown) => {
-    setIsHoveringDropdown(dropdown);
-    if (dropdown) {
-      setActiveDropdown(dropdown);
-    }
-  };
-
-  const handleDropdownLeave = () => {
-    setIsHoveringDropdown(null);
-    if (!navbarRef.current?.contains(document.activeElement)) {
-      setActiveDropdown(null);
-    }
-  };
-
-  const MobileMenu = ({
-    isMenuOpen,
-    setIsMenuOpen,
-    categories,
-    searchQuery,
-    setSearchQuery,
-    isAuthenticated,
-    handleLogout,
-  }) => {
-    const mobileSearchInputRef = useRef(null);
-
-    useEffect(() => {
-      if (isMenuOpen) {
-        const timer = setTimeout(() => {
-          if (mobileSearchInputRef.current) {
-            mobileSearchInputRef.current.focus();
-          }
-        }, 300);
-
-        return () => clearTimeout(timer);
-      }
-    }, [isMenuOpen]);
-
-    const handleMobileSearch = (e) => {
-      e.preventDefault();
-      if (searchQuery.trim()) {
-        router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-        setIsMenuOpen(false);
-        setSearchQuery("");
-      }
-    };
-
-    const handleSearchInputChange = (e) => {
-      e.stopPropagation();
-      setSearchQuery(e.target.value);
-    };
-
-    if (!isMenuOpen) return null;
-
-    return (
-      <div
-        className="md:hidden fixed inset-0 z-50 bg-gradient-to-br from-white via-white to-[#c4ab66]/5 backdrop-blur-md overflow-y-auto"
-        style={{ maxHeight: "100vh" }}
-      >
-        <div className="flex flex-col h-full">
-          {/* Mobile Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-[#f01c33] via-[#f01c33] to-[#c4ab66] shadow-xl flex justify-between items-center px-6 py-5 z-10">
-            <Link
-              href="/"
-              className="flex items-center"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg border border-white/20">
-                  <Sparkles className="h-7 w-7 text-[#f01c33]" />
-                </div>
-                <div>
-                  <span className="text-white font-bold text-2xl tracking-wide">
-                    Brand
-                  </span>
-                  <div className="w-full h-0.5 bg-gradient-to-r from-white to-transparent rounded-full"></div>
-                </div>
-              </div>
-            </Link>
-            <button
-              onClick={() => setIsMenuOpen(false)}
-              className="p-3 text-white hover:text-[#c4ab66] rounded-2xl hover:bg-white/20 focus:outline-none transition-all duration-300 hover:rotate-90"
-              aria-label="Close menu"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto py-8 px-6 space-y-8">
-            {/* Search Section */}
-            <form onSubmit={handleMobileSearch} className="sticky top-0 z-10">
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
-                <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl border border-white/50 shadow-xl">
-                  <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-[#f01c33]" />
-                  <Input
-                    ref={mobileSearchInputRef}
-                    type="text"
-                    placeholder="Search amazing products..."
-                    className="w-full pl-16 pr-16 py-6 text-lg border-0 focus:ring-2 focus:ring-[#f01c33] rounded-3xl bg-transparent placeholder:text-gray-500"
-                    value={searchQuery}
-                    onChange={handleSearchInputChange}
-                    autoComplete="off"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      className="absolute right-16 top-1/2 transform -translate-y-1/2 p-2 text-[#c4ab66] hover:text-[#f01c33] transition-colors"
-                      onClick={() => {
-                        setSearchQuery("");
-                        mobileSearchInputRef.current?.focus();
-                      }}
-                      aria-label="Clear search"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3 rounded-2xl bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white hover:shadow-lg transition-all duration-300 hover:scale-105"
-                    aria-label="Search"
-                  >
-                    <Search className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </form>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-6">
-              <Link
-                href="/products"
-                className="group relative overflow-hidden"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#c4ab66]/20 to-[#c4ab66]/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative flex flex-col items-center justify-center p-8 bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#c4ab66] to-[#c4ab66]/80 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:rotate-12 transition-transform duration-300">
-                    <ShoppingBag className="h-8 w-8 text-white" />
-                  </div>
-                  <span className="font-bold text-[#c4ab66] text-lg">
-                    All Products
-                  </span>
-                </div>
-              </Link>
-              <Link
-                href="/categories"
-                className="group relative overflow-hidden"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#f01c33]/20 to-[#f01c33]/5 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                <div className="relative flex flex-col items-center justify-center p-8 bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#f01c33]/80 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:rotate-12 transition-transform duration-300">
-                    <Menu className="h-8 w-8 text-white" />
-                  </div>
-                  <span className="font-bold text-[#f01c33] text-lg">
-                    Categories
-                  </span>
-                </div>
-              </Link>
-            </div>
-
-            {/* Navigation Links */}
-            <div className="space-y-4">
-              <h3 className="font-bold text-[#f01c33] uppercase text-sm tracking-wider px-4 flex items-center gap-2">
-                <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
-                Navigation
-              </h3>
-              <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
-                {[
-                  {
-                    href: "/",
-                    label: "Home",
-                    gradient: "from-blue-500 to-purple-500",
-                  },
-                  {
-                    href: "/about",
-                    label: "About Us",
-                    gradient: "from-green-500 to-teal-500",
-                  },
-                  {
-                    href: "/blog",
-                    label: "Blog",
-                    gradient: "from-orange-500 to-red-500",
-                  },
-                  {
-                    href: "/contact",
-                    label: "Contact",
-                    gradient: "from-pink-500 to-rose-500",
-                  },
-                ].map((item, index) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`flex items-center px-8 py-5 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group ${
-                      index !== 3 ? "border-b border-white/30" : ""
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <div
-                      className={`w-3 h-3 bg-gradient-to-r ${item.gradient} rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
-                    ></div>
-                    <span className="text-gray-700 font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
-                      {item.label}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Account Section */}
-            {isAuthenticated ? (
-              <div className="space-y-4">
-                <h3 className="font-bold text-[#f01c33] uppercase text-sm tracking-wider px-4 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
-                  My Account
-                </h3>
-                <div className="bg-white/60 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 overflow-hidden">
-                  {[
-                    {
-                      href: "/account",
-                      label: "Profile",
-                      color: "text-blue-600",
-                    },
-                    {
-                      href: "/account/orders",
-                      label: "My Orders",
-                      color: "text-green-600",
-                    },
-                    {
-                      href: "/wishlist",
-                      label: "My Wishlist",
-                      color: "text-pink-600",
-                    },
-                  ].map((item, index) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center px-8 py-5 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group ${
-                        index !== 2 ? "border-b border-white/30" : ""
-                      }`}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <div
-                        className={`w-3 h-3 bg-current rounded-full mr-4 ${item.color} group-hover:scale-125 transition-transform duration-300`}
-                      ></div>
-                      <span className="text-gray-700 font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
-                        {item.label}
-                      </span>
-                    </Link>
-                  ))}
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
-                    }}
-                    className="w-full text-left flex items-center px-8 py-5 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#f01c33]/5 transition-all duration-300 border-t border-white/30 group"
-                  >
-                    <div className="w-3 h-3 bg-[#f01c33] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
-                    <span className="font-semibold text-lg">Logout</span>
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className="relative overflow-hidden rounded-3xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#f01c33]/10 via-[#c4ab66]/10 to-[#f01c33]/5 blur-xl"></div>
-                <div className="relative space-y-6 p-8 bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                      <Sparkles className="h-8 w-8 text-white" />
-                    </div>
-                    <h3 className="font-bold text-[#f01c33] text-xl mb-2">
-                      Join Our Community!
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Unlock exclusive deals and premium features
-                    </p>
-                  </div>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                    <Button
-                      variant="outline"
-                      className="w-full py-4 border-2 border-[#f01c33] text-[#f01c33] hover:bg-[#f01c33] hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105"
-                    >
-                      Register
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            )}
-
-            {/* Contact Info */}
-            <div className="relative overflow-hidden rounded-3xl">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#c4ab66]/20 to-[#f01c33]/10 blur-xl"></div>
-              <div className="relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/50">
-                <h3 className="font-bold text-[#f01c33] mb-6 text-xl flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-xl flex items-center justify-center">
-                    <Phone className="h-4 w-4 text-white" />
-                  </div>
-                  Get in Touch
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#c4ab66] to-[#c4ab66]/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Phone className="h-6 w-6 text-white" />
-                    </div>
-                    <span className="font-bold text-gray-700 text-lg">
-                      +91 8800199820
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#f01c33]/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <MapPin className="h-6 w-6 text-white" />
-                    </div>
-                    <span className="font-bold text-gray-700 text-lg">
-                      Store Locator
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <header
-      className="sticky top-0 z-50 bg-white shadow-2xl border-b border-gray-100"
-      ref={navbarRef}
-    >
+    <>
       <Toaster position="top-center" />
 
-      {/* Main Header */}
-      <div className="bg-gradient-to-r from-white via-white to-[#c4ab66]/5">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-24">
-            {/* Left: Mobile Menu + Logo */}
-            <div className="flex items-center gap-6">
-              {/* Mobile menu button */}
-              <button
-                className="md:hidden p-3 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 focus:outline-none hover:scale-110"
-                onClick={() => setIsMenuOpen(true)}
-                aria-label="Open menu"
+      {/* Enhanced Floating Navigation */}
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`fixed z-50 top-[10px] left-0 right-0 mx-auto w-[95%] md:w-[90%] max-w-7xl transition-all duration-500 ${
+          isScrolled
+            ? "bg-black/90 backdrop-blur-xl rounded-2xl shadow-[0_0_25px_rgba(0,0,0,0.5)]"
+            : "bg-transparent"
+        }`}
+      >
+        {/* Top Notification Bar - Only visible when not scrolled */}
+        <AnimatePresence>
+          {!isScrolled && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-gradient-to-r from-[var(--galaxy-deep-red)] via-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white text-center py-2 text-sm font-medium rounded-t-2xl"
+            >
+              <div className="container mx-auto px-4 flex items-center justify-center gap-2">
+                <Star className="h-4 w-4 animate-pulse" />
+                <span className="font-['Poppins']">
+                  Free shipping on orders above ₹999 | Use code: FREESHIP
+                </span>
+                <Sparkles className="h-4 w-4 animate-pulse" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Main Navigation Container */}
+        <div
+          className={`flex items-center justify-between p-3 ${
+            !isScrolled ? "bg-white/90 backdrop-blur-sm rounded-b-2xl" : ""
+          }`}
+        >
+          {/* Logo Section */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative group flex items-center"
+          >
+            <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-[var(--galaxy-deep-red)]/20 to-[var(--galaxy-royal-gold)]/20 opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
+            <Link href="/" className="relative flex items-center">
+              <Image
+                src="/logo.png"
+                alt="Galaxy Labs"
+                width={isScrolled ? 65 : 100}
+                height={isScrolled ? 65 : 100}
+                className={`object-contain transition-all duration-300 ${
+                  isScrolled ? "scale-90" : "scale-100"
+                } group-hover:scale-105 rounded-lg`}
+              />
+            </Link>
+          </motion.div>
+
+          {/* Desktop Navigation Menu */}
+          <div className="hidden lg:block mx-auto">
+            <ul
+              className="relative flex items-center gap-1 bg-[var(--galaxy-dark-charcoal)]/80 backdrop-blur-md rounded-full  p-1"
+              onMouseLeave={() => {
+                setNavPosition((prev) => ({ ...prev, opacity: 0 }));
+                setActiveIndex(null);
+              }}
+            >
+              {menuItems.map((item, idx) => (
+                <NavTab
+                  key={item.name}
+                  href={item.href}
+                  setPosition={setNavPosition}
+                  isActive={activeIndex === idx}
+                  onClick={() => setActiveIndex(idx)}
+                >
+                  {item.name}
+                </NavTab>
+              ))}
+
+              {/* Categories Dropdown */}
+              <motion.li
+                className="relative"
+                onMouseEnter={() => setIsCategoriesDropdownOpen(true)}
+                onMouseLeave={() => setIsCategoriesDropdownOpen(false)}
               >
-                <Menu className="h-7 w-7" />
-              </button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex items-center space-x-1 text-primary px-4 py-2 rounded-full hover:bg-white/10 transition-all duration-300  text-lg font-galaxy-heading hover:text-[var(--galaxy-royal-gold)]"
+                >
+                  <span>Categories</span>
+                  <ChevronDown className="h-3 w-3 ml-1" />
+                </motion.button>
 
-              {/* Logo */}
-              <Link href="/" className="flex items-center group">
-                <Image
-                  src="/logo.png"
-                  alt="Brand Logo"
-                  width={150}
-                  height={100}
-                  className="object-cover transition-transform duration-300"
-                />
-              </Link>
-            </div>
+                <AnimatePresence>
+                  {isCategoriesDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute left-0 top-full mt-2 w-72 bg-white/95 backdrop-blur-xl rounded-2xl border border-[var(--galaxy-royal-gold)]/20 shadow-[0_10px_25px_rgba(0,0,0,0.1)] py-2 overflow-hidden"
+                    >
+                      <div className="px-4 py-3 border-b border-[var(--galaxy-ash-gray)] bg-gradient-to-r from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5">
+                        <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg">
+                          Our Products
+                        </h3>
+                        <p className="text-sm text-[var(--galaxy-dark-charcoal)]/70 font-['Lora']">
+                          Premium supplements for your fitness journey
+                        </p>
+                      </div>
+                      <div className="py-1">
+                        {categories.map((category) => (
+                          <Link
+                            key={category.id}
+                            href={`/category/${category.slug}`}
+                            className="flex items-center px-4 py-3 hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                          >
+                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                              {category.name}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.li>
 
-            {/* Center: Search Bar (Desktop) */}
-            <div className="hidden md:flex flex-1 max-w-3xl mx-12">
-              <form onSubmit={handleSearch} className="relative w-full">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
-                  <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl border border-white/50 shadow-xl">
-                    <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-6 w-6 text-[#f01c33]" />
-                    <Input
-                      type="search"
-                      placeholder="Search for products, brands, categories..."
-                      className="w-full pl-16 pr-32 py-5 border-0 focus:ring-2 focus:ring-[#f01c33] rounded-3xl text-lg bg-transparent placeholder:text-gray-500"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      autoComplete="off"
-                    />
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      <Button
-                        type="submit"
-                        size="sm"
-                        className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 font-semibold"
-                      >
-                        Search
-                      </Button> 
-                    </div>
-                  </div>
+              <NavCursor position={navPosition} />
+            </ul>
+          </div>
+
+          {/* Right Section - Search, Cart, Auth */}
+          <div className="flex items-center space-x-2">
+            {/* Search Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsSearchExpanded(true)}
+              className={`lg:hidden p-2 rounded-full transition-all duration-300 ${
+                isScrolled
+                  ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
+                  : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
+              }`}
+            >
+              <Search className="h-5 w-5" />
+            </motion.button>
+
+            {/* Desktop Search */}
+            <div className="hidden lg:block">
+              <form onSubmit={handleSearch} className="relative">
+                <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[var(--galaxy-royal-gold)]/30 shadow-md hover:shadow-lg transition-all duration-300 group">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--galaxy-deep-red)] group-hover:scale-110 transition-transform duration-300" />
+                  <Input
+                    type="search"
+                    placeholder="Search supplements..."
+                    className="w-64 pl-12 pr-4 py-2 border-0 focus:ring-2 focus:ring-[var(--galaxy-deep-red)] rounded-2xl bg-transparent placeholder:text-[var(--galaxy-dark-charcoal)]/50 font-['Lora']"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    autoComplete="off"
+                  />
                 </div>
               </form>
             </div>
 
-            {/* Right: Action Buttons */}
-            <div className="flex items-center gap-3 md:gap-6">
-              {/* Mobile Search Button */}
-              <button
-                onClick={() => setIsSearchExpanded(true)}
-                className="md:hidden p-3 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 focus:outline-none hover:scale-110"
-                aria-label="Search"
+            {/* Wishlist */}
+            <Link href="/wishlist" className="hidden sm:flex">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className={`p-2 rounded-full transition-all duration-300 relative group ${
+                  isScrolled
+                    ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
+                    : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
+                }`}
               >
-                <Search className="h-6 w-6" />
-              </button>
+                <Heart className="h-5 w-5 group-hover:fill-current transition-all duration-300" />
+              </motion.div>
+            </Link>
 
-              {/* Wishlist */}
-              <Link
-                href="/wishlist"
-                className="hidden sm:flex p-4 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 relative group hover:scale-110"
-              >
-                <Heart className="h-6 w-6" />
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full opacity-0 group-hover:opacity-100 transition-opacity animate-pulse"></span>
-              </Link>
-
-              {/* Cart */}
-              <ClientOnly>
-                <Link
-                  href="/cart"
-                  className="p-4 text-[#f01c33] hover:text-[#c4ab66] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10 rounded-2xl transition-all duration-300 relative group hover:scale-110"
+            {/* Cart */}
+            <ClientOnly>
+              <Link href="/cart">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`p-2 rounded-full transition-all duration-300 relative group ${
+                    isScrolled
+                      ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
+                      : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
+                  }`}
                 >
-                  <ShoppingCart className="h-6 w-6" />
+                  <ShoppingCart className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
                   {cart && cart.items?.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white rounded-full text-sm w-7 h-7 flex items-center justify-center font-bold shadow-lg animate-bounce">
+                    <motion.span
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-2 -right-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-full text-xs w-6 h-6 flex items-center justify-center font-bold shadow-lg"
+                    >
                       {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
-                    </span>
+                    </motion.span>
                   )}
-                </Link>
-              </ClientOnly>
+                </motion.div>
+              </Link>
+            </ClientOnly>
 
-              {/* Account Dropdown */}
-              <div
-                className="relative"
-                onMouseEnter={() => handleDropdownHover("account")}
-                onMouseLeave={handleDropdownLeave}
-              >
-                <ClientOnly>
-                  <button
-                    className={`p-4 ${
-                      activeDropdown === "account"
-                        ? "text-[#c4ab66] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                        : "text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/10 hover:to-[#c4ab66]/10"
-                    } hover:text-[#c4ab66] transition-all duration-300 flex items-center focus:outline-none group rounded-2xl hover:scale-110`}
-                    onClick={() => toggleDropdown("account")}
-                    aria-expanded={activeDropdown === "account"}
+            {/* Auth Section */}
+            <ClientOnly>
+              {isAuthenticated ? (
+                <div className="relative">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() =>
+                      setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                    }
+                    className="flex items-center space-x-2 text-white bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] px-4 py-2 rounded-full border border-[var(--galaxy-royal-gold)]/50 hover:shadow-[0_0_15px_rgba(185,155,47,0.3)] transition-all duration-300 font-['Poppins']"
                   >
-                    {isAuthenticated ? (
-                      <User className="h-6 w-6" />
-                    ) : (
-                      <LogIn className="h-6 w-6" />
-                    )}
-                    <ChevronDown
-                      className={`ml-2 h-5 w-5 transition-transform duration-300 ${
-                        activeDropdown === "account" ? "rotate-180" : ""
-                      } group-hover:rotate-180`}
-                    />
-                  </button>
+                    <User className="h-4 w-4" />
+                    <span className="text-sm hidden md:inline">Profile</span>
+                    <ChevronDown className="h-3 w-3" />
+                  </motion.button>
 
-                  {/* Account Dropdown Content */}
-                  <div
-                    className={`absolute right-0 top-full mt-4 w-80 bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl py-4 border border-white/50 z-50 transition-all duration-300 ease-in-out transform origin-top ${
-                      activeDropdown === "account"
-                        ? "opacity-100 scale-100 translate-y-0"
-                        : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
-                    }`}
-                  >
-                    {isAuthenticated ? (
-                      <>
-                        <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 rounded-t-3xl">
-                          <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center shadow-lg">
-                              <User className="h-6 w-6 text-white" />
+                  <AnimatePresence>
+                    {isProfileDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-[var(--galaxy-royal-gold)]/20 shadow-[0_10px_25px_rgba(0,0,0,0.1)] py-2 overflow-hidden"
+                      >
+                        <div className="px-4 py-3 border-b border-[var(--galaxy-ash-gray)] bg-gradient-to-r from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-full flex items-center justify-center">
+                              <User className="h-5 w-5 text-white" />
                             </div>
                             <div>
-                              <p className="font-bold text-gray-800 text-xl">
-                                Hi, {user?.name || "User"}! 👋
+                              <p className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)]">
+                                {user?.name || "User"}
                               </p>
-                              <p className="text-sm text-gray-600 truncate">
+                              <p className="text-sm text-[var(--galaxy-dark-charcoal)]/70 font-['Lora'] truncate">
                                 {user?.email}
                               </p>
                             </div>
                           </div>
                         </div>
-                        <div className="py-3">
+                        <div className="py-1">
                           {[
                             {
                               href: "/account",
                               label: "My Account",
-                              color: "from-blue-500 to-purple-500",
+                              icon: "👤",
                             },
                             {
                               href: "/account/orders",
                               label: "My Orders",
-                              color: "from-green-500 to-teal-500",
+                              icon: "📦",
                             },
                             {
                               href: "/wishlist",
                               label: "My Wishlist",
-                              color: "from-pink-500 to-rose-500",
+                              icon: "❤️",
                             },
                           ].map((item) => (
                             <Link
                               key={item.href}
                               href={item.href}
-                              className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 group"
-                              onClick={() => setActiveDropdown(null)}
+                              className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                              onClick={() => setIsProfileDropdownOpen(false)}
                             >
-                              <div
-                                className={`w-4 h-4 bg-gradient-to-r ${item.color} rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
-                              ></div>
-                              <span className="font-semibold text-gray-700 text-lg group-hover:text-[#f01c33] transition-colors">
+                              <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                                {item.icon}
+                              </span>
+                              <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
                                 {item.label}
                               </span>
                             </Link>
                           ))}
-                        </div>
-                        <div className="border-t border-gray-100 pt-3">
                           <button
-                            onClick={() => {
-                              handleLogout();
-                              setActiveDropdown(null);
-                            }}
-                            className="flex items-center w-full px-8 py-4 text-[#f01c33] hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#f01c33]/10 transition-all duration-300 font-semibold text-lg group"
+                            onClick={handleLogout}
+                            className="flex items-center w-full px-4 py-2 text-[var(--galaxy-deep-red)] hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-deep-red)]/10 transition-all duration-300 font-['Poppins'] font-medium group border-t border-[var(--galaxy-ash-gray)] mt-1 pt-3"
                           >
-                            <div className="w-4 h-4 bg-[#f01c33] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
+                            <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                              🚪
+                            </span>
                             Logout
                           </button>
                         </div>
-                      </>
-                    ) : (
-                      <div className="p-8">
-                        <div className="text-center mb-6">
-                          <div className="w-16 h-16 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                            <Sparkles className="h-8 w-8 text-white" />
-                          </div>
-                          <h3 className="font-bold text-[#f01c33] text-2xl mb-3">
-                            Welcome!
-                          </h3>
-                          <p className="text-gray-600 text-base">
-                            Join us for exclusive deals and premium features
-                          </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ) : (
+                <Link href="/login">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-full shadow-[0_0_10px_rgba(170,46,46,0.3)] transition-all duration-300 border border-[var(--galaxy-royal-gold)]/50 hover:shadow-[0_0_15px_rgba(185,155,47,0.5)] font-['Poppins']"
+                  >
+                    <LogIn className="h-4 w-4" />
+                    <span className="text-sm hidden md:inline">Login</span>
+                  </motion.button>
+                </Link>
+              )}
+            </ClientOnly>
+
+            {/* Mobile Menu Toggle */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`lg:hidden p-2 rounded-full transition-all duration-300 ${
+                isScrolled
+                  ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
+                  : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30"
+              }`}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+            </motion.button>
+          </div>
+        </div>
+      </motion.nav>
+
+      {/* Mobile Search Overlay */}
+      <AnimatePresence>
+        {isSearchExpanded && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              onClick={() => setIsSearchExpanded(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: -20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: -20 }}
+              className="fixed inset-x-4 top-20 z-50 max-w-lg mx-auto"
+            >
+              <form
+                onSubmit={handleSearch}
+                className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[var(--galaxy-royal-gold)]/20 overflow-hidden"
+              >
+                <div className="flex items-center px-4 py-3 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)]">
+                  <Search className="h-5 w-5 text-white mr-3" />
+                  <h3 className="text-white font-['Playfair_Display'] font-bold text-lg">
+                    Search Products
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchExpanded(false)}
+                    className="ml-auto p-1 rounded-full hover:bg-white/20 transition-colors"
+                  >
+                    <X className="h-5 w-5 text-white" />
+                  </button>
+                </div>
+                <div className="p-4">
+                  <Input
+                    ref={searchInputRef}
+                    type="search"
+                    placeholder="Search supplements..."
+                    className="w-full px-4 py-3 border-2 border-[var(--galaxy-royal-gold)]/30 focus:border-[var(--galaxy-deep-red)] rounded-xl text-lg bg-white/80 backdrop-blur-sm font-['Lora']"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    autoComplete="off"
+                    autoFocus
+                  />
+                  <div className="flex justify-between mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsSearchExpanded(false)}
+                      className="px-6 py-2 border-[var(--galaxy-ash-gray)] text-[var(--galaxy-dark-charcoal)] hover:bg-[var(--galaxy-ash-gray)] font-['Poppins']"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="px-6 py-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white hover:shadow-lg transition-all duration-300 font-['Poppins']"
+                    >
+                      Search
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+
+            {/* Mobile Menu Panel */}
+            <motion.div
+              initial={{ opacity: 0, x: "100%" }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="lg:hidden fixed inset-y-0 right-0 z-50 w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-l border-[var(--galaxy-royal-gold)]/20 overflow-y-auto"
+            >
+              <div className="flex flex-col h-full">
+                {/* Mobile Header */}
+                <div className="bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-white/90 rounded-xl flex items-center justify-center">
+                        <Sparkles className="h-6 w-6 text-[var(--galaxy-deep-red)]" />
+                      </div>
+                      <div>
+                        <h2 className="text-white font-['Playfair_Display'] font-bold text-xl">
+                          Galaxy Labs™
+                        </h2>
+                        <div className="w-full h-0.5 bg-gradient-to-r from-white to-transparent rounded-full"></div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="p-2 text-white hover:bg-white/20 rounded-xl transition-colors"
+                    >
+                      <X className="h-6 w-6" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 p-4 space-y-6">
+                  {/* Navigation Links */}
+                  <div>
+                    <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                      Navigation
+                    </h3>
+                    <div className="space-y-2">
+                      {menuItems.map((item, index) => (
+                        <motion.div
+                          key={item.name}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                        >
+                          <Link
+                            href={item.href}
+                            className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                              {item.name}
+                            </span>
+                          </Link>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Categories */}
+                  <div>
+                    <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                      Categories
+                    </h3>
+                    <div className="space-y-2">
+                      {categories.slice(0, 5).map((category) => (
+                        <Link
+                          key={category.id}
+                          href={`/category/${category.slug}`}
+                          className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <span className="font-['Poppins'] text-sm text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                            {category.name}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Account Section */}
+                  {isAuthenticated ? (
+                    <div className="border-t border-[var(--galaxy-ash-gray)] pt-4">
+                      <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                        My Account
+                      </h3>
+                      <div className="space-y-2">
+                        {[
+                          { href: "/account", label: "Profile", icon: "👤" },
+                          {
+                            href: "/account/orders",
+                            label: "My Orders",
+                            icon: "📦",
+                          },
+                          {
+                            href: "/wishlist",
+                            label: "My Wishlist",
+                            icon: "❤️",
+                          },
+                        ].map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                              {item.icon}
+                            </span>
+                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                              {item.label}
+                            </span>
+                          </Link>
+                        ))}
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="w-full flex items-center p-3 text-[var(--galaxy-deep-red)] hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/10 hover:to-[var(--galaxy-deep-red)]/5 transition-all duration-300 rounded-xl group"
+                        >
+                          <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                            🚪
+                          </span>
+                          <span className="font-['Poppins'] font-medium">
+                            Logout
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-t border-[var(--galaxy-ash-gray)] pt-4">
+                      <div className="text-center p-4 bg-gradient-to-br from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5 rounded-2xl">
+                        <div className="w-16 h-16 bg-gradient-to-br from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-2xl flex items-center justify-center mx-auto mb-4">
+                          <Sparkles className="h-8 w-8 text-white" />
                         </div>
-                        <div className="space-y-4">
+                        <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-xl mb-2">
+                          Join Galaxy Labs!
+                        </h3>
+                        <p className="text-[var(--galaxy-dark-charcoal)]/70 text-sm font-['Lora'] mb-4">
+                          Unlock exclusive deals and premium features
+                        </p>
+                        <div className="space-y-3">
                           <Link
                             href="/login"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            <Button className="w-full py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <Button className="w-full py-3 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-xl font-['Poppins'] font-bold shadow-lg hover:shadow-xl transition-all duration-300">
                               Login
                             </Button>
                           </Link>
                           <Link
                             href="/register"
-                            onClick={() => setActiveDropdown(null)}
+                            onClick={() => setIsMobileMenuOpen(false)}
                           >
                             <Button
                               variant="outline"
-                              className="w-full py-4 border-2 border-[#f01c33] text-[#f01c33] hover:bg-[#f01c33] hover:text-white rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105"
+                              className="w-full py-3 border-2 border-[var(--galaxy-deep-red)] text-[var(--galaxy-deep-red)] hover:bg-[var(--galaxy-deep-red)] hover:text-white rounded-xl font-['Poppins'] font-bold transition-all duration-300"
                             >
                               Register
                             </Button>
                           </Link>
                         </div>
                       </div>
-                    )}
-                  </div>
-                </ClientOnly>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Bar */}
-      <div className="hidden md:block bg-gradient-to-r h-16  from-[#f01c33] via-[#f01c33] to-[#c4ab66] text-white ">
-        <div className="container mx-auto px-4">
-          <nav className="flex items-center justify-center space-x-12 py-1">
-            <Link
-              href="/"
-              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
-            >
-              Home
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
-            </Link>
-
-            <Link
-              href="/about"
-              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
-            >
-              About
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
-            </Link>
-            <Link
-              href="/products"
-              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
-            >
-              Products
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
-            </Link>
-
-            {/* Products Dropdown */}
-            <div
-              className="relative"
-              onMouseEnter={() => handleDropdownHover("products")}
-              onMouseLeave={handleDropdownLeave}
-            >
-              <button
-                className={`font-bold text-lg ${
-                  activeDropdown === "products"
-                    ? "text-[#c4ab66] bg-white/20"
-                    : "text-white"
-                } hover:text-[#c4ab66] transition-all duration-300 flex items-center focus:outline-none group px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative`}
-                onClick={() => toggleDropdown("products")}
-                aria-expanded={activeDropdown === "products"}
-              >
-                Categories
-                <ChevronDown
-                  className={`ml-3 h-5 w-5 transition-transform duration-300 ${
-                    activeDropdown === "products" ? "rotate-180" : ""
-                  } group-hover:rotate-180`}
-                />
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
-              </button>
-              <div
-                className={`absolute left-0 top-full mt-4 w-96 bg-white/95 backdrop-blur-md shadow-2xl rounded-3xl py-4 border border-white/50 z-50 transition-all duration-300 ease-in-out transform origin-top ${
-                  activeDropdown === "products"
-                    ? "opacity-100 scale-100 translate-y-0"
-                    : "opacity-0 scale-95 -translate-y-4 pointer-events-none"
-                }`}
-              >
-                <div className="px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33]/5 to-[#c4ab66]/5 rounded-t-3xl">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-2xl flex items-center justify-center shadow-lg">
-                      <ShoppingBag className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <h3 className="font-bold text-[#f01c33] text-2xl">
-                        Our Products
-                      </h3>
-                      <p className="text-base text-gray-600">
-                        Discover our amazing collection
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="py-3">
-                  {categories.map((category, index) => (
-                    <Link
-                      key={category.id}
-                      href={`/category/${category.slug}`}
-                      className="flex items-center px-8 py-4 hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#c4ab66]/5 transition-all duration-300 text-gray-700 group"
-                      onClick={() => setActiveDropdown(null)}
-                    >
-                      <div
-                        className={`w-4 h-4 bg-gradient-to-r ${
-                          index % 3 === 0
-                            ? "from-blue-500 to-purple-500"
-                            : index % 3 === 1
-                            ? "from-green-500 to-teal-500"
-                            : "from-pink-500 to-rose-500"
-                        } rounded-full mr-4 group-hover:scale-125 transition-transform duration-300`}
-                      ></div>
-                      <span className="font-semibold text-lg group-hover:text-[#f01c33] transition-colors">
-                        {category.name}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-                <div className="pt-3 mt-3 border-t border-gray-100">
-                  <Link
-                    href="/categories"
-                    className="flex items-center px-8 py-4 text-[#f01c33] font-bold hover:bg-gradient-to-r hover:from-[#f01c33]/5 hover:to-[#f01c33]/10 transition-all duration-300 text-lg group"
-                    onClick={() => setActiveDropdown(null)}
-                  >
-                    <div className="w-4 h-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] rounded-full mr-4 group-hover:scale-125 transition-transform duration-300"></div>
-                    View All Categories
-                  </Link>
+                  )}
                 </div>
               </div>
-            </div>
-
-            <Link
-              href="/contact"
-              className="font-bold text-lg hover:text-[#c4ab66] transition-all duration-300 px-6 py-3 rounded-2xl hover:bg-white/20 hover:scale-110 relative group"
-            >
-              Contact
-              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 h-1 bg-white rounded-full group-hover:w-full transition-all duration-300"></div>
-            </Link>
-          </nav>
-        </div>
-      </div>
-
-      {/* Mobile Search Overlay */}
-      {isSearchExpanded && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/70 z-40 backdrop-blur-sm"
-            onClick={() => setIsSearchExpanded(false)}
-          />
-          <div className="fixed inset-x-0 top-0 z-50 w-full animate-in slide-in-from-top duration-300 p-6">
-            <form
-              onSubmit={handleSearch}
-              className="relative bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 overflow-hidden max-h-[90vh] md:max-w-[700px] mx-auto"
-            >
-              <div className="flex items-center px-8 py-6 border-b border-gray-100 bg-gradient-to-r from-[#f01c33] to-[#c4ab66]">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white/95 backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-lg">
-                    <Search className="h-6 w-6 text-[#f01c33]" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-white">
-                    Search Products
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  className="ml-auto p-3 rounded-2xl hover:bg-white/20 transition-all duration-300 hover:rotate-90"
-                  onClick={() => setIsSearchExpanded(false)}
-                  aria-label="Close search"
-                >
-                  <X className="h-7 w-7 text-white" />
-                </button>
-              </div>
-
-              <div className="p-8">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl"></div>
-                  <div className="relative">
-                    <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-7 w-7 text-[#f01c33]" />
-                    <Input
-                      ref={searchInputRef}
-                      type="search"
-                      placeholder="Search for products, brands, categories..."
-                      className="w-full pl-16 pr-8 py-6 border-2 border-[#f01c33]/30 focus:border-[#f01c33] focus:ring-[#f01c33] rounded-3xl text-xl bg-white/80 backdrop-blur-sm placeholder:text-gray-500"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-
-                <div className="mt-8">
-                  <h4 className="text-lg font-bold text-[#f01c33] mb-4 uppercase tracking-wider flex items-center gap-3">
-                    <div className="w-2 h-2 bg-[#f01c33] rounded-full"></div>
-                    Popular Searches
-                  </h4>
-                  <div className="flex flex-wrap gap-4">
-                    {[
-                      "Protein Powder",
-                      "Dumbbells",
-                      "Resistance Bands",
-                      "Pre-Workout",
-                    ].map((term, index) => (
-                      <button
-                        key={term}
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery(term);
-                          handleSearch({ preventDefault: () => {} });
-                        }}
-                        className={`px-6 py-3 text-base bg-gradient-to-r ${
-                          index % 2 === 0
-                            ? "from-[#f01c33]/10 to-[#f01c33]/5 hover:from-[#f01c33]/20 hover:to-[#f01c33]/10 text-[#f01c33] border-[#f01c33]/30"
-                            : "from-[#c4ab66]/10 to-[#c4ab66]/5 hover:from-[#c4ab66]/20 hover:to-[#c4ab66]/10 text-[#c4ab66] border-[#c4ab66]/30"
-                        } hover:scale-105 rounded-2xl transition-all duration-300 font-semibold border-2`}
-                      >
-                        {term}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-white border-t border-gray-100 flex justify-between">
-                <button
-                  type="button"
-                  onClick={() => setIsSearchExpanded(false)}
-                  className="px-8 py-4 bg-gray-200 text-gray-700 rounded-2xl hover:bg-gray-300 transition-all duration-300 font-bold text-lg hover:scale-105"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-8 py-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white rounded-2xl hover:from-[#c4ab66] hover:to-[#f01c33] transition-all duration-300 flex items-center gap-3 font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105"
-                >
-                  <Search className="h-6 w-6" />
-                  Search
-                </button>
-              </div>
-            </form>
-          </div>
-        </>
-      )}
-
-      {/* Mobile Menu */}
-      <ClientOnly>
-        <MobileMenu
-          isMenuOpen={isMenuOpen}
-          setIsMenuOpen={setIsMenuOpen}
-          categories={categories}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-          isAuthenticated={isAuthenticated}
-          user={user}
-          cart={cart}
-          handleLogout={handleLogout}
-        />
-      </ClientOnly>
-    </header>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
+
+// NavTab Component for Desktop Navigation
+const NavTab = ({ children, href, setPosition, isActive, onClick }) => {
+  const ref = useRef(null);
+
+  return (
+    <motion.li
+      ref={ref}
+      onMouseEnter={() => {
+        if (!ref.current) return;
+
+        const { width } = ref.current.getBoundingClientRect();
+        setPosition({
+          width,
+          opacity: 1,
+          left: ref.current.offsetLeft,
+        });
+      }}
+      onClick={onClick}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className={`relative z-10 block cursor-pointer px-4 py-2 text-lg text-white transition-colors font-galaxy-heading hover:text-[var(--galaxy-royal-gold)] ${
+        isActive ? "font-medium" : "font-normal"
+      }`}
+    >
+      <Link href={href} className="flex items-center">
+        <span>{children}</span>
+      </Link>
+    </motion.li>
+  );
+};
+
+// NavCursor Component for Hover Effect
+const NavCursor = ({ position }) => {
+  return (
+    <motion.div
+      animate={position}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className="absolute z-0 h-10 rounded-full bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] shadow-[0_0_10px_rgba(170,46,46,0.3)]"
+    />
+  );
+};

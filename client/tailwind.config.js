@@ -11,8 +11,23 @@ module.exports = {
       fontFamily: {
         jost: ["var(--font-jost)"],
         poppins: ["var(--font-poppins)"],
+        // Galaxy Labs™ Font System
+        "galaxy-heading": ["Poppins", "Quicksand", "system-ui", "sans-serif"],
+        "galaxy-body": ["Open Sans", "Lato", "system-ui", "sans-serif"],
+        "open-sans": ["Open Sans", "system-ui", "sans-serif"],
+        quicksand: ["Quicksand", "system-ui", "sans-serif"],
       },
       colors: {
+        // Galaxy Labs™ Brand Colors
+        galaxy: {
+          crimson: "#D32F2F", // Primary Red
+          gold: "#B99B2F", // Golden Yellow
+          brick: "#7B1E1E", // Dark Brown/Red
+          cream: "#FFF8F0", // Light Beige
+          white: "#FFFFFF", // Pure White
+          "text-dark": "#333333", // Dark gray text
+        },
+        // Existing Tailwind colors with Galaxy theme
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -80,8 +95,19 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        'spin-slow': 'spin 20s linear infinite',
-        'spin-slower': 'spin 30s linear infinite reverse',
+        "spin-slow": "spin 20s linear infinite",
+        "spin-slower": "spin 30s linear infinite reverse",
+      },
+      // Galaxy Labs™ specific spacing and sizing
+      spacing: {
+        galaxy: "1.5rem",
+        "galaxy-lg": "2.5rem",
+        "galaxy-xl": "4rem",
+      },
+      boxShadow: {
+        galaxy: "0 2px 10px rgba(123, 30, 30, 0.1)",
+        "galaxy-hover": "0 4px 20px rgba(211, 47, 47, 0.15)",
+        "galaxy-focus": "0 0 0 3px rgba(211, 47, 47, 0.1)",
       },
     },
   },
