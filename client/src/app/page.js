@@ -684,8 +684,8 @@ const BenefitsSection = () => {
             className="text-[#1C1C1C] text-lg max-w-2xl mx-auto mb-8 font-['Lora']"
             style={{ lineHeight: 1.7 }}
           >
-            We're committed to providing you with the best fitness supplements
-            and an exceptional experience
+            We&apos;re committed to providing you with the best fitness
+            supplements and an exceptional experience
           </p>
         </motion.div>
 
@@ -870,7 +870,7 @@ const TestimonialsSection = () => {
                   className="text-[#1C1C1C] mb-6 font-['Lora'] italic"
                   style={{ lineHeight: 1.7 }}
                 >
-                  "{testimonial.quote}"
+                  {testimonial.quote}
                 </blockquote>
 
                 <div className="bg-[#AA2E2E]/10 px-4 py-2 rounded-full">
