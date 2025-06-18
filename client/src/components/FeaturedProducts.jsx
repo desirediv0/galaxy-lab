@@ -101,7 +101,7 @@ const FeaturedProducts = ({
         <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-[#c4ab66] rounded-full animate-pulse"></div>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
         {/* Enhanced Header Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -131,8 +131,8 @@ const FeaturedProducts = ({
           >
             <span className="bg-gradient-to-r from-gray-900 via-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               Premium
-            </span>
-            <br />
+            </span>{" "}
+            
             <span className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
               Collection
             </span>
