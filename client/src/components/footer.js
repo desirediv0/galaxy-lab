@@ -11,47 +11,51 @@ import {
   Shield,
   Truck,
   HeadphonesIcon,
+  Crown,
+  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden font-galaxy-heading">
+    <footer className="relative overflow-hidden font-galaxy-heading bg-white">
       {/* Beautiful gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-slate-50 to-gray-100"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-yellow-50 to-amber-50"></div>
 
       {/* Animated background elements */}
-      <div className="absolute inset-0 opacity-30">
+      <div className="absolute inset-0 opacity-20">
         <motion.div
           animate={{
             background: [
-              "radial-gradient(circle at 20% 80%, rgba(240, 28, 51, 0.05) 0%, transparent 50%)",
-              "radial-gradient(circle at 80% 20%, rgba(185, 155, 47, 0.05) 0%, transparent 50%)",
-              "radial-gradient(circle at 40% 40%, rgba(240, 28, 51, 0.05) 0%, transparent 50%)",
+              "radial-gradient(circle at 20% 80%, rgba(255, 193, 7, 0.1) 0%, transparent 50%)",
+              "radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 50%)",
+              "radial-gradient(circle at 40% 40%, rgba(255, 193, 7, 0.1) 0%, transparent 50%)",
             ],
           }}
-          transition={{ duration: 10, repeat: Infinity, repeatType: "reverse" }}
+          transition={{
+            duration: 10,
+            repeat: Number.POSITIVE_INFINITY,
+            repeatType: "reverse",
+          }}
           className="absolute inset-0"
         />
       </div>
 
       {/* Top decorative border */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--galaxy-deep-red)] via-[var(--galaxy-royal-gold)] to-[var(--galaxy-deep-red)]"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500"></div>
 
       {/* Floating decoration elements */}
       <motion.div
         animate={{ y: [-10, 10, -10], rotate: [0, 360, 0] }}
-        transition={{ duration: 6, repeat: Infinity }}
-        className="absolute top-20 left-10 w-16 h-16 bg-gradient-to-r from-[var(--galaxy-deep-red)]/10 to-[var(--galaxy-royal-gold)]/10 rounded-full blur-xl"
+        transition={{ duration: 6, repeat: Number.POSITIVE_INFINITY }}
+        className="absolute top-20 left-10 w-16 h-16 bg-gradient-to-r from-yellow-300/20 to-amber-300/20 rounded-full blur-xl"
       ></motion.div>
       <motion.div
         animate={{ y: [10, -10, 10], rotate: [360, 0, 360] }}
-        transition={{ duration: 8, repeat: Infinity }}
-        className="absolute bottom-32 right-16 w-24 h-24 bg-gradient-to-r from-[var(--galaxy-royal-gold)]/10 to-[var(--galaxy-deep-red)]/10 rounded-full blur-2xl"
+        transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY }}
+        className="absolute bottom-32 right-16 w-24 h-24 bg-gradient-to-r from-amber-300/20 to-yellow-300/20 rounded-full blur-2xl"
       ></motion.div>
-
-      {/* Newsletter Section */}
 
       {/* Main footer content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -70,11 +74,11 @@ export function Footer() {
                     src="/logo.png"
                     alt="Galaxy Labs Logo"
                     fill
-                    className="object-contain"
+                    className="object-contain drop-shadow-lg"
                   />
                 </div>
 
-                <p className="text-[var(--galaxy-dark-charcoal)]/70 mb-6 leading-relaxed text-lg font-['Lora']">
+                <p className="text-gray-700 mb-6 leading-relaxed text-lg font-['Lora']">
                   India&apos;s premium fitness nutrition brand, dedicated to
                   providing high-quality supplements and nutritional products to
                   help you achieve your fitness goals and unlock your true
@@ -103,11 +107,9 @@ export function Footer() {
                   ].map((badge, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center space-x-2 text-[var(--galaxy-dark-charcoal)]/60"
+                      className="flex items-center space-x-2 text-gray-600"
                     >
-                      <div className="text-[var(--galaxy-royal-gold)]">
-                        {badge.icon}
-                      </div>
+                      <div className="text-yellow-600">{badge.icon}</div>
                       <span className="text-sm font-medium">{badge.text}</span>
                     </div>
                   ))}
@@ -140,8 +142,8 @@ export function Footer() {
                       className="group relative"
                       aria-label={social.label}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-[var(--galaxy-deep-red)]/20 to-[var(--galaxy-royal-gold)]/20 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
-                      <div className="relative w-12 h-12 bg-white hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)] hover:to-[var(--galaxy-royal-gold)] flex items-center justify-center rounded-2xl text-[var(--galaxy-dark-charcoal)] hover:text-white transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-100 hover:border-transparent">
+                      <div className="absolute inset-0 bg-gradient-to-r from-yellow-300/30 to-amber-300/30 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300"></div>
+                      <div className="relative w-12 h-12 bg-white hover:bg-gradient-to-r hover:from-yellow-400 hover:to-amber-400 flex items-center justify-center rounded-2xl text-gray-700 hover:text-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl border border-yellow-100 hover:border-yellow-300">
                         {social.icon}
                       </div>
                     </Link>
@@ -158,10 +160,10 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <h3 className="text-xl font-bold mb-6 text-[var(--galaxy-deep-red)] font-['Playfair_Display']">
+            <h3 className="text-xl font-bold mb-6 text-yellow-700 font-['Playfair_Display']">
               Quick Links
             </h3>
-            <div className="w-12 h-1 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-full mb-8"></div>
+            <div className="w-12 h-1 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full mb-8"></div>
             <ul className="space-y-4">
               {[
                 { label: "Home", href: "/" },
@@ -175,9 +177,9 @@ export function Footer() {
                 <li key={idx}>
                   <Link
                     href={link.href}
-                    className="group flex items-center text-[var(--galaxy-dark-charcoal)]/70 hover:text-[var(--galaxy-deep-red)] transition-all duration-300"
+                    className="group flex items-center text-gray-600 hover:text-yellow-700 transition-all duration-300"
                   >
-                    <div className="w-2 h-2 bg-[var(--galaxy-royal-gold)] rounded-full mr-3 group-hover:bg-[var(--galaxy-deep-red)] transition-colors duration-300 group-hover:scale-150"></div>
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3 group-hover:bg-yellow-600 transition-colors duration-300 group-hover:scale-150"></div>
                     <span className="group-hover:translate-x-1 transition-transform duration-300 font-medium">
                       {link.label}
                     </span>
@@ -194,10 +196,10 @@ export function Footer() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="text-xl font-bold mb-6 text-[var(--galaxy-deep-red)] font-['Playfair_Display']">
+            <h3 className="text-xl font-bold mb-6 text-yellow-700 font-['Playfair_Display']">
               Categories
             </h3>
-            <div className="w-12 h-1 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-full mb-8"></div>
+            <div className="w-12 h-1 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full mb-8"></div>
             <ul className="space-y-4">
               {[
                 { label: "Whey Protein", href: "/category/whey-protein" },
@@ -211,9 +213,9 @@ export function Footer() {
                 <li key={idx}>
                   <Link
                     href={link.href}
-                    className="group flex items-center text-[var(--galaxy-dark-charcoal)]/70 hover:text-[var(--galaxy-deep-red)] transition-all duration-300"
+                    className="group flex items-center text-gray-600 hover:text-yellow-700 transition-all duration-300"
                   >
-                    <div className="w-2 h-2 bg-[var(--galaxy-royal-gold)] rounded-full mr-3 group-hover:bg-[var(--galaxy-deep-red)] transition-colors duration-300 group-hover:scale-150"></div>
+                    <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3 group-hover:bg-yellow-600 transition-colors duration-300 group-hover:scale-150"></div>
                     <span className="group-hover:translate-x-1 transition-transform duration-300 font-medium">
                       {link.label}
                     </span>
@@ -222,22 +224,57 @@ export function Footer() {
               ))}
             </ul>
           </motion.div>
-
-          {/* Contact Info */}
         </div>
+
+        {/* Newsletter Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="mt-16 text-center"
+        >
+          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-3xl p-8 border border-yellow-200 shadow-lg">
+            <div className="flex items-center justify-center mb-4">
+              <Crown className="h-8 w-8 text-yellow-600 mr-3" />
+              <h3 className="text-2xl font-bold text-yellow-700 font-['Playfair_Display']">
+                Join the Galaxy Family
+              </h3>
+              <Sparkles className="h-8 w-8 text-yellow-600 ml-3" />
+            </div>
+            <p className="text-gray-600 mb-6 font-['Lora'] text-lg">
+              Get exclusive deals, fitness tips, and be the first to know about
+              new products!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-4 py-3 rounded-xl border border-yellow-200 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 outline-none transition-all duration-300 font-['Lora']"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-400 text-gray-800 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 font-['Poppins']"
+              >
+                Subscribe
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Enhanced bottom section */}
-      <div className="relative z-10 bg-gradient-to-r from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5 backdrop-blur-sm border-t border-[var(--galaxy-royal-gold)]/20">
+      <div className="relative z-10 bg-gradient-to-r from-yellow-100/50 to-amber-100/50 backdrop-blur-sm border-t border-yellow-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             <div className="flex items-center">
-              <Heart className="h-5 w-5 text-[var(--galaxy-deep-red)] mr-2 animate-pulse" />
-              <div className="text-[var(--galaxy-dark-charcoal)]/70 text-sm font-['Lora']">
+              <Heart className="h-5 w-5 text-yellow-600 mr-2 animate-pulse" />
+              <div className="text-gray-600 text-sm font-['Lora']">
                 © 2025{" "}
                 <a
                   href="https://desirediv.com"
-                  className="text-[var(--galaxy-deep-red)] hover:text-[var(--galaxy-royal-gold)] transition-colors duration-300"
+                  className="text-yellow-700 hover:text-yellow-800 transition-colors duration-300 font-semibold"
                 >
                   Desire Div
                 </a>{" "}
@@ -258,7 +295,7 @@ export function Footer() {
                     .toLowerCase()
                     .replace(/ & /g, "-")
                     .replace(/ /g, "-")}`}
-                  className="text-sm text-[var(--galaxy-dark-charcoal)]/70 hover:text-[var(--galaxy-deep-red)] transition-colors duration-300 font-medium"
+                  className="text-sm text-gray-600 hover:text-yellow-700 transition-colors duration-300 font-medium"
                 >
                   {link}
                 </Link>

@@ -45,7 +45,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
   // Reset states when product changes or dialog closes
   useEffect(() => {
     if (!open) {
-      // Reset everything when dialog closes
       setSelectedFlavor(null);
       setSelectedWeight(null);
       setSelectedVariant(null);
@@ -60,7 +59,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     }
 
     if (product) {
-      // Set initial image when product changes
       setImgSrc(product.image || "/product-placeholder.jpg");
     }
   }, [product, open]);
@@ -73,13 +71,11 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
       setLoading(true);
       setInitialLoading(true);
       try {
-        // Fetch detailed product info
         const response = await fetchApi(`/public/products/${product.slug}`);
         if (response.data && response.data.product) {
           const productData = response.data.product;
           setProductDetails(productData);
 
-          // Update image if available
           if (productData.images && productData.images.length > 0) {
             setImgSrc(
               productData.images[0].url ||
@@ -88,7 +84,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
             );
           }
 
-          // Extract all available combinations from variants
           if (productData.variants && productData.variants.length > 0) {
             const combinations = productData.variants
               .filter((v) => v.isActive && v.quantity > 0)
@@ -100,12 +95,10 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
 
             setAvailableCombinations(combinations);
 
-            // Set default selections
             if (productData.flavorOptions?.length > 0) {
               const firstFlavor = productData.flavorOptions[0];
               setSelectedFlavor(firstFlavor);
 
-              // Find matching weights for this flavor
               const matchingVariant = combinations.find(
                 (combo) => combo.flavorId === firstFlavor.id
               );
@@ -121,7 +114,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                 }
               }
             } else if (productData.variants.length > 0) {
-              // If no flavor/weight options but variants exist, use the first variant
               setSelectedVariant(productData.variants[0]);
             }
           }
@@ -140,69 +132,53 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     fetchProductDetails();
   }, [product, open]);
 
-  // Get available weights for a specific flavor
   const getAvailableWeightsForFlavor = (flavorId) => {
     const availableWeights = availableCombinations
       .filter((combo) => combo.flavorId === flavorId)
       .map((combo) => combo.weightId);
-
     return availableWeights;
   };
 
-  // Get available flavors for a specific weight
   const getAvailableFlavorsForWeight = (weightId) => {
     const availableFlavors = availableCombinations
       .filter((combo) => combo.weightId === weightId)
       .map((combo) => combo.flavorId);
-
     return availableFlavors;
   };
 
-  // Check if a combination is available
   const isCombinationAvailable = (flavorId, weightId) => {
     return availableCombinations.some(
       (combo) => combo.flavorId === flavorId && combo.weightId === weightId
     );
   };
 
-  // Handle flavor change
   const handleFlavorChange = (flavor) => {
     setSelectedFlavor(flavor);
-
-    // Find available weights for this flavor
     const availableWeightIds = getAvailableWeightsForFlavor(flavor.id);
 
     if (
       productDetails?.weightOptions?.length > 0 &&
       availableWeightIds.length > 0
     ) {
-      // Use currently selected weight if it's compatible with the new flavor
       if (selectedWeight && availableWeightIds.includes(selectedWeight.id)) {
-        // Current weight is compatible, keep it selected
         const matchingVariant = availableCombinations.find(
           (combo) =>
             combo.flavorId === flavor.id && combo.weightId === selectedWeight.id
         );
-
         if (matchingVariant) {
           setSelectedVariant(matchingVariant.variant);
         }
       } else {
-        // Current weight is not compatible, switch to first available
         const firstAvailableWeight = productDetails.weightOptions.find(
           (weight) => availableWeightIds.includes(weight.id)
         );
-
         if (firstAvailableWeight) {
           setSelectedWeight(firstAvailableWeight);
-
-          // Find the corresponding variant
           const matchingVariant = availableCombinations.find(
             (combo) =>
               combo.flavorId === flavor.id &&
               combo.weightId === firstAvailableWeight.id
           );
-
           if (matchingVariant) {
             setSelectedVariant(matchingVariant.variant);
           }
@@ -214,44 +190,33 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     }
   };
 
-  // Handle weight change
   const handleWeightChange = (weight) => {
     setSelectedWeight(weight);
-
-    // Find available flavors for this weight
     const availableFlavorIds = getAvailableFlavorsForWeight(weight.id);
 
     if (
       productDetails?.flavorOptions?.length > 0 &&
       availableFlavorIds.length > 0
     ) {
-      // Use currently selected flavor if it's compatible with the new weight
       if (selectedFlavor && availableFlavorIds.includes(selectedFlavor.id)) {
-        // Current flavor is compatible, keep it selected
         const matchingVariant = availableCombinations.find(
           (combo) =>
             combo.weightId === weight.id && combo.flavorId === selectedFlavor.id
         );
-
         if (matchingVariant) {
           setSelectedVariant(matchingVariant.variant);
         }
       } else {
-        // Current flavor is not compatible, switch to first available
         const firstAvailableFlavor = productDetails.flavorOptions.find(
           (flavor) => availableFlavorIds.includes(flavor.id)
         );
-
         if (firstAvailableFlavor) {
           setSelectedFlavor(firstAvailableFlavor);
-
-          // Find the corresponding variant
           const matchingVariant = availableCombinations.find(
             (combo) =>
               combo.weightId === weight.id &&
               combo.flavorId === firstAvailableFlavor.id
           );
-
           if (matchingVariant) {
             setSelectedVariant(matchingVariant.variant);
           }
@@ -263,7 +228,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     }
   };
 
-  // Handle quantity change
   const handleQuantityChange = (change) => {
     const newQuantity = quantity + change;
     if (newQuantity < 1) return;
@@ -276,13 +240,11 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     setQuantity(newQuantity);
   };
 
-  // Handle add to cart
   const handleAddToCart = async () => {
     setAddingToCart(true);
     setError(null);
     setSuccess(false);
 
-    // If no variant is selected but product has variants, use the first one
     let variantToAdd = selectedVariant;
 
     if (!variantToAdd && productDetails?.variants?.length > 0) {
@@ -298,8 +260,6 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     try {
       await addToCart(variantToAdd.id, quantity);
       setSuccess(true);
-
-      // Auto close after success notification
       setTimeout(() => {
         onOpenChange(false);
       }, 2000);
@@ -311,71 +271,66 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
     }
   };
 
-  // Format price display
   const getPriceDisplay = () => {
-    // Show loading state while initial data is being fetched
     if (initialLoading || loading) {
-      return <div className="h-8 w-32 bg-gray-200 animate-pulse rounded"></div>;
+      return <div className="h-8 w-32 bg-white/30 animate-pulse rounded"></div>;
     }
 
-    // If we have a selected variant, show its price
     if (selectedVariant) {
       if (selectedVariant.salePrice && selectedVariant.salePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+            <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
               {formatCurrency(selectedVariant.salePrice)}
             </span>
-            <span className="text-xl text-gray-500 line-through">
+            <span className="text-xl text-amber-600 line-through">
               {formatCurrency(selectedVariant.price)}
             </span>
           </div>
         );
       }
       return (
-        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+        <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
           {formatCurrency(selectedVariant.price || 0)}
         </span>
       );
     }
 
-    // If no variant but product details available, show base price
     if (productDetails) {
       if (productDetails.hasSale && productDetails.basePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+            <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
               {formatCurrency(productDetails.basePrice)}
             </span>
-            <span className="text-xl text-gray-500 line-through">
+            <span className="text-xl text-amber-600 line-through">
               {formatCurrency(productDetails.regularPrice || 0)}
             </span>
           </div>
         );
       }
       return (
-        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+        <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
           {formatCurrency(productDetails.basePrice || 0)}
         </span>
       );
     }
 
-    // Fallback to product from props if no details fetched yet
     if (product) {
       if (product.hasSale && product.basePrice > 0) {
         return (
           <div className="flex items-baseline gap-3">
-            <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+            <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
               {formatCurrency(product.basePrice)}
             </span>
-            <span className="text-xl text-gray-500 line-through">
+            <span className="text-xl text-amber-600 line-through">
               {formatCurrency(product.regularPrice || 0)}
             </span>
           </div>
         );
       }
       return (
-        <span className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+        <span className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
           {formatCurrency(product.basePrice || 0)}
         </span>
       );
@@ -390,55 +345,41 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[1100px] max-h-[95vh] overflow-y-auto p-0 bg-white rounded-3xl">
-        {/* Clean Header Design */}
-        <DialogHeader className="sticky top-0 z-10 px-8 py-6 bg-white border-b border-gray-100">
+      <DialogContent className="sm:max-w-[850px] max-h-[85vh] overflow-y-auto p-0 bg-white/95 backdrop-blur-xl rounded-3xl border border-white/40 shadow-2xl">
+        {/* Glassmorphism Header Design */}
+        <DialogHeader className="sticky top-0 z-10 px-8 py-6 bg-white/80 backdrop-blur-xl border-b border-white/30">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+            <DialogTitle className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-sm">
               {displayProduct.name}
               {displayProduct.hasSale && (
                 <motion.span
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="ml-4 inline-flex items-center px-3 py-1 text-sm bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white rounded-full"
+                  className="ml-4 inline-flex items-center px-3 py-1 text-sm bg-white/30 backdrop-blur-md border border-white/40 text-amber-900 rounded-full shadow-lg"
                 >
                   <Zap className="w-3 h-3 mr-1" />
                   SALE
                 </motion.span>
               )}
             </DialogTitle>
-            <div className="flex items-center gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-full hover:bg-gray-50 transition-colors"
-              >
-                <Heart className="h-5 w-5 text-[#f01c33]" />
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="p-2 rounded-full hover:bg-gray-50 transition-colors"
-              >
-                <Share2 className="h-5 w-5 text-[#c4ab66]" />
-              </motion.button>
-            </div>
           </div>
         </DialogHeader>
 
         {loading && !productDetails ? (
           <div className="py-20 flex justify-center items-center">
             <div className="relative">
-              <div className="w-12 h-12 border-3 border-[#c4ab66]/20 border-t-[#f01c33] rounded-full animate-spin"></div>
-              <div className="mt-4 text-sm text-gray-600">Loading details...</div>
+              <div className="w-12 h-12 border-3 border-white/30 border-t-amber-600 rounded-full animate-spin"></div>
+              <div className="mt-4 text-sm text-amber-700">
+                Loading details...
+              </div>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 p-8">
-            {/* Clean Product Image Section */}
+            {/* Glassmorphism Product Image Section */}
             <div className="space-y-6">
               <div className="relative group">
-                <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-50">
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-white/20 backdrop-blur-md border border-white/30 shadow-xl">
                   <Image
                     src={imgSrc || "/placeholder.svg"}
                     alt={displayProduct.name}
@@ -450,12 +391,12 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                 </div>
               </div>
 
-              {/* Clean Rating Display */}
+              {/* Glass Rating Display */}
               {displayProduct.avgRating > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-gray-50 rounded-xl"
+                  className="p-4 bg-white/20 backdrop-blur-md rounded-xl border border-white/30 shadow-lg"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex gap-1">
@@ -464,13 +405,13 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                           key={star}
                           className={`h-5 w-5 ${
                             star <= Math.round(displayProduct.avgRating || 0)
-                              ? "text-[#c4ab66] fill-[#c4ab66]"
-                              : "text-gray-200"
+                              ? "text-yellow-500 fill-yellow-500"
+                              : "text-amber-300"
                           }`}
                         />
                       ))}
                     </div>
-                    <div className="text-sm font-medium text-gray-600">
+                    <div className="text-sm font-medium text-amber-800">
                       {displayProduct.avgRating?.toFixed(1)} (
                       {displayProduct.reviewCount || 0} reviews)
                     </div>
@@ -479,45 +420,45 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
               )}
             </div>
 
-            {/* Clean Product Details Section */}
+            {/* Glassmorphism Product Details Section */}
             <div className="space-y-8">
-              {/* Clean Success Message */}
+              {/* Glass Success Message */}
               {success && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-green-50 rounded-xl flex items-center"
+                  className="p-4 bg-green-100/50 backdrop-blur-md rounded-xl flex items-center border border-green-200/50 shadow-lg"
                 >
                   <CheckCircle className="h-5 w-5 mr-3 text-green-600" />
-                  <span className="font-medium text-green-600">
+                  <span className="font-medium text-green-700">
                     Added to cart successfully!
                   </span>
                 </motion.div>
               )}
 
-              {/* Clean Error Message */}
+              {/* Glass Error Message */}
               {error && (
                 <motion.div
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="p-4 bg-red-50 rounded-xl flex items-center"
+                  className="p-4 bg-red-100/50 backdrop-blur-md rounded-xl flex items-center border border-red-200/50 shadow-lg"
                 >
-                  <AlertCircle className="h-5 w-5 mr-3 text-[#f01c33]" />
-                  <span className="font-medium text-[#f01c33]">{error}</span>
+                  <AlertCircle className="h-5 w-5 mr-3 text-red-600" />
+                  <span className="font-medium text-red-700">{error}</span>
                 </motion.div>
               )}
 
-              {/* Clean Price Display */}
-              <div className="p-6 bg-gray-50 rounded-xl">
+              {/* Glass Price Display */}
+              <div className="p-6 bg-white/20 backdrop-blur-md rounded-xl border border-white/30 shadow-lg">
                 {getPriceDisplay()}
               </div>
 
-              {/* Clean Flavor Selection */}
+              {/* Glass Flavor Selection */}
               {productDetails?.flavorOptions &&
                 productDetails.flavorOptions.length > 0 && (
                   <div className="space-y-4">
-                    <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                      <Sparkles className="w-5 h-5 text-[#f01c33]" />
+                    <label className="flex items-center gap-2 text-lg font-bold text-amber-800">
+                      <Sparkles className="w-5 h-5 text-amber-700" />
                       Select Flavor
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -534,12 +475,12 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                             disabled={!isAvailable}
                             whileHover={{ scale: isAvailable ? 1.02 : 1 }}
                             whileTap={{ scale: isAvailable ? 0.98 : 1 }}
-                            className={`px-6 py-3 rounded-xl text-sm font-medium transition-colors ${
+                            className={`px-6 py-3 rounded-xl text-sm font-medium transition-colors border shadow-lg ${
                               selectedFlavor?.id === flavor.id
-                                ? "bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white"
+                                ? "bg-white/40 backdrop-blur-md border-white/50 text-amber-900"
                                 : isAvailable
-                                ? "bg-white border border-gray-200 hover:border-[#f01c33] hover:text-[#f01c33]"
-                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                ? "bg-white/20 backdrop-blur-md border-white/30 hover:border-white/50 hover:text-amber-800 text-amber-700"
+                                : "bg-white/10 text-amber-400 cursor-not-allowed border-white/20"
                             }`}
                           >
                             {flavor.name}
@@ -550,12 +491,12 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                   </div>
                 )}
 
-              {/* Clean Weight Selection */}
+              {/* Glass Weight Selection */}
               {productDetails?.weightOptions &&
                 productDetails.weightOptions.length > 0 && (
                   <div className="space-y-4">
-                    <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
-                      <Sparkles className="w-5 h-5 text-[#c4ab66]" />
+                    <label className="flex items-center gap-2 text-lg font-bold text-amber-800">
+                      <Sparkles className="w-5 h-5 text-amber-700" />
                       Select Weight
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -574,12 +515,12 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                             disabled={!isAvailable}
                             whileHover={{ scale: isAvailable ? 1.02 : 1 }}
                             whileTap={{ scale: isAvailable ? 0.98 : 1 }}
-                            className={`px-6 py-3 rounded-xl text-sm font-medium transition-colors ${
+                            className={`px-6 py-3 rounded-xl text-sm font-medium transition-colors border shadow-lg ${
                               selectedWeight?.id === weight.id
-                                ? "bg-gradient-to-r from-[#c4ab66] to-[#f01c33] text-white"
+                                ? "bg-white/40 backdrop-blur-md border-white/50 text-amber-900"
                                 : isAvailable
-                                ? "bg-white border border-gray-200 hover:border-[#c4ab66] hover:text-[#c4ab66]"
-                                : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                ? "bg-white/20 backdrop-blur-md border-white/30 hover:border-white/50 hover:text-amber-800 text-amber-700"
+                                : "bg-white/10 text-amber-400 cursor-not-allowed border-white/20"
                             }`}
                           >
                             {weight.value} {weight.unit}
@@ -590,20 +531,22 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                   </div>
                 )}
 
-              {/* Clean Stock Status */}
+              {/* Glass Stock Status */}
               {selectedVariant && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`p-4 rounded-xl ${
+                  className={`p-4 rounded-xl backdrop-blur-md border shadow-lg ${
                     selectedVariant.quantity > 0
-                      ? "bg-green-50"
-                      : "bg-red-50"
+                      ? "bg-green-100/30 border-green-200/50"
+                      : "bg-red-100/30 border-red-200/50"
                   }`}
                 >
                   <span
                     className={`text-sm font-medium flex items-center gap-2 ${
-                      selectedVariant.quantity > 0 ? "text-green-600" : "text-[#f01c33]"
+                      selectedVariant.quantity > 0
+                        ? "text-green-700"
+                        : "text-red-700"
                     }`}
                   >
                     {selectedVariant.quantity > 0 ? (
@@ -621,51 +564,66 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                 </motion.div>
               )}
 
-              {/* Clean Quantity Selector */}
+              {/* Glass Quantity Selector */}
               <div className="space-y-4">
-                <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
+                <label className="flex items-center gap-2 text-lg font-bold text-amber-800">
                   <ShoppingCart className="w-5 h-5" />
                   Quantity
                 </label>
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center bg-gray-50 rounded-xl overflow-hidden">
+                  <div className="flex items-center bg-white/20 backdrop-blur-md rounded-xl overflow-hidden border border-white/30 shadow-lg">
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleQuantityChange(-1)}
                       disabled={quantity <= 1 || loading}
-                      className="p-3 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      className="p-3 hover:bg-white/30 transition-colors disabled:opacity-50"
                     >
-                      <Minus className="h-5 w-5 text-[#f01c33]" />
+                      <Minus className="h-5 w-5 text-amber-700" />
                     </motion.button>
-                    <span className="w-20 text-center py-3 font-medium text-lg bg-white border-x border-gray-100">
+                    <span className="w-20 text-center py-3 font-medium text-lg bg-white/30 border-x border-white/30 text-amber-900">
                       {quantity}
                     </span>
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={() => handleQuantityChange(1)}
-                      disabled={loading || (selectedVariant?.quantity > 0 && quantity >= selectedVariant.quantity)}
-                      className="p-3 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                      disabled={
+                        loading ||
+                        (selectedVariant?.quantity > 0 &&
+                          quantity >= selectedVariant.quantity)
+                      }
+                      className="p-3 hover:bg-white/30 transition-colors disabled:opacity-50"
                     >
-                      <Plus className="h-5 w-5 text-[#c4ab66]" />
+                      <Plus className="h-5 w-5 text-amber-700" />
                     </motion.button>
                   </div>
                 </div>
               </div>
 
-              {/* Clean Action Buttons */}
+              {/* Glass Action Buttons */}
               <div className="flex gap-4 pt-6">
-                <motion.div className="flex-1" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div
+                  className="flex-1"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
                   <Button
                     onClick={handleAddToCart}
-                    disabled={loading || addingToCart || (!selectedVariant && (!productDetails?.variants || productDetails.variants.length === 0)) || (selectedVariant && selectedVariant.quantity < 1)}
-                    className="w-full h-14 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white font-medium rounded-xl disabled:opacity-50 transition-all duration-300"
+                    disabled={
+                      loading ||
+                      addingToCart ||
+                      (!selectedVariant &&
+                        (!productDetails?.variants ||
+                          productDetails.variants.length === 0)) ||
+                      (selectedVariant && selectedVariant.quantity < 1)
+                    }
+                    className="w-full h-14 bg-white/30 backdrop-blur-md border border-white/40 hover:bg-white/40 text-amber-900 font-medium rounded-xl disabled:opacity-50 transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     <span className="flex items-center justify-center gap-2">
                       {addingToCart ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <div className="w-5 h-5 border-2 border-amber-700 border-t-transparent rounded-full animate-spin" />
                           Adding...
                         </>
                       ) : (
@@ -678,11 +636,17 @@ export default function ProductQuickView({ product, open, onOpenChange }) {
                   </Button>
                 </motion.div>
 
-                <Link href={`/products/${displayProduct.slug}`} className="flex-1">
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <Link
+                  href={`/products/${displayProduct.slug}`}
+                  className="flex-1"
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
                     <Button
                       variant="outline"
-                      className="w-full h-14 border-2 border-gray-200 hover:border-[#c4ab66] text-gray-600 hover:text-[#c4ab66] font-medium rounded-xl transition-colors"
+                      className="w-full h-14 border-2 border-white/40 bg-white/20 backdrop-blur-md hover:border-white/50 text-amber-800 hover:text-amber-900 font-medium rounded-xl transition-colors shadow-lg hover:shadow-xl"
                     >
                       View Details
                     </Button>

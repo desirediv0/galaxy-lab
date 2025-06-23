@@ -12,10 +12,9 @@ import {
   ShoppingCart,
   Heart,
   Search,
-  Phone,
-  MapPin,
+  Crown,
+  Zap,
   Star,
-  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
@@ -46,12 +45,6 @@ export function Navbar() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
-  const [navPosition, setNavPosition] = useState({
-    left: 0,
-    width: 0,
-    opacity: 0,
-  });
-  const [activeIndex, setActiveIndex] = useState(null);
   const router = useRouter();
   const pathname = usePathname();
   const searchInputRef = useRef(null);
@@ -116,164 +109,128 @@ export function Navbar() {
     <>
       <Toaster position="top-center" />
 
-      {/* Enhanced Floating Navigation */}
+      {/* Top Notification Bar */}
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-amber-900 text-center py-2 text-sm font-semibold shadow-lg"
+      >
+        <div className="container mx-auto px-4 flex items-center justify-center gap-2">
+          <Star className="h-4 w-4 animate-pulse" />
+          <span>Free shipping on orders above ₹999 | Use code: FREESHIP</span>
+          <Zap className="h-4 w-4 animate-bounce" />
+        </div>
+      </motion.div>
+
+      {/* Main Glassmorphism Navigation */}
       <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed z-50 top-[10px] left-0 right-0 mx-auto w-[95%] md:w-[90%] max-w-7xl transition-all duration-500 ${
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className={`fixed top-10 left-0 right-0 z-40 mx-auto w-[95%] max-w-7xl transition-all duration-500 ${
           isScrolled
-            ? "bg-black/90 backdrop-blur-xl rounded-2xl shadow-[0_0_25px_rgba(0,0,0,0.5)]"
-            : "bg-transparent"
+            ? "bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.37)]"
+            : "bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.25)]"
         }`}
       >
-        {/* Top Notification Bar - Only visible when not scrolled */}
-        <AnimatePresence>
-          {!isScrolled && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-gradient-to-r from-[var(--galaxy-deep-red)] via-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white text-center py-2 text-sm font-medium rounded-t-2xl"
-            >
-              <div className="container mx-auto px-4 flex items-center justify-center gap-2">
-                <Star className="h-4 w-4 animate-pulse" />
-                <span className="font-['Poppins']">
-                  Free shipping on orders above ₹999 | Use code: FREESHIP
-                </span>
-                <Sparkles className="h-4 w-4 animate-pulse" />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Main Navigation Container */}
-        <div
-          className={`flex items-center justify-between p-3 ${
-            !isScrolled ? "bg-white/90 backdrop-blur-sm rounded-b-2xl" : ""
-          }`}
-        >
+        <div className="flex items-center justify-between p-4">
           {/* Logo Section */}
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="relative group flex items-center"
+            className="relative group"
           >
-            <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-[var(--galaxy-deep-red)]/20 to-[var(--galaxy-royal-gold)]/20 opacity-0 group-hover:opacity-100 blur transition duration-500"></div>
-            <Link href="/" className="relative flex items-center">
+            <Link href="/" className="flex items-center">
               <Image
                 src="/logo.png"
                 alt="Galaxy Labs"
-                width={isScrolled ? 65 : 100}
-                height={isScrolled ? 65 : 100}
-                className={`object-contain transition-all duration-300 ${
-                  isScrolled ? "scale-90" : "scale-100"
-                } group-hover:scale-105 rounded-lg`}
+                width={80}
+                height={80}
+                className="object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-lg"
               />
             </Link>
           </motion.div>
 
           {/* Desktop Navigation Menu */}
-          <div className="hidden lg:block mx-auto">
-            <ul
-              className="relative flex items-center gap-1 bg-[var(--galaxy-dark-charcoal)]/80 backdrop-blur-md rounded-full  p-1"
-              onMouseLeave={() => {
-                setNavPosition((prev) => ({ ...prev, opacity: 0 }));
-                setActiveIndex(null);
-              }}
-            >
-              {menuItems.map((item, idx) => (
-                <NavTab
-                  key={item.name}
-                  href={item.href}
-                  setPosition={setNavPosition}
-                  isActive={activeIndex === idx}
-                  onClick={() => setActiveIndex(idx)}
-                >
-                  {item.name}
-                </NavTab>
-              ))}
-
-              {/* Categories Dropdown */}
-              <motion.li
-                className="relative"
-                onMouseEnter={() => setIsCategoriesDropdownOpen(true)}
-                onMouseLeave={() => setIsCategoriesDropdownOpen(false)}
-              >
-                <motion.button
+          <div className="hidden lg:flex items-center space-x-1">
+            {menuItems.map((item) => (
+              <Link key={item.name} href={item.href}>
+                <motion.div
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center space-x-1 text-primary px-4 py-2 rounded-full hover:bg-white/10 transition-all duration-300  text-lg font-galaxy-heading hover:text-[var(--galaxy-royal-gold)]"
+                  className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 ${
+                    pathname === item.href
+                      ? "bg-white/30 text-amber-900 shadow-lg backdrop-blur-sm border border-white/40"
+                      : "text-amber-800 hover:bg-white/20 hover:text-amber-900 hover:backdrop-blur-sm"
+                  }`}
                 >
-                  <span>Categories</span>
-                  <ChevronDown className="h-3 w-3 ml-1" />
-                </motion.button>
+                  {item.name}
+                </motion.div>
+              </Link>
+            ))}
 
-                <AnimatePresence>
-                  {isCategoriesDropdownOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute left-0 top-full mt-2 w-72 bg-white/95 backdrop-blur-xl rounded-2xl border border-[var(--galaxy-royal-gold)]/20 shadow-[0_10px_25px_rgba(0,0,0,0.1)] py-2 overflow-hidden"
-                    >
-                      <div className="px-4 py-3 border-b border-[var(--galaxy-ash-gray)] bg-gradient-to-r from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5">
-                        <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg">
-                          Our Products
-                        </h3>
-                        <p className="text-sm text-[var(--galaxy-dark-charcoal)]/70 font-['Lora']">
-                          Premium supplements for your fitness journey
-                        </p>
-                      </div>
-                      <div className="py-1">
-                        {categories.map((category) => (
-                          <Link
-                            key={category.id}
-                            href={`/category/${category.slug}`}
-                            className="flex items-center px-4 py-3 hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
-                          >
-                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
-                              {category.name}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.li>
+            {/* Categories Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setIsCategoriesDropdownOpen(true)}
+              onMouseLeave={() => setIsCategoriesDropdownOpen(false)}
+            >
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center space-x-1 px-6 py-3 rounded-xl font-semibold text-sm text-amber-800 hover:bg-white/20 hover:text-amber-900 transition-all duration-300"
+              >
+                <span>Categories</span>
+                <ChevronDown className="h-4 w-4" />
+              </motion.button>
 
-              <NavCursor position={navPosition} />
-            </ul>
+              <AnimatePresence>
+                {isCategoriesDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute left-0 top-full mt-2 w-80 bg-white/20 backdrop-blur-xl rounded-2xl border border-white/30 shadow-[0_8px_32px_rgba(31,38,135,0.37)] py-2 overflow-hidden"
+                  >
+                    <div className="px-4 py-3 border-b border-white/20 bg-white/10">
+                      <h3 className="font-bold text-amber-900 text-lg">
+                        Our Products
+                      </h3>
+                      <p className="text-sm text-amber-800">
+                        Premium supplements for your fitness journey
+                      </p>
+                    </div>
+                    <div className="py-1 max-h-64 overflow-y-auto">
+                      {categories.map((category) => (
+                        <Link
+                          key={category.id}
+                          href={`/category/${category.slug}`}
+                          className="flex items-center px-4 py-3 hover:bg-white/20 transition-all duration-300 group"
+                        >
+                          <span className="font-medium text-amber-800 group-hover:text-amber-900 transition-colors">
+                            {category.name}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Right Section - Search, Cart, Auth */}
-          <div className="flex items-center space-x-2">
-            {/* Search Button */}
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsSearchExpanded(true)}
-              className={`lg:hidden p-2 rounded-full transition-all duration-300 ${
-                isScrolled
-                  ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
-                  : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
-              }`}
-            >
-              <Search className="h-5 w-5" />
-            </motion.button>
-
+          <div className="flex items-center space-x-3">
             {/* Desktop Search */}
             <div className="hidden lg:block">
               <form onSubmit={handleSearch} className="relative">
-                <div className="relative bg-white/90 backdrop-blur-sm rounded-2xl border border-[var(--galaxy-royal-gold)]/30 shadow-md hover:shadow-lg transition-all duration-300 group">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[var(--galaxy-deep-red)] group-hover:scale-110 transition-transform duration-300" />
+                <div className="relative bg-white/20 backdrop-blur-md rounded-xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-amber-700 group-hover:scale-110 transition-transform duration-300" />
                   <Input
                     type="search"
                     placeholder="Search supplements..."
-                    className="w-64 pl-12 pr-4 py-2 border-0 focus:ring-2 focus:ring-[var(--galaxy-deep-red)] rounded-2xl bg-transparent placeholder:text-[var(--galaxy-dark-charcoal)]/50 font-['Lora']"
+                    className="w-64 pl-10 pr-4 py-2 border-0 focus:ring-2 focus:ring-white/50 rounded-xl bg-transparent placeholder:text-amber-700/70 text-amber-900 font-medium"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoComplete="off"
@@ -282,16 +239,22 @@ export function Navbar() {
               </form>
             </div>
 
+            {/* Mobile Search Button */}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => setIsSearchExpanded(true)}
+              className="lg:hidden p-3 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-amber-800 hover:bg-white/30 transition-all duration-300"
+            >
+              <Search className="h-5 w-5" />
+            </motion.button>
+
             {/* Wishlist */}
             <Link href="/wishlist" className="hidden sm:flex">
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className={`p-2 rounded-full transition-all duration-300 relative group ${
-                  isScrolled
-                    ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
-                    : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
-                }`}
+                className="p-3 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-amber-800 hover:bg-white/30 transition-all duration-300 relative group"
               >
                 <Heart className="h-5 w-5 group-hover:fill-current transition-all duration-300" />
               </motion.div>
@@ -303,18 +266,14 @@ export function Navbar() {
                 <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`p-2 rounded-full transition-all duration-300 relative group ${
-                    isScrolled
-                      ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
-                      : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30 hover:bg-[var(--galaxy-royal-gold)]/20"
-                  }`}
+                  className="p-3 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-amber-800 hover:bg-white/30 transition-all duration-300 relative group"
                 >
                   <ShoppingCart className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
                   {cart && cart.items?.length > 0 && (
                     <motion.span
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
-                      className="absolute -top-2 -right-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-full text-xs w-6 h-6 flex items-center justify-center font-bold shadow-lg"
+                      className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 rounded-full text-xs w-6 h-6 flex items-center justify-center font-bold shadow-lg"
                     >
                       {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
                     </motion.span>
@@ -333,7 +292,7 @@ export function Navbar() {
                     onClick={() =>
                       setIsProfileDropdownOpen(!isProfileDropdownOpen)
                     }
-                    className="flex items-center space-x-2 text-white bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] px-4 py-2 rounded-full border border-[var(--galaxy-royal-gold)]/50 hover:shadow-[0_0_15px_rgba(185,155,47,0.3)] transition-all duration-300 font-['Poppins']"
+                    className="flex items-center space-x-2 px-4 py-2 bg-white/30 backdrop-blur-md border border-white/40 text-amber-900 rounded-xl hover:bg-white/40 transition-all duration-300 font-semibold shadow-lg"
                   >
                     <User className="h-4 w-4" />
                     <span className="text-sm hidden md:inline">Profile</span>
@@ -347,18 +306,18 @@ export function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl border border-[var(--galaxy-royal-gold)]/20 shadow-[0_10px_25px_rgba(0,0,0,0.1)] py-2 overflow-hidden"
+                        className="absolute right-0 mt-2 w-64 bg-white/20 backdrop-blur-xl rounded-2xl border border-white/30 shadow-[0_8px_32px_rgba(31,38,135,0.37)] py-2 overflow-hidden"
                       >
-                        <div className="px-4 py-3 border-b border-[var(--galaxy-ash-gray)] bg-gradient-to-r from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5">
+                        <div className="px-4 py-3 border-b border-white/20 bg-white/10">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-full flex items-center justify-center">
-                              <User className="h-5 w-5 text-white" />
+                            <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-full flex items-center justify-center">
+                              <User className="h-5 w-5 text-amber-900" />
                             </div>
                             <div>
-                              <p className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)]">
+                              <p className="font-bold text-amber-900">
                                 {user?.name || "User"}
                               </p>
-                              <p className="text-sm text-[var(--galaxy-dark-charcoal)]/70 font-['Lora'] truncate">
+                              <p className="text-sm text-amber-800 truncate">
                                 {user?.email}
                               </p>
                             </div>
@@ -385,20 +344,20 @@ export function Navbar() {
                             <Link
                               key={item.href}
                               href={item.href}
-                              className="flex items-center px-4 py-2 hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                              className="flex items-center px-4 py-2 hover:bg-white/20 transition-all duration-300 group"
                               onClick={() => setIsProfileDropdownOpen(false)}
                             >
                               <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
                                 {item.icon}
                               </span>
-                              <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                              <span className="font-medium text-amber-800 group-hover:text-amber-900 transition-colors">
                                 {item.label}
                               </span>
                             </Link>
                           ))}
                           <button
                             onClick={handleLogout}
-                            className="flex items-center w-full px-4 py-2 text-[var(--galaxy-deep-red)] hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-deep-red)]/10 transition-all duration-300 font-['Poppins'] font-medium group border-t border-[var(--galaxy-ash-gray)] mt-1 pt-3"
+                            className="flex items-center w-full px-4 py-2 text-amber-800 hover:bg-white/20 transition-all duration-300 font-medium group border-t border-white/20 mt-1 pt-3"
                           >
                             <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
                               🚪
@@ -415,7 +374,7 @@ export function Navbar() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-full shadow-[0_0_10px_rgba(170,46,46,0.3)] transition-all duration-300 border border-[var(--galaxy-royal-gold)]/50 hover:shadow-[0_0_15px_rgba(185,155,47,0.5)] font-['Poppins']"
+                    className="flex items-center space-x-2 px-4 py-2 bg-white/30 backdrop-blur-md border border-white/40 text-amber-900 rounded-xl hover:bg-white/40 transition-all duration-300 font-semibold shadow-lg"
                   >
                     <LogIn className="h-4 w-4" />
                     <span className="text-sm hidden md:inline">Login</span>
@@ -429,11 +388,7 @@ export function Navbar() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`lg:hidden p-2 rounded-full transition-all duration-300 ${
-                isScrolled
-                  ? "text-white bg-white/10 border border-white/20 hover:bg-white/20"
-                  : "text-[var(--galaxy-deep-red)] bg-[var(--galaxy-royal-gold)]/10 border border-[var(--galaxy-royal-gold)]/30"
-              }`}
+              className="lg:hidden p-3 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 text-amber-800 hover:bg-white/30 transition-all duration-300"
             >
               {isMobileMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -453,22 +408,22 @@ export function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
               onClick={() => setIsSearchExpanded(false)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: -20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: -20 }}
-              className="fixed inset-x-4 top-20 z-50 max-w-lg mx-auto"
+              className="fixed inset-x-4 top-32 z-50 max-w-lg mx-auto"
             >
               <form
                 onSubmit={handleSearch}
-                className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[var(--galaxy-royal-gold)]/20 overflow-hidden"
+                className="bg-white/20 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 overflow-hidden"
               >
-                <div className="flex items-center px-4 py-3 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)]">
-                  <Search className="h-5 w-5 text-white mr-3" />
-                  <h3 className="text-white font-['Playfair_Display'] font-bold text-lg">
+                <div className="flex items-center px-4 py-3 bg-white/10">
+                  <Search className="h-5 w-5 text-amber-800 mr-3" />
+                  <h3 className="text-amber-900 font-bold text-lg">
                     Search Products
                   </h3>
                   <button
@@ -476,7 +431,7 @@ export function Navbar() {
                     onClick={() => setIsSearchExpanded(false)}
                     className="ml-auto p-1 rounded-full hover:bg-white/20 transition-colors"
                   >
-                    <X className="h-5 w-5 text-white" />
+                    <X className="h-5 w-5 text-amber-800" />
                   </button>
                 </div>
                 <div className="p-4">
@@ -484,7 +439,7 @@ export function Navbar() {
                     ref={searchInputRef}
                     type="search"
                     placeholder="Search supplements..."
-                    className="w-full px-4 py-3 border-2 border-[var(--galaxy-royal-gold)]/30 focus:border-[var(--galaxy-deep-red)] rounded-xl text-lg bg-white/80 backdrop-blur-sm font-['Lora']"
+                    className="w-full px-4 py-3 border-2 border-white/30 focus:border-white/50 rounded-xl text-lg bg-white/20 backdrop-blur-sm text-amber-900 placeholder:text-amber-700"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoComplete="off"
@@ -495,13 +450,13 @@ export function Navbar() {
                       type="button"
                       variant="outline"
                       onClick={() => setIsSearchExpanded(false)}
-                      className="px-6 py-2 border-[var(--galaxy-ash-gray)] text-[var(--galaxy-dark-charcoal)] hover:bg-[var(--galaxy-ash-gray)] font-['Poppins']"
+                      className="px-6 py-2 border-white/30 text-amber-800 hover:bg-white/20 bg-white/10 backdrop-blur-sm"
                     >
                       Cancel
                     </Button>
                     <Button
                       type="submit"
-                      className="px-6 py-2 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white hover:shadow-lg transition-all duration-300 font-['Poppins']"
+                      className="px-6 py-2 bg-white/30 backdrop-blur-md text-amber-900 hover:bg-white/40 transition-all duration-300 font-semibold border border-white/40"
                     >
                       Search
                     </Button>
@@ -517,7 +472,6 @@ export function Navbar() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -526,32 +480,29 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
-            {/* Mobile Menu Panel */}
             <motion.div
               initial={{ opacity: 0, x: "100%" }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed inset-y-0 right-0 z-50 w-80 bg-white/95 backdrop-blur-xl shadow-2xl border-l border-[var(--galaxy-royal-gold)]/20 overflow-y-auto"
+              className="lg:hidden fixed inset-y-0 right-0 z-50 w-80 bg-white/20 backdrop-blur-xl shadow-2xl border-l border-white/30 overflow-y-auto"
             >
               <div className="flex flex-col h-full">
-                {/* Mobile Header */}
-                <div className="bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] p-4">
+                <div className="bg-white/10 backdrop-blur-md p-4 border-b border-white/20">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-white/90 rounded-xl flex items-center justify-center">
-                        <Sparkles className="h-6 w-6 text-[var(--galaxy-deep-red)]" />
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                        <Crown className="h-6 w-6 text-amber-800" />
                       </div>
                       <div>
-                        <h2 className="text-white font-['Playfair_Display'] font-bold text-xl">
+                        <h2 className="text-amber-900 font-bold text-xl">
                           Galaxy Labs™
                         </h2>
-                        <div className="w-full h-0.5 bg-gradient-to-r from-white to-transparent rounded-full"></div>
                       </div>
                     </div>
                     <button
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="p-2 text-white hover:bg-white/20 rounded-xl transition-colors"
+                      className="p-2 text-amber-800 hover:bg-white/20 rounded-xl transition-colors"
                     >
                       <X className="h-6 w-6" />
                     </button>
@@ -559,9 +510,8 @@ export function Navbar() {
                 </div>
 
                 <div className="flex-1 p-4 space-y-6">
-                  {/* Navigation Links */}
                   <div>
-                    <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                    <h3 className="font-bold text-amber-900 text-lg mb-4">
                       Navigation
                     </h3>
                     <div className="space-y-2">
@@ -574,10 +524,10 @@ export function Navbar() {
                         >
                           <Link
                             href={item.href}
-                            className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                            className="flex items-center p-3 rounded-xl hover:bg-white/20 transition-all duration-300 group"
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                            <span className="font-medium text-amber-800 group-hover:text-amber-900 transition-colors">
                               {item.name}
                             </span>
                           </Link>
@@ -586,9 +536,8 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  {/* Categories */}
                   <div>
-                    <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                    <h3 className="font-bold text-amber-900 text-lg mb-4">
                       Categories
                     </h3>
                     <div className="space-y-2">
@@ -596,10 +545,10 @@ export function Navbar() {
                         <Link
                           key={category.id}
                           href={`/category/${category.slug}`}
-                          className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                          className="flex items-center p-3 rounded-xl hover:bg-white/20 transition-all duration-300 group"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
-                          <span className="font-['Poppins'] text-sm text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                          <span className="text-sm text-amber-800 group-hover:text-amber-900 transition-colors">
                             {category.name}
                           </span>
                         </Link>
@@ -607,10 +556,9 @@ export function Navbar() {
                     </div>
                   </div>
 
-                  {/* Account Section */}
                   {isAuthenticated ? (
-                    <div className="border-t border-[var(--galaxy-ash-gray)] pt-4">
-                      <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-lg mb-4">
+                    <div className="border-t border-white/20 pt-4">
+                      <h3 className="font-bold text-amber-900 text-lg mb-4">
                         My Account
                       </h3>
                       <div className="space-y-2">
@@ -630,13 +578,13 @@ export function Navbar() {
                           <Link
                             key={item.href}
                             href={item.href}
-                            className="flex items-center p-3 rounded-xl hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/5 hover:to-[var(--galaxy-royal-gold)]/5 transition-all duration-300 group"
+                            className="flex items-center p-3 rounded-xl hover:bg-white/20 transition-all duration-300 group"
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
                             <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
                               {item.icon}
                             </span>
-                            <span className="font-['Poppins'] font-medium text-[var(--galaxy-dark-charcoal)] group-hover:text-[var(--galaxy-deep-red)] transition-colors">
+                            <span className="font-medium text-amber-800 group-hover:text-amber-900 transition-colors">
                               {item.label}
                             </span>
                           </Link>
@@ -646,27 +594,25 @@ export function Navbar() {
                             handleLogout();
                             setIsMobileMenuOpen(false);
                           }}
-                          className="w-full flex items-center p-3 text-[var(--galaxy-deep-red)] hover:bg-gradient-to-r hover:from-[var(--galaxy-deep-red)]/10 hover:to-[var(--galaxy-deep-red)]/5 transition-all duration-300 rounded-xl group"
+                          className="w-full flex items-center p-3 text-amber-800 hover:bg-white/20 transition-all duration-300 rounded-xl group"
                         >
                           <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
                             🚪
                           </span>
-                          <span className="font-['Poppins'] font-medium">
-                            Logout
-                          </span>
+                          <span className="font-medium">Logout</span>
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <div className="border-t border-[var(--galaxy-ash-gray)] pt-4">
-                      <div className="text-center p-4 bg-gradient-to-br from-[var(--galaxy-deep-red)]/5 to-[var(--galaxy-royal-gold)]/5 rounded-2xl">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <Sparkles className="h-8 w-8 text-white" />
+                    <div className="border-t border-white/20 pt-4">
+                      <div className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
+                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                          <Crown className="h-8 w-8 text-amber-800" />
                         </div>
-                        <h3 className="font-['Playfair_Display'] font-bold text-[var(--galaxy-deep-red)] text-xl mb-2">
+                        <h3 className="font-bold text-amber-900 text-xl mb-2">
                           Join Galaxy Labs!
                         </h3>
-                        <p className="text-[var(--galaxy-dark-charcoal)]/70 text-sm font-['Lora'] mb-4">
+                        <p className="text-amber-800 text-sm mb-4">
                           Unlock exclusive deals and premium features
                         </p>
                         <div className="space-y-3">
@@ -674,7 +620,7 @@ export function Navbar() {
                             href="/login"
                             onClick={() => setIsMobileMenuOpen(false)}
                           >
-                            <Button className="w-full py-3 bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] text-white rounded-xl font-['Poppins'] font-bold shadow-lg hover:shadow-xl transition-all duration-300">
+                            <Button className="w-full py-3 bg-white/30 backdrop-blur-md text-amber-900 rounded-xl font-bold shadow-lg hover:bg-white/40 transition-all duration-300 border border-white/40">
                               Login
                             </Button>
                           </Link>
@@ -684,7 +630,7 @@ export function Navbar() {
                           >
                             <Button
                               variant="outline"
-                              className="w-full py-3 border-2 border-[var(--galaxy-deep-red)] text-[var(--galaxy-deep-red)] hover:bg-[var(--galaxy-deep-red)] hover:text-white rounded-xl font-['Poppins'] font-bold transition-all duration-300"
+                              className="w-full py-3 border-2 border-white/40 text-amber-800 hover:bg-white/20 bg-white/10 backdrop-blur-sm rounded-xl font-bold transition-all duration-300"
                             >
                               Register
                             </Button>
@@ -702,45 +648,3 @@ export function Navbar() {
     </>
   );
 }
-
-// NavTab Component for Desktop Navigation
-const NavTab = ({ children, href, setPosition, isActive, onClick }) => {
-  const ref = useRef(null);
-
-  return (
-    <motion.li
-      ref={ref}
-      onMouseEnter={() => {
-        if (!ref.current) return;
-
-        const { width } = ref.current.getBoundingClientRect();
-        setPosition({
-          width,
-          opacity: 1,
-          left: ref.current.offsetLeft,
-        });
-      }}
-      onClick={onClick}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className={`relative z-10 block cursor-pointer px-4 py-2 text-lg text-white transition-colors font-galaxy-heading hover:text-[var(--galaxy-royal-gold)] ${
-        isActive ? "font-medium" : "font-normal"
-      }`}
-    >
-      <Link href={href} className="flex items-center">
-        <span>{children}</span>
-      </Link>
-    </motion.li>
-  );
-};
-
-// NavCursor Component for Hover Effect
-const NavCursor = ({ position }) => {
-  return (
-    <motion.div
-      animate={position}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="absolute z-0 h-10 rounded-full bg-gradient-to-r from-[var(--galaxy-deep-red)] to-[var(--galaxy-royal-gold)] shadow-[0_0_10px_rgba(170,46,46,0.3)]"
-    />
-  );
-};
