@@ -13,19 +13,19 @@ export default defineConfig({
   },
   // Add the preview configuration for production builds
   preview: {
-    port: 4173,
+    port: 4178,
     host: "0.0.0.0",
     allowedHosts: [
-      "admin.genuinenutrition.com",
-      "www.admin.genuinenutrition.com",
+      "admin.usagalaxylabs.com",
+      "www.admin.usagalaxylabs.com",
     ],
   },
   // Add server configuration for development
   server: {
     host: "0.0.0.0",
     allowedHosts: [
-      "admin.genuinenutrition.com",
-      "www.admin.genuinenutrition.com",
+      "admin.usagalaxylabs.com",
+      "www.admin.usagalaxylabs.com",
     ],
   },
 });

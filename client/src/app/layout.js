@@ -51,7 +51,11 @@ export const metadata = {
     "Get high-quality supplements at the best prices. Free shipping on orders over ₹999. Galaxy Labs™ - Your trusted partner in fitness and nutrition.",
   keywords: "supplements, fitness, nutrition, Galaxy Labs, protein, vitamins",
   author: "Galaxy Labs™",
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }) {
