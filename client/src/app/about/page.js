@@ -28,7 +28,7 @@ export default function AboutPage() {
             🏆 India&apos;s Most Trusted Nutrition Brand
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-primary">
-            About GenuineNutrition
+            About GalaxyLabs
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
             Transforming lives through premium nutritional supplements, backed
@@ -64,11 +64,11 @@ export default function AboutPage() {
                 <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
                   <p>
                     <strong className="text-primary">Founded in 2015</strong>,
-                    GenuineNutrition was born from a personal struggle with
-                    finding authentic, effective supplements in the Indian
-                    market. Our founder, Rahul Sharma, after years of
-                    disappointment with substandard products, decided to create
-                    the change he wanted to see.
+                    GalaxyLabs was born from a personal struggle with finding
+                    authentic, effective supplements in the Indian market. Our
+                    founder, Rahul Sharma, after years of disappointment with
+                    substandard products, decided to create the change he wanted
+                    to see.
                   </p>
                   <p>
                     What started as a small operation in a garage has now grown
@@ -113,7 +113,7 @@ export default function AboutPage() {
                 <div className="relative h-[500px] overflow-hidden shadow">
                   <Image
                     src="/images/about-story.jpg"
-                    alt="GenuineNutrition founder and manufacturing facility"
+                    alt="GalaxyLabs founder and manufacturing facility"
                     fill
                     sizes="(max-width: 768px) 100vw, 600px"
                     className="object-cover"

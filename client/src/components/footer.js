@@ -20,13 +20,13 @@ export function Footer() {
       {/* Main footer content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* About GenuineNutrition */}
+          {/* About GalaxyLabs */}
           <div className="lg:col-span-2">
             <div className="mb-8">
               <div className="relative h-16 w-32 mb-6">
                 <Image
                   src="/logo.png"
-                  alt="GenuineNutrition Logo"
+                  alt="GalaxyLabs Logo"
                   fill
                   className="object-contain"
                 />
@@ -75,22 +75,22 @@ export function Footer() {
               {[
                 {
                   icon: <Instagram size={20} />,
-                  href: "https://instagram.com/genuinenutrition",
+                  href: "https://instagram.com/GalaxyLabs",
                   label: "Instagram",
                 },
                 {
                   icon: <Facebook size={20} />,
-                  href: "https://facebook.com/genuinenutrition",
+                  href: "https://facebook.com/GalaxyLabs",
                   label: "Facebook",
                 },
                 {
                   icon: <Twitter size={20} />,
-                  href: "https://twitter.com/genuinenutrition",
+                  href: "https://twitter.com/GalaxyLabs",
                   label: "Twitter",
                 },
                 {
                   icon: <Youtube size={20} />,
-                  href: "https://youtube.com/genuinenutrition",
+                  href: "https://youtube.com/GalaxyLabs",
                   label: "YouTube",
                 },
               ].map((social, idx) => (
@@ -171,7 +171,7 @@ export function Footer() {
             <div className="flex items-center">
               <Heart className="h-5 w-5 text-primary mr-2" />
               <div className="text-gray-600 text-sm">
-                © 2025 GenuineNutrition | All Rights Reserved
+                © 2025 GalaxyLabs | All Rights Reserved
               </div>
             </div>
 

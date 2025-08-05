@@ -131,7 +131,7 @@ const TestimonialsSection = () => {
               name: "Yatharth S.",
               role: "Bodybuilding Gold Medalist",
               quote:
-                "Genuine Nutrition products are always authentic and delivery is super quick. Highly recommended!",
+                "Galaxy Labs products are always authentic and delivery is super quick. Highly recommended!",
               rating: 5,
               verified: true,
             },
@@ -158,7 +158,7 @@ const TestimonialsSection = () => {
               name: "Amit K.",
               role: "Gym Trainer",
               quote:
-                "My clients and I both use Genuine Nutrition. Great results every time.",
+                "My clients and I both use Galaxy Labs. Great results every time.",
               rating: 5,
               verified: true,
             },
@@ -190,7 +190,7 @@ const TestimonialsSection = () => {
             name: "Yatharth S.",
             role: "Bodybuilding Gold Medalist",
             quote:
-              "Genuine Nutrition products are always authentic and delivery is super quick. Highly recommended!",
+              "Galaxy Labs products are always authentic and delivery is super quick. Highly recommended!",
             rating: 5,
             verified: true,
           },
@@ -217,7 +217,7 @@ const TestimonialsSection = () => {
             name: "Amit K.",
             role: "Gym Trainer",
             quote:
-              "My clients and I both use Genuine Nutrition. Great results every time.",
+              "My clients and I both use Galaxy Labs. Great results every time.",
             rating: 5,
             verified: true,
           },

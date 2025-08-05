@@ -247,7 +247,7 @@ export default function CheckoutPage() {
           key: razorpayKey,
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency,
-          name: "Genuine Nutrition - Premium Supplements for Your Fitness Journey",
+          name: "Galaxy Labs - Premium Supplements for Your Fitness Journey",
           description: "Get high-quality supplements at the best prices.",
           order_id: razorpayOrder.id,
           prefill: {

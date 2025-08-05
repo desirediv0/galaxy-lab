@@ -115,7 +115,7 @@ export const getVerificationTemplate = (verificationLink) => `
             </div>
         </div>
         <div class="footer">
-            © ${new Date().getFullYear()} GenuineNutrition | Premium Health Supplements<br>
+            © ${new Date().getFullYear()} GalaxyLabs | Premium Health Supplements<br>
             This is an automated message. Please do not reply to this email.
         </div>
     </div>
@@ -352,7 +352,7 @@ export const getResetTemplate = (resetLink) => `
             <p>This link will expire in 15 minutes for security reasons.</p>
         </div>
         <div class="footer">
-            © ${new Date().getFullYear()} GenuineNutrition | Premium Health Supplements<br>
+            © ${new Date().getFullYear()} GalaxyLabs | Premium Health Supplements<br>
             This is an automated message. Please do not reply to this email.
         </div>
     </div>

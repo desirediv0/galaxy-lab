@@ -58,9 +58,7 @@ export default function LoginPage() {
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-200">
-                Genuine Nutrition
-              </h1>
+              <h1 className="text-xl font-bold text-gray-200">Galaxy Labs</h1>
               <p className="text-sm text-gray-500">Admin Portal</p>
             </div>
           </div>
@@ -70,7 +68,7 @@ export default function LoginPage() {
         <div className="flex-1 relative group overflow-hidden cursor-pointer">
           <img
             src={loginbg}
-            alt="Genuine Nutrition - Premium Supplements"
+            alt="Galaxy Labs - Premium Supplements"
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
 
@@ -81,7 +79,7 @@ export default function LoginPage() {
           <div className="absolute inset-0 flex items-center justify-center p-8 text-white">
             <div className="text-center max-w-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold mb-4 opacity-90 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                Genuine Nutrition
+                Galaxy Labs
               </h2>
               <p className="text-lg lg:text-xl opacity-80 group-hover:opacity-100 transition-opacity duration-300 delay-200 leading-relaxed">
                 Premium Supplements for Your Fitness Journey
@@ -121,7 +119,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-800">
-                  Genuine Nutrition
+                  Galaxy Labs
                 </h1>
                 <p className="text-sm text-gray-600">Admin Portal</p>
               </div>
@@ -214,7 +212,7 @@ export default function LoginPage() {
           {/* Footer */}
           <div className="text-center pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500">
-              © 2025 Genuine Nutrition. All rights reserved.
+              © 2025 Galaxy Labs. All rights reserved.
             </p>
             <p className="text-xs text-gray-400 mt-1">
               Secure admin access portal

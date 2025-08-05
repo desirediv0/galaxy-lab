@@ -206,7 +206,7 @@ export default function ContactPage() {
                     <div>
                       <p className="font-medium">Email</p>
                       <p className="text-gray-600">
-                        {"support@GenuineNutrition.com"}
+                        {"support@GalaxyLabs.com"}
                       </p>
                     </div>
                   </div>
@@ -217,7 +217,7 @@ export default function ContactPage() {
                 <h3 className="text-xl font-bold mb-4">Follow Us</h3>
                 <div className="flex space-x-4">
                   <a
-                    href={"https://facebook.com/GenuineNutrition"}
+                    href={"https://facebook.com/GalaxyLabs"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-white p-3 text-primary hover:bg-primary hover:text-white transition-colors"
@@ -226,7 +226,7 @@ export default function ContactPage() {
                     <Facebook className="h-5 w-5" />
                   </a>
                   <a
-                    href={"https://instagram.com/GenuineNutrition"}
+                    href={"https://instagram.com/GalaxyLabs"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-white p-3 text-primary hover:bg-primary hover:text-white transition-colors"
@@ -235,7 +235,7 @@ export default function ContactPage() {
                     <Instagram className="h-5 w-5" />
                   </a>
                   <a
-                    href={"https://twitter.com/GenuineNutrition"}
+                    href={"https://twitter.com/GalaxyLabs"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-white p-3 text-primary hover:bg-primary hover:text-white transition-colors"
@@ -253,7 +253,7 @@ export default function ContactPage() {
             <div className="bg-gray-50 overflow-hidden h-[400px] mb-4">
               <iframe
                 src={`https://maps.google.com/maps?q=${28.4423},${77.0493}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
-                title="GenuineNutrition Location"
+                title="GalaxyLabs Location"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
