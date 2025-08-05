@@ -48,6 +48,7 @@ export function Navbar() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [categories, setCategories] = useState([]);
+  const [isBottomMenuOpen, setIsBottomMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
   const searchInputRef = useRef(null);
@@ -72,6 +73,7 @@ export function Navbar() {
       setIsProfileDropdownOpen(false);
       setIsCategoriesDropdownOpen(false);
       setIsSearchExpanded(false);
+      setIsBottomMenuOpen(false);
     };
 
     handleRouteChange();
@@ -488,7 +490,7 @@ export function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+              className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 h-[85vh]"
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
@@ -497,7 +499,7 @@ export function Navbar() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed inset-y-0 right-0 z-50 w-80 bg-white shadow-2xl border-l border-gray-200 overflow-y-auto"
+              className="lg:hidden fixed inset-y-0 right-0 h-[85vh] z-50 w-80 bg-white shadow-2xl border-l border-gray-200 overflow-y-auto"
             >
               <div className="flex flex-col h-full">
                 <div className="bg-gray-50 p-4 border-b border-gray-200">
@@ -640,12 +642,14 @@ export function Navbar() {
       </AnimatePresence>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
-        <div className="grid grid-cols-4 gap-1">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
+        <div className="grid grid-cols-5 gap-1 p-2">
           <Link
             href="/"
-            className={`flex flex-col items-center justify-center py-2 px-1 ${
-              pathname === "/" ? "text-primary" : "text-gray-600"
+            className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 ${
+              pathname === "/"
+                ? "text-amber-600 bg-amber-50"
+                : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
             }`}
           >
             <svg
@@ -657,28 +661,53 @@ export function Navbar() {
             >
               <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
             </svg>
-            <span className="text-xs mt-1">Home</span>
+            <span className="text-xs mt-1 font-medium">Home</span>
           </Link>
 
           <Link
-            href={isAuthenticated ? "/account" : "/login"}
-            className={`flex flex-col items-center justify-center py-2 px-1 ${
-              pathname.includes("/account") || pathname === "/login"
-                ? "text-primary"
-                : "text-gray-600"
+            href="/products"
+            className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 ${
+              pathname === "/products"
+                ? "text-amber-600 bg-amber-50"
+                : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
             }`}
           >
-            {isAuthenticated ? (
-              <User className="h-6 w-6" />
-            ) : (
-              <LogIn className="h-6 w-6" />
+            <svg
+              className="h-6 w-6"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+            <span className="text-xs mt-1 font-medium">Products</span>
+          </Link>
+
+          <Link
+            href="/cart"
+            className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 relative ${
+              pathname === "/cart"
+                ? "text-amber-600 bg-amber-50"
+                : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
+            }`}
+          >
+            <ShoppingCart className="h-6 w-6" />
+            {cart && cart.items?.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center font-bold">
+                {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
+              </span>
             )}
-            <span className="text-xs mt-1">You</span>
+            <span className="text-xs mt-1 font-medium">Cart</span>
           </Link>
 
           <button
-            onClick={() => setIsMenuOpen(true)}
-            className="flex flex-col items-center justify-center py-2 px-1 text-gray-600 w-full"
+            onClick={() => setIsBottomMenuOpen(true)}
+            className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 ${
+              isBottomMenuOpen
+                ? "text-amber-600 bg-amber-50"
+                : "text-gray-600 hover:text-amber-600 hover:bg-gray-50"
+            }`}
           >
             <svg
               className="h-6 w-6"
@@ -689,7 +718,7 @@ export function Navbar() {
             >
               <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <span className="text-xs mt-1">More</span>
+            <span className="text-xs mt-1 font-medium">More</span>
           </button>
 
           <motion.a
@@ -698,7 +727,7 @@ export function Navbar() {
             rel="noopener noreferrer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="flex flex-col items-center justify-center  px-1"
+            className="flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 hover:bg-gray-50"
           >
             <Image
               src={logo}
@@ -710,6 +739,212 @@ export function Navbar() {
           </motion.a>
         </div>
       </div>
+
+      {/* Bottom Menu Overlay */}
+      <AnimatePresence>
+        {isBottomMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              onClick={() => setIsBottomMenuOpen(false)}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, y: "100%" }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl shadow-2xl border-t border-gray-200 overflow-hidden"
+              style={{ maxHeight: "80vh" }}
+            >
+              <div className="flex flex-col">
+                {/* Top Close Button */}
+                <div className="flex justify-end p-3">
+                  <button
+                    onClick={() => setIsBottomMenuOpen(false)}
+                    className="p-3 rounded-full bg-red-100 hover:bg-red-200 transition-colors shadow-lg"
+                  >
+                    <X className="h-6 w-6 text-red-600" />
+                  </button>
+                </div>
+
+                {/* Handle */}
+                <div className="flex justify-center pt-1 pb-3">
+                  <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                </div>
+
+                {/* Close Text */}
+                <div className="text-center pb-3">
+                  <span className="text-sm text-gray-500 font-medium">
+                    Tap X to close menu
+                  </span>
+                </div>
+
+                <div className="px-6 pb-8 space-y-6">
+                  {/* Quick Actions */}
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg mb-4">
+                      Quick Actions
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href="/wishlist"
+                        onClick={() => setIsBottomMenuOpen(false)}
+                        className="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:bg-amber-50 transition-all duration-300 group"
+                      >
+                        <Heart className="h-8 w-8 text-gray-600 group-hover:text-amber-600 mb-2" />
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-amber-600">
+                          Wishlist
+                        </span>
+                      </Link>
+
+                      <Link
+                        href="/categories"
+                        onClick={() => setIsBottomMenuOpen(false)}
+                        className="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:bg-amber-50 transition-all duration-300 group"
+                      >
+                        <svg
+                          className="h-8 w-8 text-gray-600 group-hover:text-amber-600 mb-2"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        <span className="text-sm font-medium text-gray-700 group-hover:text-amber-600">
+                          Categories
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg mb-4">
+                      Navigation
+                    </h3>
+                    <div className="space-y-2">
+                      {menuItems.map((item) => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          onClick={() => setIsBottomMenuOpen(false)}
+                          className="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 group"
+                        >
+                          <span className="font-medium text-gray-700 group-hover:text-amber-600 transition-colors">
+                            {item.name}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Account Section */}
+                  {isAuthenticated ? (
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-lg mb-4">
+                        My Account
+                      </h3>
+                      <div className="space-y-2">
+                        {[
+                          { href: "/account", label: "Profile", icon: "👤" },
+                          {
+                            href: "/account/orders",
+                            label: "My Orders",
+                            icon: "📦",
+                          },
+                          {
+                            href: "/wishlist",
+                            label: "My Wishlist",
+                            icon: "❤️",
+                          },
+                        ].map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsBottomMenuOpen(false)}
+                            className="flex items-center p-3 rounded-xl hover:bg-gray-50 transition-all duration-300 group"
+                          >
+                            <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                              {item.icon}
+                            </span>
+                            <span className="font-medium text-gray-700 group-hover:text-amber-600 transition-colors">
+                              {item.label}
+                            </span>
+                          </Link>
+                        ))}
+                        <button
+                          onClick={() => {
+                            handleLogout();
+                            setIsBottomMenuOpen(false);
+                          }}
+                          className="w-full flex items-center p-3 text-gray-700 hover:bg-gray-50 transition-all duration-300 rounded-xl group"
+                        >
+                          <span className="text-lg mr-3 group-hover:scale-125 transition-transform duration-300">
+                            🚪
+                          </span>
+                          <span className="font-medium">Logout</span>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-lg mb-4">
+                        Account
+                      </h3>
+                      <div className="space-y-3">
+                        <Link
+                          href="/login"
+                          onClick={() => setIsBottomMenuOpen(false)}
+                        >
+                          <Button className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold">
+                            Login
+                          </Button>
+                        </Link>
+                        <Link
+                          href="/register"
+                          onClick={() => setIsBottomMenuOpen(false)}
+                        >
+                          <Button
+                            variant="outline"
+                            className="w-full py-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-700 rounded-xl font-bold"
+                          >
+                            Register
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Contact Info */}
+                  <div className="pt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-center space-x-4">
+                      <a
+                        href="tel:+1234567890"
+                        className="flex items-center space-x-2 text-gray-600 hover:text-amber-600 transition-colors"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span className="text-sm">Call Us</span>
+                      </a>
+                      <a
+                        href="mailto:support@galaxylabs.com"
+                        className="flex items-center space-x-2 text-gray-600 hover:text-amber-600 transition-colors"
+                      >
+                        <Mail className="h-4 w-4" />
+                        <span className="text-sm">Email</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 }

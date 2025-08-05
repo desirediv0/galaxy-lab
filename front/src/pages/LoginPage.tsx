@@ -54,7 +54,7 @@ export default function LoginPage() {
         {/* Brand Logo/Title */}
         <div className="absolute top-6 left-6 z-20">
           <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0160A8]">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#DB7D06]">
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -86,7 +86,7 @@ export default function LoginPage() {
               </p>
 
               {/* Decorative Line */}
-              <div className="w-24 h-1 bg-[#0160A8] mx-auto mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-300"></div>
+              <div className="w-24 h-1 bg-[#DB7D06] mx-auto mt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-300"></div>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export default function LoginPage() {
           {/* Bottom Corner Accent */}
           <div className="absolute bottom-8 left-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
             <div className="flex items-center space-x-2 text-white/80">
-              <div className="w-2 h-2 bg-[#0160A8] rounded-full"></div>
+              <div className="w-2 h-2 bg-[#DB7D06] rounded-full"></div>
               <span className="text-sm font-medium">Admin Access</span>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
           {/* Mobile Brand Header */}
           <div className="lg:hidden text-center mb-8">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#0160A8]">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#DB7D06]">
                 <Package className="h-7 w-7 text-white" />
               </div>
               <div>
@@ -129,7 +129,7 @@ export default function LoginPage() {
           {/* Login Form Header */}
           <div className="text-center space-y-2">
             <div className="hidden lg:flex lg:justify-center lg:mb-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#0160A8]">
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#DB7D06]">
                 <Shield className="h-7 w-7 text-white" />
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-base bg-[#0160A8] hover:bg-[#0160A8]/90 focus:ring-[#0160A8] cursor-pointer"
+              className="w-full h-12 text-base bg-[#DB7D06] hover:bg-[#DB7D06]/90 focus:ring-[#DB7D06] cursor-pointer"
               disabled={isSubmitting || isLoading}
             >
               {isSubmitting ? (
