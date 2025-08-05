@@ -542,7 +542,7 @@ export default function ProductContent({ slug }) {
   // Display loading state
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex flex-col items-center justify-center h-64">
           <div className="w-16 h-16 border-4 border-primary border-t-transparent animate-spin mb-6"></div>
           <p className="text-gray-600 text-lg">Loading product details...</p>
@@ -554,7 +554,7 @@ export default function ProductContent({ slug }) {
   // Display error state
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-red-50 p-6 shadow-sm border border-red-200 flex flex-col items-center text-center">
           <AlertCircle className="text-red-500 h-12 w-12 mb-4" />
           <h2 className="text-2xl font-semibold text-red-700 mb-2">
@@ -574,7 +574,7 @@ export default function ProductContent({ slug }) {
   // If product not found
   if (!product) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-yellow-50 p-6 shadow-sm border border-yellow-200 flex flex-col items-center text-center">
           <AlertCircle className="text-yellow-500 h-12 w-12 mb-4" />
           <h2 className="text-2xl font-semibold text-yellow-700 mb-2">
@@ -595,7 +595,7 @@ export default function ProductContent({ slug }) {
 
   // Updated render code for the product image carousel
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Breadcrumbs */}
       <div className="flex items-center text-sm mb-8">
         <Link href="/" className="text-gray-500 hover:text-primary">

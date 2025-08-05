@@ -71,7 +71,7 @@ export default function RootLayout({ children }) {
         <meta name="msapplication-TileColor" content="#D32F2F" />
       </head>
       <body
-        className={`${jostFont.variable} ${poppinsFont.variable} ${poppinsGoogle.variable} ${openSans.variable} ${quicksand.variable} font-galaxy-body antialiased bg-galaxy-cream text-galaxy-text-dark`}
+        className={`${jostFont.variable} ${poppinsFont.variable} ${poppinsGoogle.variable} ${openSans.variable} ${quicksand.variable} antialiased bg-gray-50 text-galaxy-text-dark`}
       >
         <AuthProvider>
           <CartProvider>

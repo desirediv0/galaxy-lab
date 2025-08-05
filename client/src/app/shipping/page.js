@@ -28,7 +28,7 @@ export default function ShippingPolicyPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
-        <div className="container mx-auto px-4 py-12">
+        <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto">
             <Skeleton className="h-10 w-1/2 mx-auto mb-6" />
             <Skeleton className="h-5 w-full mb-2" />
@@ -51,7 +51,7 @@ export default function ShippingPolicyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-yellow-50">
       <main className="py-12 md:py-16">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             {/* Header Section */}
             <div className="text-center mb-12">

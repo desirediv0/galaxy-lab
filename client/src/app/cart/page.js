@@ -223,7 +223,7 @@ export default function CartPage() {
   // Display loading state
   if (loading && !cart.items.length) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
         <div className="flex justify-center items-center h-64">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
@@ -235,7 +235,7 @@ export default function CartPage() {
   // Display empty cart - but not when there's an error
   if ((!cart.items || cart.items.length === 0) && !error) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
         <div className="bg-white p-8 shadow-sm text-center border">
           <div className="inline-flex justify-center items-center bg-gray-100 p-6 mb-4">
@@ -254,7 +254,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Your Cart</h1>
 
       {/* Show general cart error as a banner if it exists */}

@@ -234,7 +234,7 @@ export default function CategoryPage() {
   // Loading state
   if (loading && !category) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
         </div>
@@ -245,7 +245,7 @@ export default function CategoryPage() {
   // Error state
   if (error && !category) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-red-50 p-4 flex items-start">
           <AlertCircle className="text-red-500 mr-3 mt-0.5" />
           <div>
@@ -260,7 +260,7 @@ export default function CategoryPage() {
   }
 
   return (
-    <>
+    <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Category header */}
       {category && (
         <div className="mb-10">
@@ -601,6 +601,6 @@ export default function CategoryPage() {
         open={quickViewOpen}
         onOpenChange={setQuickViewOpen}
       />
-    </>
+    </div>
   );
 }

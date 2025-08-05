@@ -117,16 +117,8 @@ export function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         className=" z-50 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-white text-center py-2 text-sm font-medium shadow-lg border-b border-amber-400"
       >
-        <div className="container mx-auto px-4 flex items-center justify-center gap-4">
-          <div className="flex items-center gap-2">
-            <Phone className="h-4 w-4" />
-            <span>+91 98765 43210</span>
-          </div>
-          <div className="hidden md:flex items-center gap-2">
-            <Mail className="h-4 w-4" />
-            <span>support@galaxylabs.com</span>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-4">
+          <div className="flex items-center gap-2 capitalize">
             <Star className="h-4 w-4 animate-pulse" />
             <span>
               Shop for ₹999+ and receive a scratch card with exciting rewards!
@@ -147,7 +139,7 @@ export function Navbar() {
             : "bg-white/90 backdrop-blur-lg border-b border-gray-100"
         }`}
       >
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <motion.div
@@ -392,7 +384,7 @@ export function Navbar() {
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center space-x-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all duration-300 font-medium shadow-md"
+                      className="md:flex hidden items-center space-x-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all duration-300 font-medium shadow-md"
                     >
                       <LogIn className="h-4 w-4" />
                       <span className="text-sm hidden md:inline">Login</span>
@@ -508,20 +500,7 @@ export function Navbar() {
             >
               <div className="flex flex-col h-full">
                 <div className="bg-gray-50 p-4 border-b border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                        <Crown className="h-6 w-6 text-amber-600" />
-                      </div>
-                      <div>
-                        <h2 className="text-gray-900 font-bold text-xl">
-                          Galaxy Labs™
-                        </h2>
-                        <p className="text-sm text-gray-600">
-                          Premium Supplements
-                        </p>
-                      </div>
-                    </div>
+                  <div className="flex items-center justify-end">
                     <button
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="p-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
@@ -628,15 +607,6 @@ export function Navbar() {
                   ) : (
                     <div className="border-t border-gray-200 pt-4">
                       <div className="text-center p-4 bg-gray-50 rounded-2xl">
-                        <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                          <Crown className="h-8 w-8 text-amber-600" />
-                        </div>
-                        <h3 className="font-bold text-gray-900 text-xl mb-2">
-                          Join Galaxy Labs!
-                        </h3>
-                        <p className="text-gray-600 text-sm mb-4">
-                          Unlock exclusive deals and premium features
-                        </p>
                         <div className="space-y-3">
                           <Link
                             href="/login"
@@ -652,7 +622,7 @@ export function Navbar() {
                           >
                             <Button
                               variant="outline"
-                              className="w-full py-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl font-bold"
+                              className="w-full py-3 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-700 mt-2 rounded-xl font-bold"
                             >
                               Register
                             </Button>

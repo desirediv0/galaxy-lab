@@ -82,7 +82,7 @@ export default function FeaturesSection() {
       <div className="absolute inset-0 bg-[url('/api/placeholder/100/100')] bg-repeat opacity-5"></div>
 
       <motion.div
-        className="container mx-auto px-4 relative z-10"
+        className="max-w-7xl mx-auto px-4 relative z-10"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{ duration: 0.5 }}

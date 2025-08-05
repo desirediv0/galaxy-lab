@@ -4,13 +4,6 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
 export default function AboutPage() {
-  const stats = [
-    { label: "Happy Customers", value: "50,000+", icon: "👥" },
-    { label: "Products Sold", value: "2M+", icon: "📦" },
-    { label: "Years of Excellence", value: "9+", icon: "⭐" },
-    { label: "5-Star Reviews", value: "15,000+", icon: "⭐" },
-  ];
-
   const certifications = [
     "ISO 22000:2018 Certified",
     "FSSAI Licensed",
@@ -23,7 +16,7 @@ export default function AboutPage() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gray-50 py-20 md:py-32">
-        <div className="container mx-auto px-4 text-center">
+        <div className="max-w-7xl mx-auto px-4 text-center">
           <Badge variant="secondary" className="mb-6 text-sm font-medium">
             🏆 India&apos;s Most Trusted Nutrition Brand
           </Badge>
@@ -35,23 +28,12 @@ export default function AboutPage() {
             by science and trusted by fitness enthusiasts across India since
             2015.
           </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-2xl mb-1">{stat.icon}</div>
-                <div className="text-2xl md:text-3xl font-bold text-primary">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Our Story Section */}
-      <section className="py-20 md:py-28">
-        <div className="container mx-auto px-4">
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="order-2 lg:order-1">
@@ -142,16 +124,18 @@ export default function AboutPage() {
 
       {/* Mission & Vision */}
       <section className="bg-primary py-20 text-white">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-6xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-white">
               Our Mission & Vision
             </h2>
             <div className="grid md:grid-cols-2 gap-12">
-              <div className="bg-white/10 p-8">
+              <div className="bg-white/10 p-8 ">
                 <div className="text-4xl mb-4">🎯</div>
-                <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
-                <p className="text-lg opacity-90 leading-relaxed">
+                <h3 className="text-2xl font-bold mb-4 text-white">
+                  Our Mission
+                </h3>
+                <p className="text-lg opacity-90 leading-relaxed text-gray-300">
                   To democratize access to premium nutrition by providing
                   scientifically-backed, affordable supplements that help every
                   Indian achieve their fitness goals.
@@ -159,8 +143,10 @@ export default function AboutPage() {
               </div>
               <div className="bg-white/10 p-8">
                 <div className="text-4xl mb-4">🔮</div>
-                <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
-                <p className="text-lg opacity-90 leading-relaxed">
+                <h3 className="text-2xl font-bold mb-4 text-white">
+                  Our Vision
+                </h3>
+                <p className="text-lg opacity-90 leading-relaxed text-gray-300">
                   To become the most trusted nutrition brand globally, setting
                   new standards for quality, transparency, and customer
                   satisfaction in the wellness industry.
@@ -173,7 +159,7 @@ export default function AboutPage() {
 
       {/* Enhanced Values Section */}
       <section className="py-20 md:py-28 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <Badge variant="outline" className="mb-4">
@@ -291,7 +277,7 @@ export default function AboutPage() {
 
       {/* Certifications */}
       <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="max-w-6xl mx-auto text-center">
             <h2 className="text-2xl md:text-3xl font-bold mb-8 text-gray-900">
               Certified Excellence
@@ -307,27 +293,6 @@ export default function AboutPage() {
                 </Badge>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="bg-primary py-16 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Ready to Transform Your Nutrition Journey?
-          </h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join thousands of satisfied customers who have achieved their
-            fitness goals with our premium supplements.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-primary font-bold py-3 px-8 hover:bg-gray-100 transition-colors">
-              Shop Now
-            </button>
-            <button className="border-2 border-white text-white font-bold py-3 px-8 hover:bg-white hover:text-primary transition-colors">
-              Free Consultation
-            </button>
           </div>
         </div>
       </section>

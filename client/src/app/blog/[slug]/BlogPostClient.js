@@ -22,7 +22,7 @@ export default function BlogPostClient({ post, relatedPosts }) {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <Skeleton className="h-8 w-3/4 mb-4" />
           <Skeleton className="h-5 w-1/2 mb-8" />
@@ -43,7 +43,7 @@ export default function BlogPostClient({ post, relatedPosts }) {
 
   if (!postData) {
     return (
-      <div className="container mx-auto px-4 py-20 text-center">
+      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
         <h1 className="text-2xl font-bold mb-4">Blog Post Not Found</h1>
         <p className="mb-8 text-gray-600">
           The blog post you&apos;re looking for doesn&apos;t exist or has been
@@ -61,7 +61,7 @@ export default function BlogPostClient({ post, relatedPosts }) {
 
   return (
     <main className="pt-12 pb-20">
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           {/* Back to blog link */}
           <Link

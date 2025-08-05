@@ -122,7 +122,7 @@ export default function ChangePasswordPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-10 flex justify-center">
+      <div className="max-w-7xl mx-auto py-10 flex justify-center">
         <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -130,7 +130,7 @@ export default function ChangePasswordPage() {
 
   return (
     <ClientOnly>
-      <div className="container mx-auto py-10 px-4">
+      <div className="max-w-7xl mx-auto py-10 px-4">
         <div className="flex items-center mb-8">
           <Link
             href="/account"

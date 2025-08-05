@@ -7,17 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { fetchApi, formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Star,
-  Filter,
-  X,
-  ChevronDown,
-  ChevronUp,
-  ChevronRight,
-  AlertCircle,
-  Search,
-  Eye,
-} from "lucide-react";
+import { DynamicIcon } from "@/components/dynamic-icon";
 import { useCart } from "@/lib/cart-context";
 import ProductQuickView from "@/components/ProductQuickView";
 import { toast } from "sonner";
@@ -25,7 +15,7 @@ import { toast } from "sonner";
 // Product Card Skeleton
 function ProductCardSkeleton() {
   return (
-    <div className="bg-white shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+    <div className="bg-white shadow border border-gray-200 overflow-hidden animate-pulse">
       <div className="h-64 w-full bg-gray-200"></div>
       <div className="p-6">
         <div className="flex justify-center mb-3">
@@ -57,6 +47,9 @@ function ProductsContent() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
 
+  // Accordion state for filters
+  const [openFilter, setOpenFilter] = useState("search");
+
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [maxPossiblePrice, setMaxPossiblePrice] = useState(1000);
 
@@ -79,7 +72,6 @@ function ProductsContent() {
   });
 
   const { addToCart } = useCart();
-  const [debugMode, setDebugMode] = useState(false);
   const [selectedFlavors, setSelectedFlavors] = useState([]);
   const [selectedWeights, setSelectedWeights] = useState([]);
 
@@ -371,11 +363,15 @@ function ProductsContent() {
     setQuickViewOpen(true);
   };
 
+  const toggleFilter = (filterName) => {
+    setOpenFilter(openFilter === filterName ? null : filterName);
+  };
+
   if (loading && products.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
-          <div className="w-12 h-12 border-4 border-[#aa2e2e] border-t-transparent animate-spin"></div>
+          <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
         </div>
       </div>
     );
@@ -383,7 +379,7 @@ function ProductsContent() {
 
   return (
     <div className="bg-gray-50 py-16 min-h-screen">
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         {/* Hero Banner */}
         <div className="relative w-full h-[350px] mb-12 overflow-hidden">
           <Image
@@ -405,14 +401,14 @@ function ProductsContent() {
         </div>
 
         {/* Mobile filter toggle */}
-        <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 shadow-sm border border-gray-200">
-          <h1 className="text-2xl font-bold text-[#aa2e2e]">Products</h1>
+        <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 shadow border border-gray-200">
+          <h1 className="text-2xl font-bold text-primary">Products</h1>
           <Button
             variant="outline"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="flex items-center gap-2 border-[#aa2e2e] text-[#aa2e2e] hover:bg-[#aa2e2e] hover:text-white"
+            className="flex items-center gap-2 border-primary text-primary hover:bg-primary hover:text-white"
           >
-            <Filter className="h-5 w-5" />
+            <DynamicIcon name="Filter" className="h-5 w-5" />
             Filters
           </Button>
         </div>
@@ -426,13 +422,13 @@ function ProductsContent() {
                 : "hidden"
             } lg:block lg:static lg:z-auto lg:bg-transparent lg:p-0`}
           >
-            <div className="bg-white shadow-sm border border-gray-200 sticky top-20">
+            <div className="bg-white shadow border border-gray-200 sticky top-20">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-[#aa2e2e]">FILTERS</h2>
+                <h2 className="text-xl font-bold text-primary">FILTERS</h2>
                 <div className="flex gap-3">
                   <button
                     onClick={clearFilters}
-                    className="text-sm text-[#aa2e2e] hover:underline font-medium"
+                    className="text-sm text-primary hover:underline font-medium"
                   >
                     Clear all
                   </button>
@@ -440,193 +436,246 @@ function ProductsContent() {
                     className="lg:hidden text-gray-500"
                     onClick={() => setMobileFiltersOpen(false)}
                   >
-                    <X className="h-5 w-5" />
+                    <DynamicIcon name="X" className="h-5 w-5" />
                   </button>
                 </div>
               </div>
 
               {/* Search Filter */}
-              <div className="p-6 border-b border-gray-200">
-                <h3 className="text-sm font-semibold mb-3 text-[#aa2e2e] uppercase">
-                  Search
-                </h3>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const searchInput = e.target.elements.search.value;
-                    handleFilterChange("search", searchInput);
-                  }}
-                  className="relative"
+              <div className="border-b border-gray-200">
+                <button
+                  onClick={() => toggleFilter("search")}
+                  className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
-                  <Input
-                    name="search"
-                    placeholder="Search products..."
-                    defaultValue={filters.search}
-                    className="w-full pr-10 border-gray-300 focus:border-[#aa2e2e] focus:ring-[#aa2e2e]"
+                  <h3 className="text-sm font-semibold text-primary uppercase">
+                    Search
+                  </h3>
+                  <DynamicIcon
+                    name={openFilter === "search" ? "ChevronUp" : "ChevronDown"}
+                    className="h-4 w-4 text-gray-400"
                   />
-                  <button
-                    type="submit"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#aa2e2e] hover:text-gray-600"
-                  >
-                    <Search className="h-4 w-4" />
-                  </button>
-                </form>
+                </button>
+                {openFilter === "search" && (
+                  <div className="px-6 pb-6">
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const searchInput = e.target.elements.search.value;
+                        handleFilterChange("search", searchInput);
+                      }}
+                      className="relative"
+                    >
+                      <Input
+                        name="search"
+                        placeholder="Search products..."
+                        defaultValue={filters.search}
+                        className="w-full pr-10 border-gray-300 focus:border-primary focus:ring-primary"
+                      />
+                      <button
+                        type="submit"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-primary hover:text-gray-600"
+                      >
+                        <DynamicIcon name="Search" className="h-4 w-4" />
+                      </button>
+                    </form>
+                  </div>
+                )}
               </div>
 
               {/* Categories Filter */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
+              <div className="border-b border-gray-200">
+                <button
+                  onClick={() => toggleFilter("categories")}
+                  className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <h3 className="text-sm font-semibold text-primary uppercase">
                     Categories
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="space-y-3">
-                  <div
-                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
-                      filters.category === ""
-                        ? "font-semibold text-[#aa2e2e]"
-                        : "text-gray-600"
-                    }`}
-                    onClick={() => handleFilterChange("category", "")}
-                  >
-                    All Categories
-                  </div>
-                  {categories.map((category) => (
-                    <div key={category.id} className="ml-3">
+                  <DynamicIcon
+                    name={
+                      openFilter === "categories" ? "ChevronUp" : "ChevronDown"
+                    }
+                    className="h-4 w-4 text-gray-400"
+                  />
+                </button>
+                {openFilter === "categories" && (
+                  <div className="px-6 pb-6">
+                    <div className="space-y-3">
                       <div
-                        className={`cursor-pointer hover:text-[#aa2e2e] flex items-center transition-colors ${
-                          filters.category === category.slug
-                            ? "font-semibold text-[#aa2e2e]"
+                        className={`cursor-pointer hover:text-primary transition-colors ${
+                          filters.category === ""
+                            ? "font-semibold text-primary"
                             : "text-gray-600"
                         }`}
-                        onClick={() =>
-                          handleFilterChange("category", category.slug)
-                        }
+                        onClick={() => handleFilterChange("category", "")}
                       >
-                        <ChevronRight className="h-4 w-4 mr-1" />
-                        {category.name}
+                        All Categories
                       </div>
-                      {category.children && category.children.length > 0 && (
-                        <div className="ml-6 mt-2 space-y-2">
-                          {category.children.map((child) => (
-                            <div
-                              key={child.id}
-                              className={`cursor-pointer hover:text-[#aa2e2e] text-sm transition-colors ${
-                                filters.category === child.slug
-                                  ? "font-semibold text-[#aa2e2e]"
-                                  : "text-gray-600"
-                              }`}
-                              onClick={() =>
-                                handleFilterChange("category", child.slug)
-                              }
-                            >
-                              {child.name}
-                            </div>
-                          ))}
+                      {categories.map((category) => (
+                        <div key={category.id} className="ml-3">
+                          <div
+                            className={`cursor-pointer hover:text-primary flex items-center transition-colors ${
+                              filters.category === category.slug
+                                ? "font-semibold text-primary"
+                                : "text-gray-600"
+                            }`}
+                            onClick={() =>
+                              handleFilterChange("category", category.slug)
+                            }
+                          >
+                            <DynamicIcon
+                              name="ChevronRight"
+                              className="h-4 w-4 mr-1"
+                            />
+                            {category.name}
+                          </div>
+                          {category.children &&
+                            category.children.length > 0 && (
+                              <div className="ml-6 mt-2 space-y-2">
+                                {category.children.map((child) => (
+                                  <div
+                                    key={child.id}
+                                    className={`cursor-pointer hover:text-primary text-sm transition-colors ${
+                                      filters.category === child.slug
+                                        ? "font-semibold text-primary"
+                                        : "text-gray-600"
+                                    }`}
+                                    onClick={() =>
+                                      handleFilterChange("category", child.slug)
+                                    }
+                                  >
+                                    {child.name}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                         </div>
-                      )}
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Flavors Filter */}
-              <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
+              <div className="border-b border-gray-200">
+                <button
+                  onClick={() => toggleFilter("flavors")}
+                  className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <h3 className="text-sm font-semibold text-primary uppercase">
                     Flavor
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="space-y-3">
-                  <div
-                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
-                      selectedFlavors.length === 0
-                        ? "font-semibold text-[#aa2e2e]"
-                        : "text-gray-600"
-                    }`}
-                    onClick={() => {
-                      setSelectedFlavors([]);
-                      handleFilterChange("flavor", "");
-                    }}
-                  >
-                    All Flavors
-                  </div>
-
-                  {flavors.map((flavor) => (
-                    <div
-                      key={flavor.id}
-                      className={`cursor-pointer hover:text-[#aa2e2e] ml-3 flex items-center transition-colors ${
-                        selectedFlavors.includes(flavor.id)
-                          ? "font-semibold text-[#aa2e2e]"
-                          : "text-gray-600"
-                      }`}
-                      onClick={() => handleFlavorChange(flavor.id)}
-                    >
-                      <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
-                        {selectedFlavors.includes(flavor.id) && (
-                          <div className="w-2 h-2 bg-[#aa2e2e]"></div>
-                        )}
+                  <DynamicIcon
+                    name={
+                      openFilter === "flavors" ? "ChevronUp" : "ChevronDown"
+                    }
+                    className="h-4 w-4 text-gray-400"
+                  />
+                </button>
+                {openFilter === "flavors" && (
+                  <div className="px-6 pb-6">
+                    <div className="space-y-3">
+                      <div
+                        className={`cursor-pointer hover:text-primary transition-colors ${
+                          selectedFlavors.length === 0
+                            ? "font-semibold text-primary"
+                            : "text-gray-600"
+                        }`}
+                        onClick={() => {
+                          setSelectedFlavors([]);
+                          handleFilterChange("flavor", "");
+                        }}
+                      >
+                        All Flavors
                       </div>
-                      {flavor.image && (
-                        <div className="w-4 h-4 overflow-hidden mr-2">
-                          <Image
-                            src={flavor.image || "/placeholder.jpg"}
-                            alt={flavor.name}
-                            width={16}
-                            height={16}
-                          />
+
+                      {flavors.map((flavor) => (
+                        <div
+                          key={flavor.id}
+                          className={`cursor-pointer hover:text-primary ml-3 flex items-center transition-colors ${
+                            selectedFlavors.includes(flavor.id)
+                              ? "font-semibold text-primary"
+                              : "text-gray-600"
+                          }`}
+                          onClick={() => handleFlavorChange(flavor.id)}
+                        >
+                          <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
+                            {selectedFlavors.includes(flavor.id) && (
+                              <div className="w-2 h-2 bg-primary"></div>
+                            )}
+                          </div>
+                          {flavor.image && (
+                            <div className="w-4 h-4 overflow-hidden mr-2">
+                              <Image
+                                src={flavor.image || "/placeholder.jpg"}
+                                alt={flavor.name}
+                                width={16}
+                                height={16}
+                              />
+                            </div>
+                          )}
+                          {flavor.name}
                         </div>
-                      )}
-                      {flavor.name}
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Weights Filter */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
+              <div className="border-b border-gray-200">
+                <button
+                  onClick={() => toggleFilter("weights")}
+                  className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                >
+                  <h3 className="text-sm font-semibold text-primary uppercase">
                     Weight
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-gray-400" />
-                </div>
-                <div className="space-y-3">
-                  <div
-                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
-                      selectedWeights.length === 0
-                        ? "font-semibold text-[#aa2e2e]"
-                        : "text-gray-600"
-                    }`}
-                    onClick={() => {
-                      setSelectedWeights([]);
-                      handleFilterChange("weight", "");
-                    }}
-                  >
-                    All Weights
-                  </div>
-
-                  {weights.map((weight) => (
-                    <div
-                      key={weight.id}
-                      className={`cursor-pointer hover:text-[#aa2e2e] ml-3 flex items-center transition-colors ${
-                        selectedWeights.includes(weight.id)
-                          ? "font-semibold text-[#aa2e2e]"
-                          : "text-gray-600"
-                      }`}
-                      onClick={() => handleWeightChange(weight.id)}
-                    >
-                      <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
-                        {selectedWeights.includes(weight.id) && (
-                          <div className="w-2 h-2 bg-[#aa2e2e]"></div>
-                        )}
+                  <DynamicIcon
+                    name={
+                      openFilter === "weights" ? "ChevronUp" : "ChevronDown"
+                    }
+                    className="h-4 w-4 text-gray-400"
+                  />
+                </button>
+                {openFilter === "weights" && (
+                  <div className="px-6 pb-6">
+                    <div className="space-y-3">
+                      <div
+                        className={`cursor-pointer hover:text-primary transition-colors ${
+                          selectedWeights.length === 0
+                            ? "font-semibold text-primary"
+                            : "text-gray-600"
+                        }`}
+                        onClick={() => {
+                          setSelectedWeights([]);
+                          handleFilterChange("weight", "");
+                        }}
+                      >
+                        All Weights
                       </div>
-                      {weight.display}
+
+                      {weights.map((weight) => (
+                        <div
+                          key={weight.id}
+                          className={`cursor-pointer hover:text-primary ml-3 flex items-center transition-colors ${
+                            selectedWeights.includes(weight.id)
+                              ? "font-semibold text-primary"
+                              : "text-gray-600"
+                          }`}
+                          onClick={() => handleWeightChange(weight.id)}
+                        >
+                          <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
+                            {selectedWeights.includes(weight.id) && (
+                              <div className="w-2 h-2 bg-primary"></div>
+                            )}
+                          </div>
+                          {weight.display}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -634,18 +683,18 @@ function ProductsContent() {
           {/* Products Grid */}
           <div className="lg:w-3/4">
             {/* Header with count and sort */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 bg-white p-6 shadow-sm border border-gray-200">
-              <div className="text-[#aa2e2e] mb-4 sm:mb-0">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 bg-white p-6 shadow border border-gray-200">
+              <div className="text-primary mb-4 sm:mb-0">
                 {loading && !products.length ? (
                   <div className="h-6 w-32 bg-gray-200 animate-pulse"></div>
                 ) : (
                   <div className="text-lg">
                     Showing{" "}
-                    <span className="font-bold text-[#aa2e2e]">
+                    <span className="font-bold text-primary">
                       {products.length}
                     </span>{" "}
                     of{" "}
-                    <span className="font-bold text-[#aa2e2e]">
+                    <span className="font-bold text-primary">
                       {pagination.total || 0}
                     </span>{" "}
                     products
@@ -656,17 +705,17 @@ function ProductsContent() {
               <div className="flex items-center gap-4">
                 {loading && (
                   <div className="text-sm text-gray-500 flex items-center">
-                    <div className="w-4 h-4 border-2 border-[#b99b2f] border-t-transparent animate-spin mr-2"></div>
+                    <div className="animate-spin h-4 w-4 border-b-2 border-primary mr-2"></div>
                     Updating...
                   </div>
                 )}
 
                 <div className="flex items-center bg-gray-50 overflow-hidden border border-gray-200">
-                  <span className="px-4 py-2 text-sm font-medium text-[#aa2e2e]">
+                  <span className="px-4 py-2 text-sm font-medium text-primary">
                     SORT BY
                   </span>
                   <select
-                    className="border-l border-gray-200 px-4 py-2 focus:outline-none bg-white text-[#aa2e2e]"
+                    className="border-l border-gray-200 px-4 py-2 focus:outline-none bg-white text-primary"
                     onChange={handleSortChange}
                     disabled={loading}
                     value={
@@ -698,25 +747,25 @@ function ProductsContent() {
               selectedWeights.length > 0 ||
               filters.minPrice ||
               filters.maxPrice) && (
-              <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-white shadow-sm border border-gray-200">
-                <span className="text-sm font-semibold text-[#aa2e2e]">
+              <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-white shadow border border-gray-200">
+                <span className="text-sm font-semibold text-primary">
                   Active Filters:
                 </span>
 
                 {filters.search && (
-                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
+                  <div className="bg-primary text-white text-sm px-3 py-1 flex items-center">
                     <span>Search: {filters.search}</span>
                     <button
                       onClick={() => handleFilterChange("search", "")}
                       className="ml-2"
                     >
-                      <X className="h-3 w-3" />
+                      <DynamicIcon name="X" className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {filters.category && (
-                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
+                  <div className="bg-primary text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Category:{" "}
                       {categories.find((c) => c.slug === filters.category)
@@ -726,13 +775,13 @@ function ProductsContent() {
                       onClick={() => handleFilterChange("category", "")}
                       className="ml-2"
                     >
-                      <X className="h-3 w-3" />
+                      <DynamicIcon name="X" className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {selectedFlavors.length > 0 && (
-                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
+                  <div className="bg-primary text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Flavor:{" "}
                       {flavors.find((f) => f.id === selectedFlavors[0])?.name ||
@@ -745,13 +794,13 @@ function ProductsContent() {
                       }}
                       className="ml-2"
                     >
-                      <X className="h-3 w-3" />
+                      <DynamicIcon name="X" className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {selectedWeights.length > 0 && (
-                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
+                  <div className="bg-primary text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Weight:{" "}
                       {weights.find((w) => w.id === selectedWeights[0])
@@ -764,14 +813,14 @@ function ProductsContent() {
                       }}
                       className="ml-2"
                     >
-                      <X className="h-3 w-3" />
+                      <DynamicIcon name="X" className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-[#aa2e2e] underline font-medium ml-2"
+                  className="text-sm text-primary underline font-medium ml-2"
                 >
                   Clear All
                 </button>
@@ -786,11 +835,14 @@ function ProductsContent() {
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <div className="bg-white p-12 shadow-sm text-center border border-gray-200">
+              <div className="bg-white p-12 shadow text-center border border-gray-200">
                 <div className="text-gray-400 mb-6">
-                  <AlertCircle className="h-16 w-16 mx-auto" />
+                  <DynamicIcon
+                    name="AlertCircle"
+                    className="h-16 w-16 mx-auto"
+                  />
                 </div>
-                <h2 className="text-2xl font-bold text-[#aa2e2e] mb-4">
+                <h2 className="text-2xl font-bold text-primary mb-4">
                   No products found
                 </h2>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
@@ -799,7 +851,7 @@ function ProductsContent() {
                 </p>
                 <Button
                   onClick={clearFilters}
-                  className="bg-[#aa2e2e] hover:bg-[#8a1e1e] text-white px-8 py-3 font-semibold"
+                  className="bg-primary hover:bg-primary/90 text-white px-8 py-3 font-semibold"
                 >
                   Clear All Filters
                 </Button>
@@ -809,7 +861,7 @@ function ProductsContent() {
                 {products.map((product) => (
                   <div
                     key={product.id}
-                    className="bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group"
+                    className="bg-white shadow hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group"
                   >
                     <div className="relative h-64 w-full overflow-hidden">
                       <Link href={`/products/${product.slug}`}>
@@ -830,7 +882,7 @@ function ProductsContent() {
                       </Link>
 
                       {product.hasSale && (
-                        <span className="absolute top-3 left-3 bg-[#aa2e2e] text-white text-xs font-bold px-3 py-1">
+                        <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1">
                           SALE
                         </span>
                       )}
@@ -839,13 +891,13 @@ function ProductsContent() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="w-10 h-10 p-0 bg-white hover:bg-[#aa2e2e] hover:text-white border border-gray-200 transition-colors duration-300"
+                          className="w-10 h-10 p-0 bg-white hover:bg-primary hover:text-white border border-gray-200 transition-colors duration-300"
                           onClick={(e) => {
                             e.preventDefault();
                             handleQuickView(product);
                           }}
                         >
-                          <Eye className="h-4 w-4" />
+                          <DynamicIcon name="Eye" className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -853,18 +905,19 @@ function ProductsContent() {
                     <div className="p-6 border-t border-gray-200">
                       <Link
                         href={`/products/${product.slug}`}
-                        className="block hover:text-[#aa2e2e] transition-colors"
+                        className="block hover:text-primary transition-colors"
                       >
-                        <h3 className="font-semibold text-[#aa2e2e] mb-3 line-clamp-2 text-center">
+                        <h3 className="font-semibold text-primary mb-3 line-clamp-2 text-center">
                           {product.name}
                         </h3>
                       </Link>
 
                       <div className="flex items-center justify-center mb-3">
-                        <div className="flex text-[#b99b2f]">
+                        <div className="flex text-yellow-500">
                           {[...Array(5)].map((_, i) => (
-                            <Star
+                            <DynamicIcon
                               key={i}
+                              name="Star"
                               className="h-4 w-4"
                               fill={
                                 i < Math.round(product.avgRating || 0)
@@ -882,7 +935,7 @@ function ProductsContent() {
                       <div className="text-center mb-4">
                         {product.hasSale ? (
                           <div className="flex items-center justify-center space-x-2">
-                            <span className="font-bold text-xl text-[#aa2e2e]">
+                            <span className="font-bold text-xl text-primary">
                               {formatCurrency(product.basePrice)}
                             </span>
                             <span className="text-gray-500 line-through text-sm">
@@ -890,7 +943,7 @@ function ProductsContent() {
                             </span>
                           </div>
                         ) : (
-                          <span className="font-bold text-xl text-[#aa2e2e]">
+                          <span className="font-bold text-xl text-primary">
                             {formatCurrency(product.basePrice)}
                           </span>
                         )}
@@ -918,15 +971,18 @@ function ProductsContent() {
             {/* Pagination */}
             {pagination.pages > 1 && (
               <div className="flex justify-center items-center mt-12">
-                <div className="flex items-center bg-white shadow-sm border border-gray-200 overflow-hidden">
+                <div className="flex items-center bg-white shadow border border-gray-200 overflow-hidden">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handlePageChange(pagination.page - 1)}
                     disabled={pagination.page === 1 || loading}
-                    className="border-0 hover:bg-[#aa2e2e] hover:text-white px-4 py-3"
+                    className="border-0 hover:bg-primary hover:text-white px-4 py-3"
                   >
-                    <ChevronUp className="h-4 w-4 rotate-90" />
+                    <DynamicIcon
+                      name="ChevronUp"
+                      className="h-4 w-4 rotate-90"
+                    />
                   </Button>
 
                   {[...Array(pagination.pages)].map((_, i) => {
@@ -944,8 +1000,8 @@ function ProductsContent() {
                           disabled={loading}
                           className={`px-4 py-3 font-medium transition-colors ${
                             pagination.page === page
-                              ? "bg-[#aa2e2e] text-white"
-                              : "hover:bg-gray-50 text-[#aa2e2e]"
+                              ? "bg-primary text-white"
+                              : "hover:bg-gray-50 text-primary"
                           }`}
                         >
                           {page}
@@ -973,9 +1029,12 @@ function ProductsContent() {
                     size="sm"
                     onClick={() => handlePageChange(pagination.page + 1)}
                     disabled={pagination.page === pagination.pages || loading}
-                    className="border-0 hover:bg-[#aa2e2e] hover:text-white px-4 py-3"
+                    className="border-0 hover:bg-primary hover:text-white px-4 py-3"
                   >
-                    <ChevronDown className="h-4 w-4 rotate-90" />
+                    <DynamicIcon
+                      name="ChevronDown"
+                      className="h-4 w-4 rotate-90"
+                    />
                   </Button>
                 </div>
               </div>
@@ -998,9 +1057,9 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="flex justify-center items-center h-64">
-            <div className="w-12 h-12 border-4 border-[#aa2e2e] border-t-transparent animate-spin"></div>
+            <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
           </div>
         </div>
       }

@@ -29,7 +29,7 @@ const BenefitsSection = () => {
       icon: <Award className="w-8 h-8" />,
     },
     {
-      title: "Fast & Free Shipping",
+      title: "Fast Shipping",
       description:
         "Get your supplements delivered to your doorstep within 2-3 business days. Shop for ₹999+ and receive a scratch card with exciting rewards! across India.",
       icon: <Truck className="w-8 h-8" />,
@@ -486,7 +486,7 @@ export default function Home() {
       {/* Featured Products Section */}
       {featuredProducts.length > 0 && (
         <section className="py-5 md:py-6 my-3 md:my-4 bg-gray-50">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <Headtext text="FEATURED PRODUCTS" />
               <p className="text-gray-600 mt-6 max-w-2xl mx-auto">
@@ -506,7 +506,7 @@ export default function Home() {
       {/* Latest Products Section */}
       {latestProducts.length > 0 && (
         <section className="py-10 bg-white">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <Headtext text="LATEST PRODUCTS" />
               <p className="text-gray-600 my-6 max-w-2xl mx-auto">
@@ -526,7 +526,7 @@ export default function Home() {
       {/* Bestseller Products Section */}
       {bestsellerProducts.length > 0 && (
         <section className="py-5 md:py-6 my-3 md:my-4 bg-gray-50">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <Headtext text="BEST SELLERS" />
               <p className="text-gray-600 mt-6 max-w-2xl mx-auto">
@@ -546,7 +546,7 @@ export default function Home() {
       {/* Trending Products Section */}
       {trendingProducts.length > 0 && (
         <section className="py-5 md:py-6 my-3 md:my-4 bg-white">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <Headtext text="TRENDING NOW" />
               <p className="text-gray-600 mt-6 max-w-2xl mx-auto">
@@ -566,7 +566,7 @@ export default function Home() {
       {/* New Products Section */}
       {newProducts.length > 0 && (
         <section className="py-5 md:py-6 my-3 md:my-4 bg-gray-50">
-          <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <Headtext text="NEW ARRIVALS" />
               <p className="text-gray-600 mt-6 max-w-2xl mx-auto">

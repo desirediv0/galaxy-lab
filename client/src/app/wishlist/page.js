@@ -79,7 +79,7 @@ export default function WishlistPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-10 flex justify-center">
+      <div className="max-w-7xl mx-auto py-10 flex justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -87,7 +87,7 @@ export default function WishlistPage() {
 
   return (
     <ClientOnly>
-      <div className="container mx-auto py-10 px-4">
+      <div className="max-w-7xl mx-auto py-10 px-4">
         <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
 
         {error && (

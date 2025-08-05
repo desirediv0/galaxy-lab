@@ -109,7 +109,7 @@ export default function OrderDetailsPage({ params }) {
 
   if (loading || !isAuthenticated) {
     return (
-      <div className="container mx-auto py-10 flex justify-center">
+      <div className="max-w-7xl mx-auto py-10 flex justify-center">
         <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
@@ -117,7 +117,7 @@ export default function OrderDetailsPage({ params }) {
 
   return (
     <ClientOnly>
-      <div className="container mx-auto py-10 px-4">
+      <div className="max-w-7xl mx-auto py-10 px-4">
         <div className="flex items-center justify-between mb-8">
           <div>
             <Link

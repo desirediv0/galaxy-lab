@@ -55,7 +55,7 @@ export default function ResendVerificationPage() {
   };
 
   return (
-    <div className="container max-w-lg mx-auto p-8">
+    <div className="max-w-7xl max-w-lg mx-auto p-8">
       <div className="bg-white shadow p-8">
         <h1 className="text-2xl font-bold mb-4 text-center">
           Resend Verification Email

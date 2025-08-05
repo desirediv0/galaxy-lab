@@ -166,7 +166,7 @@ export default function VerifyEmailPage({ params }) {
   };
 
   return (
-    <div className="container max-w-lg mx-auto p-8">
+    <div className="max-w-7xl max-w-lg mx-auto p-8">
       <div className="bg-white shadow p-8 text-center">
         <h1 className="text-2xl font-bold mb-4">Email Verification</h1>
 

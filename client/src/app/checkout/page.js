@@ -348,7 +348,7 @@ export default function CheckoutPage() {
 
   if (!isAuthenticated || loadingAddresses) {
     return (
-      <div className="container mx-auto px-4 py-10">
+      <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex justify-center items-center h-64">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
         </div>
@@ -359,7 +359,7 @@ export default function CheckoutPage() {
   // If order created successfully
   if (orderCreated) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="max-w-lg mx-auto bg-white p-8 border shadow-lg relative overflow-hidden">
           {/* Background pattern for festive feel */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent z-0"></div>
@@ -441,7 +441,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold mb-6">Checkout</h1>
 
       {error && (

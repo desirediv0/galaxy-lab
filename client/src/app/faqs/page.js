@@ -110,7 +110,7 @@ export default function FAQsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           <Skeleton className="h-10 w-1/2 mx-auto mb-6" />
           <Skeleton className="h-5 w-full mb-2" />
@@ -133,7 +133,7 @@ export default function FAQsPage() {
 
   return (
     <main className="py-12 md:py-16">
-      <div className="container mx-auto px-4">
+      <div className="max-w-7xl mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl md:text-4xl font-bold text-center mb-4">
             Frequently Asked Questions
