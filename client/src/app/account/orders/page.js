@@ -5,30 +5,8 @@ import { useAuth } from "@/lib/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { DynamicIcon } from "@/components/dynamic-icon";
 import { fetchApi, formatCurrency, formatDate } from "@/lib/utils";
-import { motion } from "framer-motion";
-import {
-  Package,
-  ShoppingBag,
-  Eye,
-  ChevronsLeft,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsRight,
-  CreditCard,
-  Building,
-  Wallet,
-  Smartphone,
-  Calendar,
-  DollarSign,
-  CheckCircle,
-  Clock,
-  Truck,
-  XCircle,
-  RotateCcw,
-  Search,
-  Filter,
-} from "lucide-react";
 
 export default function OrdersPage() {
   const { isAuthenticated } = useAuth();
@@ -44,12 +22,10 @@ export default function OrdersPage() {
   });
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [error, setError] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
 
   // Handle page from URL
   const page = searchParams.get("page")
-    ? Number.parseInt(searchParams.get("page"))
+    ? parseInt(searchParams.get("page"))
     : 1;
 
   // Fetch orders
@@ -88,60 +64,30 @@ export default function OrdersPage() {
     fetchOrders();
   }, [isAuthenticated, page]);
 
-  // Get status badge color and icon
-  const getStatusInfo = (status) => {
-    const statusMap = {
-      PENDING: {
-        color: "bg-red-100 text-red-800 border-red-200",
-        icon: Clock,
-        bgColor: "bg-red-50",
-      },
-      PROCESSING: {
-        color: "bg-blue-100 text-blue-800 border-blue-200",
-        icon: Package,
-        bgColor: "bg-blue-50",
-      },
-      SHIPPED: {
-        color: "bg-indigo-100 text-indigo-800 border-indigo-200",
-        icon: Truck,
-        bgColor: "bg-indigo-50",
-      },
-      DELIVERED: {
-        color: "bg-green-100 text-green-800 border-green-200",
-        icon: CheckCircle,
-        bgColor: "bg-green-50",
-      },
-      CANCELLED: {
-        color: "bg-red-100 text-red-800 border-red-200",
-        icon: XCircle,
-        bgColor: "bg-red-50",
-      },
-      REFUNDED: {
-        color: "bg-purple-100 text-purple-800 border-purple-200",
-        icon: RotateCcw,
-        bgColor: "bg-purple-50",
-      },
+  // Get status badge color
+  const getStatusColor = (status) => {
+    const statusColors = {
+      PENDING: "bg-yellow-100 text-yellow-800",
+      PROCESSING: "bg-blue-100 text-blue-800",
+      SHIPPED: "bg-indigo-100 text-indigo-800",
+      DELIVERED: "bg-green-100 text-green-800",
+      CANCELLED: "bg-red-100 text-red-800",
+      REFUNDED: "bg-purple-100 text-purple-800",
     };
-    return (
-      statusMap[status] || {
-        color: "bg-gray-100 text-gray-800 border-gray-200",
-        icon: Package,
-        bgColor: "bg-gray-50",
-      }
-    );
+    return statusColors[status] || "bg-gray-100 text-gray-800";
   };
 
   // Get payment method icon
   const getPaymentIcon = (method) => {
     const methodIcons = {
-      CARD: CreditCard,
-      NETBANKING: Building,
-      WALLET: Wallet,
-      UPI: Smartphone,
-      EMI: Calendar,
-      OTHER: DollarSign,
+      CARD: "CreditCard",
+      NETBANKING: "Building",
+      WALLET: "Wallet",
+      UPI: "Smartphone",
+      EMI: "Calendar",
+      OTHER: "DollarSign",
     };
-    return methodIcons[method] || DollarSign;
+    return methodIcons[method] || "DollarSign";
   };
 
   // Handle pagination
@@ -150,343 +96,309 @@ export default function OrdersPage() {
     router.push(`/account/orders?page=${newPage}`);
   };
 
-  // Filter orders by search term
-  const filteredOrders = orders.filter((order) =>
-    order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { type: "spring", stiffness: 100 },
-    },
-  };
-
   return (
-    <motion.div
-      className="space-y-6"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {/* Page Header */}
-      <motion.div
-        className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
-        variants={itemVariants}
-      >
-        <div className="p-6 md:p-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <div className="mb-4 md:mb-0">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
-                My Orders
-              </h1>
-              <p className="text-gray-500">
-                Track and manage your order history
-              </p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <div className="relative flex-1 md:w-64">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-4 w-4 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search orders..."
-                  className="pl-10 pr-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <Button
-                variant="outline"
-                className="border-gray-200 text-gray-600 hover:bg-gray-50"
-                onClick={() => setFilterOpen(!filterOpen)}
-              >
-                <Filter className="h-4 w-4 mr-2" />
-                Filter
-              </Button>
-            </div>
-          </div>
-
-          {filterOpen && (
-            <div className="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Status
-                  </label>
-                  <select className="w-full border border-gray-200 rounded-lg p-2">
-                    <option value="">All Statuses</option>
-                    <option value="PENDING">Pending</option>
-                    <option value="PROCESSING">Processing</option>
-                    <option value="SHIPPED">Shipped</option>
-                    <option value="DELIVERED">Delivered</option>
-                    <option value="CANCELLED">Cancelled</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Date Range
-                  </label>
-                  <select className="w-full border border-gray-200 rounded-lg p-2">
-                    <option value="">All Time</option>
-                    <option value="30">Last 30 Days</option>
-                    <option value="90">Last 3 Months</option>
-                    <option value="180">Last 6 Months</option>
-                    <option value="365">Last Year</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sort By
-                  </label>
-                  <select className="w-full border border-gray-200 rounded-lg p-2">
-                    <option value="date_desc">Date (Newest First)</option>
-                    <option value="date_asc">Date (Oldest First)</option>
-                    <option value="total_desc">Amount (High to Low)</option>
-                    <option value="total_asc">Amount (Low to High)</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end mt-4 space-x-3">
-                <Button
-                  variant="outline"
-                  className="border-gray-200"
-                  onClick={() => setFilterOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button className="bg-red-600 hover:bg-red-700">
-                  Apply Filters
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
-      </motion.div>
+    <>
+      <h1 className="text-3xl font-bold mb-8">My Orders</h1>
 
       {error && (
-        <motion.div
-          className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <XCircle className="h-5 w-5 mr-3 flex-shrink-0" />
-          <p>{error}</p>
-        </motion.div>
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-6">
+          {error}
+        </div>
+      )}
+
+      {/* Highlighted Order Card */}
+      {orders.length > 0 && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 shadow-sm p-5 mb-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+            <div>
+              <div className="text-lg font-medium text-blue-800 mb-1">
+                Recent Order: #{orders[0].orderNumber}
+              </div>
+              <p className="text-sm text-gray-600 mb-3">
+                Placed on {formatDate(orders[0].date)} •{" "}
+                {orders[0].items.length}{" "}
+                {orders[0].items.length === 1 ? "item" : "items"} •{" "}
+                {formatCurrency(orders[0].total)}
+              </p>
+              <span
+                className={`px-2.5 py-1 ${getStatusColor(
+                  orders[0].status
+                )} text-xs font-medium inline-block`}
+              >
+                {orders[0].status}
+              </span>
+            </div>
+            <Button
+              className="mt-4 md:mt-0"
+              onClick={() => router.push(`/account/orders/${orders[0].id}`)}
+            >
+              <DynamicIcon name="Eye" className="mr-2 h-4 w-4" />
+              View Order Details
+            </Button>
+          </div>
+        </div>
       )}
 
       {loadingOrders ? (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 flex justify-center">
-          <div className="relative">
-            <div className="h-16 w-16 rounded-full border-4 border-gray-200 border-t-red-500 animate-spin"></div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Package className="h-6 w-6 text-red-500" />
-            </div>
-          </div>
+        <div className="bg-white shadow p-8 flex justify-center">
+          <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
         </div>
       ) : orders.length === 0 ? (
-        <motion.div
-          className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12 text-center"
-          variants={itemVariants}
-        >
-          <div className="w-24 h-24 bg-gray-100 rounded-full mx-auto mb-6 flex items-center justify-center">
-            <ShoppingBag className="h-12 w-12 text-gray-400" />
-          </div>
-          <h2 className="text-2xl font-bold mb-2 text-gray-800">
-            No Orders Found
-          </h2>
-          <p className="text-gray-500 mb-8 max-w-md mx-auto">
-            You haven&apos;t placed any orders yet. Start shopping to see your
-            orders here!
+        <div className="bg-white shadow p-8 text-center">
+          <DynamicIcon
+            name="ShoppingBag"
+            className="h-16 w-16 mx-auto text-gray-400 mb-4"
+          />
+          <h2 className="text-xl font-semibold mb-2">No Orders Found</h2>
+          <p className="text-gray-600 mb-6">
+            You haven&apos;t placed any orders yet.
           </p>
           <Link href="/products">
-            <Button className="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg">
-              Start Shopping
-            </Button>
+            <Button>Start Shopping</Button>
           </Link>
-        </motion.div>
+        </div>
       ) : (
         <>
-          {/* Order Cards */}
-          <motion.div className="space-y-4" variants={containerVariants}>
-            {filteredOrders.map((order) => {
-              const statusInfo = getStatusInfo(order.status);
-              const StatusIcon = statusInfo.icon;
-              const PaymentIcon = getPaymentIcon(order.paymentMethod);
-
-              return (
-                <motion.div
-                  key={order.id}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-                  variants={itemVariants}
-                  onClick={() => router.push(`/account/orders/${order.id}`)}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                >
-                  <div className="p-6">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div className="flex items-start mb-4 md:mb-0">
-                        <div
-                          className={`w-12 h-12 ${statusInfo.bgColor} rounded-xl flex items-center justify-center mr-4`}
-                        >
-                          <StatusIcon
-                            className={`h-6 w-6 ${
-                              statusInfo.color.includes("text")
-                                ? statusInfo.color.split(" ")[1]
-                                : "text-gray-600"
-                            }`}
-                          />
+          <div className="bg-white shadow overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Order
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Date
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Total
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Payment
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {orders.map((order) => (
+                    <tr
+                      key={order.id}
+                      className="hover:bg-gray-50 cursor-pointer transition-all"
+                      onClick={() => router.push(`/account/orders/${order.id}`)}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          #{order.orderNumber}
                         </div>
-                        <div>
-                          <div className="flex items-center">
-                            <h3 className="font-bold text-gray-800 mr-3">
-                              Order #{order.orderNumber}
-                            </h3>
-                            <span
-                              className={`px-3 py-1 text-xs font-medium rounded-full ${statusInfo.color}`}
-                            >
-                              {order.status}
-                            </span>
-                          </div>
-                          <p className="text-gray-500 text-sm mt-1">
-                            Placed on {formatDate(order.date)}
-                          </p>
-                          <div className="flex items-center mt-2">
-                            <PaymentIcon className="h-4 w-4 text-gray-400 mr-2" />
-                            <span className="text-sm text-gray-600">
-                              {order.paymentMethod}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-end">
-                        <p className="text-xl font-bold text-gray-800 mb-1">
-                          {formatCurrency(order.total)}
-                        </p>
-                        <p className="text-sm text-gray-500 mb-3">
+                        <div className="text-sm text-gray-500">
                           {order.items.length}{" "}
                           {order.items.length === 1 ? "item" : "items"}
-                        </p>
-                        <Button
-                          className="bg-red-600 hover:bg-red-700"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/account/orders/${order.id}`);
-                          }}
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Details
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-
-          {/* Pagination */}
-          {pagination.pages > 1 && (
-            <motion.div
-              className="flex justify-center mt-8"
-              variants={itemVariants}
-            >
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  className="w-10 h-10 p-0 rounded-lg border-gray-200"
-                  onClick={() => changePage(1)}
-                  disabled={pagination.page === 1}
-                >
-                  <ChevronsLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-10 h-10 p-0 rounded-lg border-gray-200"
-                  onClick={() => changePage(pagination.page - 1)}
-                  disabled={pagination.page === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-
-                {/* Page numbers */}
-                <div className="flex space-x-2">
-                  {[...Array(pagination.pages).keys()].map((i) => {
-                    const pageNumber = i + 1;
-                    if (
-                      pageNumber === 1 ||
-                      pageNumber === pagination.pages ||
-                      Math.abs(pageNumber - pagination.page) <= 1 ||
-                      (pagination.page <= 2 && pageNumber <= 3) ||
-                      (pagination.page >= pagination.pages - 1 &&
-                        pageNumber >= pagination.pages - 2)
-                    ) {
-                      return (
-                        <Button
-                          key={pageNumber}
-                          className={`w-10 h-10 p-0 rounded-lg ${
-                            pagination.page === pageNumber
-                              ? "bg-red-600 text-white hover:bg-red-700"
-                              : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-                          }`}
-                          onClick={() => changePage(pageNumber)}
-                        >
-                          {pageNumber}
-                        </Button>
-                      );
-                    } else if (
-                      (pageNumber === 2 && pagination.page > 3) ||
-                      (pageNumber === pagination.pages - 1 &&
-                        pagination.page < pagination.pages - 2)
-                    ) {
-                      return (
-                        <div
-                          key={pageNumber}
-                          className="w-10 h-10 flex items-center justify-center text-gray-500"
-                        >
-                          ...
                         </div>
-                      );
-                    }
-                    return null;
-                  })}
-                </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900">
+                          {formatDate(order.date)}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold ${getStatusColor(
+                            order.status
+                          )}`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-gray-900 font-medium">
+                          {formatCurrency(order.total)}
+                        </div>
+                        {order.discount > 0 && (
+                          <div className="text-xs text-green-600">
+                            {order.couponCode ? (
+                              <span>
+                                Saved {formatCurrency(order.discount)} with{" "}
+                                {order.couponCode}
+                              </span>
+                            ) : (
+                              <span>
+                                Saved {formatCurrency(order.discount)}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center text-sm text-gray-900">
+                          <DynamicIcon
+                            name={getPaymentIcon(order.paymentMethod)}
+                            className="h-4 w-4 mr-1 text-gray-500"
+                          />
+                          {order.paymentMethod}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <Link
+                          href={`/account/orders/${order.id}`}
+                          className="text-primary hover:text-primary/80"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          View Details
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-                <Button
-                  variant="outline"
-                  className="w-10 h-10 p-0 rounded-lg border-gray-200"
-                  onClick={() => changePage(pagination.page + 1)}
-                  disabled={pagination.page === pagination.pages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-10 h-10 p-0 rounded-lg border-gray-200"
-                  onClick={() => changePage(pagination.pages)}
-                  disabled={pagination.page === pagination.pages}
-                >
-                  <ChevronsRight className="h-4 w-4" />
-                </Button>
+            {/* Pagination */}
+            {pagination.pages > 1 && (
+              <div className="px-6 py-4 flex items-center justify-between border-t border-gray-200">
+                <div className="flex-1 flex justify-between sm:hidden">
+                  <Button
+                    variant="outline"
+                    onClick={() => changePage(pagination.page - 1)}
+                    disabled={pagination.page === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => changePage(pagination.page + 1)}
+                    disabled={pagination.page === pagination.pages}
+                  >
+                    Next
+                  </Button>
+                </div>
+                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      Showing page{" "}
+                      <span className="font-medium">{pagination.page}</span> of{" "}
+                      <span className="font-medium">{pagination.pages}</span>
+                    </p>
+                  </div>
+                  <div>
+                    <nav
+                      className="inline-flex shadow-sm -space-x-px"
+                      aria-label="Pagination"
+                    >
+                      <Button
+                        variant="outline"
+                        className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        onClick={() => changePage(1)}
+                        disabled={pagination.page === 1}
+                      >
+                        <span className="sr-only">First Page</span>
+                        <DynamicIcon name="ChevronsLeft" className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        onClick={() => changePage(pagination.page - 1)}
+                        disabled={pagination.page === 1}
+                      >
+                        <span className="sr-only">Previous</span>
+                        <DynamicIcon name="ChevronLeft" className="h-5 w-5" />
+                      </Button>
+
+                      {/* Page numbers */}
+                      {[...Array(pagination.pages).keys()].map((i) => {
+                        const pageNumber = i + 1;
+                        // Only show 5 page numbers centered around current page
+                        if (
+                          pageNumber === 1 ||
+                          pageNumber === pagination.pages ||
+                          Math.abs(pageNumber - pagination.page) <= 1 ||
+                          (pagination.page <= 2 && pageNumber <= 3) ||
+                          (pagination.page >= pagination.pages - 1 &&
+                            pageNumber >= pagination.pages - 2)
+                        ) {
+                          return (
+                            <Button
+                              key={pageNumber}
+                              variant={
+                                pagination.page === pageNumber
+                                  ? "default"
+                                  : "outline"
+                              }
+                              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                                pagination.page === pageNumber
+                                  ? "z-10 border-primary bg-primary text-white"
+                                  : "border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                              }`}
+                              onClick={() => changePage(pageNumber)}
+                            >
+                              {pageNumber}
+                            </Button>
+                          );
+                        } else if (
+                          (pageNumber === 2 && pagination.page > 3) ||
+                          (pageNumber === pagination.pages - 1 &&
+                            pagination.page < pagination.pages - 2)
+                        ) {
+                          return (
+                            <span
+                              key={pageNumber}
+                              className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700"
+                            >
+                              ...
+                            </span>
+                          );
+                        }
+                        return null;
+                      })}
+
+                      <Button
+                        variant="outline"
+                        className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        onClick={() => changePage(pagination.page + 1)}
+                        disabled={pagination.page === pagination.pages}
+                      >
+                        <span className="sr-only">Next</span>
+                        <DynamicIcon name="ChevronRight" className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="relative inline-flex items-center px-2 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                        onClick={() => changePage(pagination.pages)}
+                        disabled={pagination.page === pagination.pages}
+                      >
+                        <span className="sr-only">Last Page</span>
+                        <DynamicIcon name="ChevronsRight" className="h-5 w-5" />
+                      </Button>
+                    </nav>
+                  </div>
+                </div>
               </div>
-            </motion.div>
-          )}
+            )}
+          </div>
         </>
       )}
-    </motion.div>
+    </>
   );
 }

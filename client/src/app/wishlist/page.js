@@ -6,19 +6,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ClientOnly } from "@/components/client-only";
+import { DynamicIcon } from "@/components/dynamic-icon";
 import { fetchApi } from "@/lib/utils";
 import Image from "next/image";
-import {
-  Eye,
-  Heart,
-  Star,
-  ShoppingBag,
-  Trash2,
-  ArrowRight,
-  Sparkles,
-} from "lucide-react";
+import { Eye, Heart, Star } from "lucide-react";
 import ProductQuickView from "@/components/ProductQuickView";
-import { toast } from "sonner";
 
 export default function WishlistPage() {
   const { isAuthenticated, loading } = useAuth();
@@ -29,7 +21,6 @@ export default function WishlistPage() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [error, setError] = useState("");
-  const [removingItems, setRemovingItems] = useState(new Set());
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -65,8 +56,6 @@ export default function WishlistPage() {
 
   // Remove item from wishlist
   const removeFromWishlist = async (wishlistItemId) => {
-    setRemovingItems((prev) => new Set(prev).add(wishlistItemId));
-
     try {
       await fetchApi(`/users/wishlist/${wishlistItemId}`, {
         method: "DELETE",
@@ -77,17 +66,9 @@ export default function WishlistPage() {
       setWishlistItems((current) =>
         current.filter((item) => item.id !== wishlistItemId)
       );
-      toast.success("Item removed from wishlist");
     } catch (error) {
       console.error("Failed to remove item from wishlist:", error);
       setError("Failed to remove item. Please try again.");
-      toast.error("Failed to remove item from wishlist");
-    } finally {
-      setRemovingItems((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(wishlistItemId);
-        return newSet;
-      });
     }
   };
 
@@ -98,252 +79,139 @@ export default function WishlistPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#f01c33]/5 via-white to-[#c4ab66]/5">
-        <div className="container mx-auto py-10 flex justify-center">
-          <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
-        </div>
+      <div className="container mx-auto py-10 flex justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f01c33]/5 via-white to-[#c4ab66]/5 relative overflow-hidden">
-      {/* Floating Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#f01c33]/20 to-[#c4ab66]/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-[#c4ab66]/20 to-[#f01c33]/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
+    <ClientOnly>
+      <div className="container mx-auto py-10 px-4">
+        <h1 className="text-3xl font-bold mb-8">My Wishlist</h1>
 
-      <ClientOnly>
-        <div className="container mx-auto py-12 px-4 relative z-10">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#f01c33] to-[#c4ab66] rounded-full mb-6 shadow-2xl relative">
-              <Heart className="h-10 w-10 text-white" />
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-[#c4ab66] to-white rounded-full flex items-center justify-center">
-                <Sparkles className="h-3 w-3 text-[#f01c33]" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent mb-4">
-              My Wishlist
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              Your saved favorites - ready when you are
-            </p>
-            <div className="flex items-center justify-center mt-6 space-x-2">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-5 w-5 text-[#c4ab66] fill-current" />
-              ))}
-              <span className="text-gray-600 ml-2 font-medium">
-                Curated with Love
-              </span>
-            </div>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mb-6">
+            {error}
           </div>
+        )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-3xl mb-8 max-w-2xl mx-auto">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
+        {loadingItems ? (
+          <div className="bg-white shadow p-8 flex justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          </div>
+        ) : wishlistItems.length === 0 ? (
+          <div className="bg-white shadow p-8 text-center">
+            <DynamicIcon
+              name="Heart"
+              className="h-16 w-16 mx-auto text-gray-400 mb-4"
+            />
+            <h2 className="text-xl font-semibold mb-2">
+              Your Wishlist is Empty
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Save your favorite items to your wishlist for easy access later.
+            </p>
+            <Link href="/products">
+              <Button>Explore Products</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {wishlistItems.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white overflow-hidden transition-all hover:shadow-lg shadow-md group"
+              >
+                <Link href={`/products/${product.slug}`}>
+                  <div className="relative h-64 w-full overflow-hidden">
+                    <Image
+                      src={
+                        product.image
+                          ? product.image.startsWith("http")
+                            ? product.image
+                            : `https://desirediv-storage.blr1.digitaloceanspaces.com/${product.image}`
+                          : product.images?.[0]
+                          ? product.images[0].startsWith("http")
+                            ? product.images[0]
+                            : `https://desirediv-storage.blr1.digitaloceanspaces.com/${product.images[0]}`
+                          : "/placeholder.jpg"
+                      }
+                      alt={product.name}
+                      fill
+                      className="object-contain px-4 transition-transform group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
-                  </svg>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium">{error}</p>
-                </div>
-              </div>
-            </div>
-          )}
 
-          {loadingItems ? (
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12 flex justify-center">
-              <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : wishlistItems.length === 0 ? (
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-12 text-center max-w-md mx-auto">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-[#f01c33]/20 to-[#c4ab66]/20 rounded-full mb-6">
-                <Heart className="h-10 w-10 text-[#f01c33]" />
-              </div>
-              <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-                Your Wishlist is Empty
-              </h2>
-              <p className="text-gray-600 mb-8">
-                Save your favorite items to your wishlist for easy access later.
-              </p>
-              <Link href="/products">
-                <Button className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#f01c33]/90 hover:to-[#c4ab66]/90 text-white px-8 py-3 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <ShoppingBag className="h-4 w-4 mr-2" />
-                  Explore Products
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <>
-              {/* Wishlist Stats */}
-              <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-6 mb-8">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-                      {wishlistItems.length}{" "}
-                      {wishlistItems.length === 1 ? "Item" : "Items"} Saved
-                    </h2>
-                    <p className="text-gray-600">
-                      Your favorite products are waiting for you
-                    </p>
-                  </div>
-                  <Link href="/products">
-                    <Button
-                      variant="outline"
-                      className="border-[#f01c33]/30 text-[#f01c33] hover:bg-[#f01c33]/10 rounded-xl"
-                    >
-                      <ShoppingBag className="h-4 w-4 mr-2" />
-                      Continue Shopping
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-
-              {/* Wishlist Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {wishlistItems.map((product) => (
-                  <div
-                    key={product.id}
-                    className="bg-white/80 backdrop-blur-xl overflow-hidden transition-all hover:shadow-3xl shadow-2xl rounded-3xl border border-white/20 group relative"
-                  >
-                    <Link href={`/products/${product.slug}`}>
-                      <div className="relative h-64 w-full bg-gradient-to-br from-[#f01c33]/5 to-[#c4ab66]/5 overflow-hidden">
-                        <Image
-                          src={
-                            product.images[0] ||
-                            "/placeholder.svg?height=300&width=400" ||
-                            "/placeholder.svg"
-                          }
-                          alt={product.name}
-                          fill
-                          className="object-contain p-4 transition-transform group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-
-                        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 backdrop-blur-[2px] flex justify-center py-3 translate-y-full group-hover:translate-y-0 transition-transform">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-white hover:text-white hover:bg-[#f01c33]/80 rounded-full p-2"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleQuickView(product);
-                            }}
-                          >
-                            <Eye className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-white hover:text-white hover:bg-red-500/80 rounded-full p-2 mx-2"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              removeFromWishlist(product.id);
-                            }}
-                            disabled={removingItems.has(product.id)}
-                          >
-                            {removingItems.has(product.id) ? (
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            ) : (
-                              <Trash2 className="h-5 w-5" />
-                            )}
-                          </Button>
-                        </div>
-
-                        {/* Remove button - always visible on mobile */}
-                        <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            removeFromWishlist(product.id);
-                          }}
-                          disabled={removingItems.has(product.id)}
-                          className="absolute top-3 right-3 bg-white/90 hover:bg-white text-red-500 hover:text-red-600 p-2 rounded-full shadow-md transition-all md:opacity-0 group-hover:opacity-100"
-                        >
-                          {removingItems.has(product.id) ? (
-                            <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                    </Link>
-
-                    <div className="p-6 text-center">
-                      <div className="flex items-center justify-center mb-3">
-                        <div className="flex text-[#c4ab66]">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className="h-4 w-4"
-                              fill={
-                                i < Math.round(product.avgRating || 0)
-                                  ? "currentColor"
-                                  : "none"
-                              }
-                            />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-2">
-                          ({product.reviewCount || 0})
-                        </span>
-                      </div>
-
-                      <Link
-                        href={`/products/${product.slug}`}
-                        className="hover:text-[#f01c33] transition-colors"
+                    <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-0 group-hover:bg-opacity-70 backdrop-blur-[2px] flex justify-center py-3 translate-y-full group-hover:translate-y-0 transition-transform">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white hover:text-white hover:bg-primary/80 p-2"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleQuickView(product);
+                        }}
                       >
-                        <h3 className="font-semibold text-gray-800 mb-3 line-clamp-2 text-lg">
-                          {product.name}
-                        </h3>
-                      </Link>
-
-                      {product.flavors > 1 && (
-                        <span className="text-xs text-gray-500 bg-gray-100 px-3 py-1 rounded-full mb-4 inline-block">
-                          {product.flavors} variants
-                        </span>
-                      )}
-
-                      <div className="flex space-x-2">
-                        <Link
-                          href={`/products/${product.slug}`}
-                          className="flex-1"
-                        >
-                          <Button className="w-full bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#f01c33]/90 hover:to-[#c4ab66]/90 text-white rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl relative overflow-hidden group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                            View Product
-                            <ArrowRight className="h-4 w-4 ml-2" />
-                          </Button>
-                        </Link>
-                      </div>
+                        <Eye className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white hover:text-white hover:bg-primary/80 mx-2 p-2"
+                      >
+                        <Heart className="h-5 w-5" />
+                      </Button>
                     </div>
                   </div>
-                ))}
-              </div>
-            </>
-          )}
+                </Link>
 
-          {/* Quick View Dialog */}
-          <ProductQuickView
-            product={quickViewProduct}
-            open={quickViewOpen}
-            onOpenChange={setQuickViewOpen}
-          />
-        </div>
-      </ClientOnly>
-    </div>
+                <div className="p-4 text-center">
+                  <div className="flex items-center justify-center mb-2">
+                    <div className="flex text-yellow-400">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="h-4 w-4"
+                          fill={
+                            i < Math.round(product.avgRating || 0)
+                              ? "currentColor"
+                              : "none"
+                          }
+                        />
+                      ))}
+                    </div>
+                    <span className="text-xs text-gray-500 ml-2">
+                      ({product.reviewCount || 0})
+                    </span>
+                  </div>
+
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="hover:text-primary"
+                  >
+                    <h3 className="font-medium uppercase mb-2 line-clamp-2 text-sm">
+                      {product.name}
+                    </h3>
+                  </Link>
+
+                  {product.flavors > 1 && (
+                    <span className="text-xs text-gray-500 block">
+                      {product.flavors} variants
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Quick View Dialog */}
+        <ProductQuickView
+          product={quickViewProduct}
+          open={quickViewOpen}
+          onOpenChange={setQuickViewOpen}
+        />
+      </div>
+    </ClientOnly>
   );
 }

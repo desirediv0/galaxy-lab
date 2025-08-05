@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Link from "next/link";
 import { ClientOnly } from "@/components/client-only";
-import { User, Package, MapPin, Heart } from "lucide-react";
+import { DynamicIcon } from "@/components/dynamic-icon";
 
 export default function AccountLayout({ children }) {
   const { isAuthenticated, loading } = useAuth();
@@ -21,20 +21,18 @@ export default function AccountLayout({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-        <div className="container mx-auto py-10 flex justify-center">
-          <div className="w-12 h-12 border-4 border-red-700 border-t-transparent rounded-full animate-spin"></div>
-        </div>
+      <div className="container mx-auto py-10 flex justify-center">
+        <div className="animate-spin h-12 w-12 border-b-2 border-primary"></div>
       </div>
     );
   }
 
   // List of navigation items with their paths and icons
   const navItems = [
-    { path: "/account", label: "Profile", icon: User },
-    { path: "/account/orders", label: "Orders", icon: Package },
-    { path: "/account/addresses", label: "Addresses", icon: MapPin },
-    { path: "/wishlist", label: "Wishlist", icon: Heart },
+    { path: "/account", label: "Profile", icon: "User" },
+    { path: "/account/orders", label: "Orders", icon: "Package" },
+    { path: "/account/addresses", label: "Addresses", icon: "MapPin" },
+    { path: "/wishlist", label: "Wishlist", icon: "Heart" },
   ];
 
   // Check if the current path matches a nav item
@@ -49,54 +47,47 @@ export default function AccountLayout({ children }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-      <ClientOnly>
-        <div className="container mx-auto py-10 px-4">
-          {isSpecialPage ? (
-            // For pages like order details, just render the children
-            children
-          ) : (
-            // For regular account pages, render with the sidebar
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {/* Sidebar */}
-              <div className="md:col-span-1">
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-24">
-                  <div className="space-y-1">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                      <div className="bg-red-100 p-2 rounded-lg mr-3">
-                        <User className="h-5 w-5 text-red-600" />
-                      </div>
-                      My Account
-                    </h2>
-                    <nav className="space-y-2">
-                      {navItems.map((item) => {
-                        const IconComponent = item.icon;
-                        return (
-                          <Link
-                            key={item.path}
-                            href={item.path}
-                            className={`flex items-center p-3 rounded-xl transition-all duration-200 ${
-                              isActive(item.path)
-                                ? "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg"
-                                : "hover:bg-red-50 text-gray-700 hover:text-red-600"
-                            }`}
-                          >
-                            <IconComponent className="mr-3 h-5 w-5" />
-                            <span className="font-medium">{item.label}</span>
-                          </Link>
-                        );
-                      })}
-                    </nav>
-                  </div>
+    <ClientOnly>
+      <div className="container mx-auto py-10 px-4">
+        {isSpecialPage ? (
+          // For pages like order details, just render the children
+          children
+        ) : (
+          // For regular account pages, render with the sidebar
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            {/* Sidebar */}
+            <div className="md:col-span-1">
+              <div className="bg-white shadow p-6 sticky top-24">
+                <div className="space-y-1">
+                  <h2 className="text-xl font-semibold mb-4">Account</h2>
+                  <nav className="space-y-1">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.path}
+                        href={item.path}
+                        className={`flex items-center p-2 ${
+                          isActive(item.path)
+                            ? "bg-primary/10 text-primary"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        <DynamicIcon
+                          name={item.icon}
+                          className="mr-2 h-5 w-5"
+                        />
+                        <span>{item.label}</span>
+                      </Link>
+                    ))}
+                  </nav>
                 </div>
               </div>
-
-              {/* Main content */}
-              <div className="md:col-span-3">{children}</div>
             </div>
-          )}
-        </div>
-      </ClientOnly>
-    </div>
+
+            {/* Main content */}
+            <div className="md:col-span-3">{children}</div>
+          </div>
+        )}
+      </div>
+    </ClientOnly>
   );
 }

@@ -128,7 +128,9 @@ export function Navbar() {
           </div>
           <div className="flex items-center gap-2">
             <Star className="h-4 w-4 animate-pulse" />
-            <span>Free Shipping on Orders Above ₹999</span>
+            <span>
+              Shop for ₹999+ and receive a scratch card with exciting rewards!
+            </span>
             <Zap className="h-4 w-4 animate-bounce" />
           </div>
         </div>

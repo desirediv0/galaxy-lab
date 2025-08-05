@@ -16,35 +16,27 @@ import {
   ChevronRight,
   AlertCircle,
   Search,
-  Heart,
   Eye,
-  ShoppingCart,
-  Sparkles,
-  Grid3X3,
-  List,
 } from "lucide-react";
 import { useCart } from "@/lib/cart-context";
 import ProductQuickView from "@/components/ProductQuickView";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
 
-// Enhanced Product Card Skeleton
+// Product Card Skeleton
 function ProductCardSkeleton() {
   return (
-    <div className="bg-white rounded-3xl shadow-xl overflow-hidden animate-pulse border border-gray-100">
-      <div className="h-72 w-full bg-gradient-to-br from-gray-100 to-gray-200 relative">
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-200/50 to-transparent"></div>
-      </div>
-      <div className="p-8 space-y-4">
-        <div className="flex justify-center space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-4 w-4 bg-gray-200 rounded-full"></div>
-          ))}
+    <div className="bg-white shadow-sm border border-gray-200 overflow-hidden animate-pulse">
+      <div className="h-64 w-full bg-gray-200"></div>
+      <div className="p-6">
+        <div className="flex justify-center mb-3">
+          <div className="h-4 w-24 bg-gray-200"></div>
         </div>
-        <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-3/4 mx-auto"></div>
-        <div className="h-4 bg-gray-200 rounded-lg w-1/2 mx-auto"></div>
-        <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded-xl w-2/3 mx-auto"></div>
-        <div className="h-12 bg-gradient-to-r from-gray-200 to-gray-300 rounded-2xl"></div>
+        <div className="h-4 w-full bg-gray-200 mb-3"></div>
+        <div className="h-4 w-3/4 mx-auto bg-gray-200 mb-4"></div>
+        <div className="flex justify-center">
+          <div className="h-6 w-16 bg-gray-200"></div>
+        </div>
+        <div className="h-10 w-full bg-gray-200 mt-4"></div>
       </div>
     </div>
   );
@@ -64,7 +56,6 @@ function ProductsContent() {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("grid");
 
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [maxPossiblePrice, setMaxPossiblePrice] = useState(1000);
@@ -328,14 +319,6 @@ function ProductsContent() {
         handleFilterChange("sort", "createdAt");
         handleFilterChange("order", "asc");
         break;
-      case "price-low":
-        handleFilterChange("sort", "createdAt");
-        handleFilterChange("order", "asc");
-        break;
-      case "price-high":
-        handleFilterChange("sort", "createdAt");
-        handleFilterChange("order", "desc");
-        break;
       case "name-asc":
         handleFilterChange("sort", "name");
         handleFilterChange("order", "asc");
@@ -356,6 +339,7 @@ function ProductsContent() {
   };
 
   const handleAddToCart = async (product) => {
+    console.log(product);
     try {
       if (!product || !product.variants || product.variants.length === 0) {
         const response = await fetchApi(
@@ -391,66 +375,42 @@ function ProductsContent() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
-          <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-[#aa2e2e] border-t-transparent animate-spin"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-b from-white via-gray-50/30 to-white min-h-screen">
-      <div className="container mx-auto px-4 py-8">
-        {/* Enhanced Hero Banner */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative w-full h-[400px] mb-16 rounded-3xl overflow-hidden shadow-2xl"
-        >
+    <div className="bg-gray-50 py-16 min-h-screen">
+      <div className="container mx-auto px-4">
+        {/* Hero Banner */}
+        <div className="relative w-full h-[350px] mb-12 overflow-hidden">
           <Image
             src="/banner-background.jpg"
             alt="Premium Supplements"
             fill
-            className="object-cover"
+            className="object-cover filter grayscale"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/90 via-[#f01c33]/70 to-[#c4ab66]/60 flex flex-col justify-center px-8 md:px-16">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-3xl"
-            >
-              <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full border border-white/30 mb-6">
-                <Sparkles className="w-5 h-5 text-white" />
-                <span className="text-white font-bold text-sm uppercase tracking-wider">
-                  Premium Quality
-                </span>
-              </div>
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                PREMIUM
-                <br />
-                <span className="bg-gradient-to-r from-white to-[#c4ab66] bg-clip-text text-transparent">
-                  SUPPLEMENTS
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-white/90 max-w-2xl leading-relaxed">
-                Fuel your performance with premium quality supplements designed
-                for champions
-              </p>
-            </motion.div>
+          <div className="absolute inset-0 bg-black/70 text-center flex flex-col justify-center md:px-12">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+              PREMIUM SUPPLEMENTS
+            </h1>
+            <p className="text-xl text-gray-200 max-w-2xl text-center mx-auto">
+              Fuel your performance with premium quality supplements designed
+              for champions
+            </p>
           </div>
-        </motion.div>
+        </div>
 
         {/* Mobile filter toggle */}
-        <div className="md:hidden flex items-center justify-between mb-8 bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/50">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-            Products
-          </h1>
+        <div className="md:hidden flex items-center justify-between mb-6 bg-white p-4 shadow-sm border border-gray-200">
+          <h1 className="text-2xl font-bold text-[#aa2e2e]">Products</h1>
           <Button
             variant="outline"
             onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-            className="flex items-center gap-3 border-2 border-[#f01c33] text-[#f01c33] hover:bg-[#f01c33] hover:text-white rounded-2xl px-6 py-3 font-bold transition-all duration-300"
+            className="flex items-center gap-2 border-[#aa2e2e] text-[#aa2e2e] hover:bg-[#aa2e2e] hover:text-white"
           >
             <Filter className="h-5 w-5" />
             Filters
@@ -458,7 +418,7 @@ function ProductsContent() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Enhanced Filters Sidebar */}
+          {/* Filters Sidebar */}
           <div
             className={`lg:w-1/4 ${
               mobileFiltersOpen
@@ -466,31 +426,28 @@ function ProductsContent() {
                 : "hidden"
             } lg:block lg:static lg:z-auto lg:bg-transparent lg:p-0`}
           >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50 sticky top-20">
-              <div className="flex items-center justify-between p-8 border-b border-gray-100">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-                  FILTERS
-                </h2>
-                <div className="flex gap-4">
+            <div className="bg-white shadow-sm border border-gray-200 sticky top-20">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-[#aa2e2e]">FILTERS</h2>
+                <div className="flex gap-3">
                   <button
                     onClick={clearFilters}
-                    className="text-sm text-[#f01c33] hover:text-[#c4ab66] font-bold transition-colors duration-300"
+                    className="text-sm text-[#aa2e2e] hover:underline font-medium"
                   >
                     Clear all
                   </button>
                   <button
-                    className="lg:hidden text-gray-500 hover:text-[#f01c33] transition-colors duration-300"
+                    className="lg:hidden text-gray-500"
                     onClick={() => setMobileFiltersOpen(false)}
                   >
-                    <X className="h-6 w-6" />
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
               </div>
 
-              {/* Enhanced Search Filter */}
-              <div className="p-8 border-b border-gray-100">
-                <h3 className="text-sm font-bold mb-4 text-[#f01c33] uppercase tracking-wider flex items-center gap-2">
-                  <Search className="w-4 h-4" />
+              {/* Search Filter */}
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-sm font-semibold mb-3 text-[#aa2e2e] uppercase">
                   Search
                 </h3>
                 <form
@@ -505,31 +462,31 @@ function ProductsContent() {
                     name="search"
                     placeholder="Search products..."
                     defaultValue={filters.search}
-                    className="w-full pr-12 border-2 border-gray-200 focus:border-[#f01c33] focus:ring-[#f01c33] rounded-2xl py-3 bg-white/50 backdrop-blur-sm"
+                    className="w-full pr-10 border-gray-300 focus:border-[#aa2e2e] focus:ring-[#aa2e2e]"
                   />
                   <button
                     type="submit"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#f01c33] hover:text-[#c4ab66] transition-colors duration-300"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#aa2e2e] hover:text-gray-600"
                   >
-                    <Search className="h-5 w-5" />
+                    <Search className="h-4 w-4" />
                   </button>
                 </form>
               </div>
 
-              {/* Enhanced Categories Filter */}
-              <div className="p-8 border-b border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-[#f01c33] uppercase tracking-wider">
+              {/* Categories Filter */}
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
                     Categories
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-[#c4ab66]" />
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 </div>
                 <div className="space-y-3">
                   <div
-                    className={`cursor-pointer hover:text-[#f01c33] transition-colors duration-300 p-3 rounded-xl ${
+                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
                       filters.category === ""
-                        ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "font-semibold text-[#aa2e2e]"
+                        : "text-gray-600"
                     }`}
                     onClick={() => handleFilterChange("category", "")}
                   >
@@ -538,16 +495,16 @@ function ProductsContent() {
                   {categories.map((category) => (
                     <div key={category.id} className="ml-3">
                       <div
-                        className={`cursor-pointer hover:text-[#f01c33] flex items-center transition-colors duration-300 p-3 rounded-xl ${
+                        className={`cursor-pointer hover:text-[#aa2e2e] flex items-center transition-colors ${
                           filters.category === category.slug
-                            ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                            : "text-gray-600 hover:bg-gray-50"
+                            ? "font-semibold text-[#aa2e2e]"
+                            : "text-gray-600"
                         }`}
                         onClick={() =>
                           handleFilterChange("category", category.slug)
                         }
                       >
-                        <ChevronRight className="h-4 w-4 mr-2" />
+                        <ChevronRight className="h-4 w-4 mr-1" />
                         {category.name}
                       </div>
                       {category.children && category.children.length > 0 && (
@@ -555,10 +512,10 @@ function ProductsContent() {
                           {category.children.map((child) => (
                             <div
                               key={child.id}
-                              className={`cursor-pointer hover:text-[#f01c33] text-sm transition-colors duration-300 p-2 rounded-lg ${
+                              className={`cursor-pointer hover:text-[#aa2e2e] text-sm transition-colors ${
                                 filters.category === child.slug
-                                  ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                                  : "text-gray-600 hover:bg-gray-50"
+                                  ? "font-semibold text-[#aa2e2e]"
+                                  : "text-gray-600"
                               }`}
                               onClick={() =>
                                 handleFilterChange("category", child.slug)
@@ -574,20 +531,20 @@ function ProductsContent() {
                 </div>
               </div>
 
-              {/* Enhanced Flavors Filter */}
-              <div className="p-8 border-b border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-[#f01c33] uppercase tracking-wider">
+              {/* Flavors Filter */}
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
                     Flavor
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-[#c4ab66]" />
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 </div>
                 <div className="space-y-3">
                   <div
-                    className={`cursor-pointer hover:text-[#f01c33] transition-colors duration-300 p-3 rounded-xl ${
+                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
                       selectedFlavors.length === 0
-                        ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "font-semibold text-[#aa2e2e]"
+                        : "text-gray-600"
                     }`}
                     onClick={() => {
                       setSelectedFlavors([]);
@@ -600,25 +557,25 @@ function ProductsContent() {
                   {flavors.map((flavor) => (
                     <div
                       key={flavor.id}
-                      className={`cursor-pointer hover:text-[#f01c33] ml-3 flex items-center transition-colors duration-300 p-3 rounded-xl ${
+                      className={`cursor-pointer hover:text-[#aa2e2e] ml-3 flex items-center transition-colors ${
                         selectedFlavors.includes(flavor.id)
-                          ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                          : "text-gray-600 hover:bg-gray-50"
+                          ? "font-semibold text-[#aa2e2e]"
+                          : "text-gray-600"
                       }`}
                       onClick={() => handleFlavorChange(flavor.id)}
                     >
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded-lg mr-3 flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
                         {selectedFlavors.includes(flavor.id) && (
-                          <div className="w-3 h-3 rounded bg-gradient-to-r from-[#f01c33] to-[#c4ab66]"></div>
+                          <div className="w-2 h-2 bg-[#aa2e2e]"></div>
                         )}
                       </div>
                       {flavor.image && (
-                        <div className="w-5 h-5 rounded-full overflow-hidden mr-3">
+                        <div className="w-4 h-4 overflow-hidden mr-2">
                           <Image
-                            src={flavor.image || "/placeholder.svg"}
+                            src={flavor.image || "/placeholder.jpg"}
                             alt={flavor.name}
-                            width={20}
-                            height={20}
+                            width={16}
+                            height={16}
                           />
                         </div>
                       )}
@@ -628,20 +585,20 @@ function ProductsContent() {
                 </div>
               </div>
 
-              {/* Enhanced Weights Filter */}
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-[#f01c33] uppercase tracking-wider">
+              {/* Weights Filter */}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-sm font-semibold text-[#aa2e2e] uppercase">
                     Weight
                   </h3>
-                  <ChevronDown className="h-4 w-4 text-[#c4ab66]" />
+                  <ChevronDown className="h-4 w-4 text-gray-400" />
                 </div>
                 <div className="space-y-3">
                   <div
-                    className={`cursor-pointer hover:text-[#f01c33] transition-colors duration-300 p-3 rounded-xl ${
+                    className={`cursor-pointer hover:text-[#aa2e2e] transition-colors ${
                       selectedWeights.length === 0
-                        ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "font-semibold text-[#aa2e2e]"
+                        : "text-gray-600"
                     }`}
                     onClick={() => {
                       setSelectedWeights([]);
@@ -654,16 +611,16 @@ function ProductsContent() {
                   {weights.map((weight) => (
                     <div
                       key={weight.id}
-                      className={`cursor-pointer hover:text-[#f01c33] ml-3 flex items-center transition-colors duration-300 p-3 rounded-xl ${
+                      className={`cursor-pointer hover:text-[#aa2e2e] ml-3 flex items-center transition-colors ${
                         selectedWeights.includes(weight.id)
-                          ? "font-bold text-[#f01c33] bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10"
-                          : "text-gray-600 hover:bg-gray-50"
+                          ? "font-semibold text-[#aa2e2e]"
+                          : "text-gray-600"
                       }`}
                       onClick={() => handleWeightChange(weight.id)}
                     >
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded-lg mr-3 flex items-center justify-center">
+                      <div className="w-4 h-4 border-2 border-gray-300 mr-3 flex items-center justify-center">
                         {selectedWeights.includes(weight.id) && (
-                          <div className="w-3 h-3 rounded bg-gradient-to-r from-[#f01c33] to-[#c4ab66]"></div>
+                          <div className="w-2 h-2 bg-[#aa2e2e]"></div>
                         )}
                       </div>
                       {weight.display}
@@ -676,19 +633,19 @@ function ProductsContent() {
 
           {/* Products Grid */}
           <div className="lg:w-3/4">
-            {/* Enhanced Header with count and sort */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/50">
-              <div className="text-gray-700 mb-4 sm:mb-0">
+            {/* Header with count and sort */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 bg-white p-6 shadow-sm border border-gray-200">
+              <div className="text-[#aa2e2e] mb-4 sm:mb-0">
                 {loading && !products.length ? (
-                  <div className="h-6 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-6 w-32 bg-gray-200 animate-pulse"></div>
                 ) : (
                   <div className="text-lg">
                     Showing{" "}
-                    <span className="font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+                    <span className="font-bold text-[#aa2e2e]">
                       {products.length}
                     </span>{" "}
                     of{" "}
-                    <span className="font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+                    <span className="font-bold text-[#aa2e2e]">
                       {pagination.total || 0}
                     </span>{" "}
                     products
@@ -696,44 +653,20 @@ function ProductsContent() {
                 )}
               </div>
 
-              <div className="flex items-center gap-6">
-                {/* View Mode Toggle */}
-                <div className="flex items-center bg-gray-100 rounded-2xl p-1">
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-3 rounded-xl transition-all duration-300 ${
-                      viewMode === "grid"
-                        ? "bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white shadow-lg"
-                        : "text-gray-600 hover:text-[#f01c33]"
-                    }`}
-                  >
-                    <Grid3X3 className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-3 rounded-xl transition-all duration-300 ${
-                      viewMode === "list"
-                        ? "bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white shadow-lg"
-                        : "text-gray-600 hover:text-[#f01c33]"
-                    }`}
-                  >
-                    <List className="h-5 w-5" />
-                  </button>
-                </div>
-
+              <div className="flex items-center gap-4">
                 {loading && (
                   <div className="text-sm text-gray-500 flex items-center">
-                    <div className="w-4 h-4 border-2 border-[#f01c33] border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <div className="w-4 h-4 border-2 border-[#b99b2f] border-t-transparent animate-spin mr-2"></div>
                     Updating...
                   </div>
                 )}
 
-                <div className="flex items-center bg-white rounded-2xl overflow-hidden border-2 border-gray-200 shadow-lg">
-                  <span className="px-6 py-3 text-sm font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
+                <div className="flex items-center bg-gray-50 overflow-hidden border border-gray-200">
+                  <span className="px-4 py-2 text-sm font-medium text-[#aa2e2e]">
                     SORT BY
                   </span>
                   <select
-                    className="border-l-2 border-gray-200 px-6 py-3 focus:outline-none bg-white text-gray-700 font-medium"
+                    className="border-l border-gray-200 px-4 py-2 focus:outline-none bg-white text-[#aa2e2e]"
                     onChange={handleSortChange}
                     disabled={loading}
                     value={
@@ -750,8 +683,6 @@ function ProductsContent() {
                     }
                   >
                     <option value="newest">Featured</option>
-                    <option value="price-low">Price, low to high</option>
-                    <option value="price-high">Price, high to low</option>
                     <option value="name-asc">Alphabetically, A-Z</option>
                     <option value="name-desc">Alphabetically, Z-A</option>
                     <option value="oldest">Date, old to new</option>
@@ -760,33 +691,32 @@ function ProductsContent() {
               </div>
             </div>
 
-            {/* Enhanced Active Filters */}
+            {/* Active Filters */}
             {(filters.search ||
               filters.category ||
               selectedFlavors.length > 0 ||
               selectedWeights.length > 0 ||
               filters.minPrice ||
               filters.maxPrice) && (
-              <div className="flex flex-wrap items-center gap-4 mb-8 p-6 bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/50">
-                <span className="text-sm font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-[#f01c33]" />
+              <div className="flex flex-wrap items-center gap-3 mb-8 p-4 bg-white shadow-sm border border-gray-200">
+                <span className="text-sm font-semibold text-[#aa2e2e]">
                   Active Filters:
                 </span>
 
                 {filters.search && (
-                  <div className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm px-4 py-2 rounded-full flex items-center shadow-lg">
+                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
                     <span>Search: {filters.search}</span>
                     <button
                       onClick={() => handleFilterChange("search", "")}
-                      className="ml-2 hover:scale-110 transition-transform"
+                      className="ml-2"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {filters.category && (
-                  <div className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm px-4 py-2 rounded-full flex items-center shadow-lg">
+                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Category:{" "}
                       {categories.find((c) => c.slug === filters.category)
@@ -794,15 +724,15 @@ function ProductsContent() {
                     </span>
                     <button
                       onClick={() => handleFilterChange("category", "")}
-                      className="ml-2 hover:scale-110 transition-transform"
+                      className="ml-2"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {selectedFlavors.length > 0 && (
-                  <div className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm px-4 py-2 rounded-full flex items-center shadow-lg">
+                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Flavor:{" "}
                       {flavors.find((f) => f.id === selectedFlavors[0])?.name ||
@@ -813,15 +743,15 @@ function ProductsContent() {
                         setSelectedFlavors([]);
                         handleFilterChange("flavor", "");
                       }}
-                      className="ml-2 hover:scale-110 transition-transform"
+                      className="ml-2"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 {selectedWeights.length > 0 && (
-                  <div className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm px-4 py-2 rounded-full flex items-center shadow-lg">
+                  <div className="bg-[#aa2e2e] text-white text-sm px-3 py-1 flex items-center">
                     <span>
                       Weight:{" "}
                       {weights.find((w) => w.id === selectedWeights[0])
@@ -832,207 +762,171 @@ function ProductsContent() {
                         setSelectedWeights([]);
                         handleFilterChange("weight", "");
                       }}
-                      className="ml-2 hover:scale-110 transition-transform"
+                      className="ml-2"
                     >
-                      <X className="h-4 w-4" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 )}
 
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-[#f01c33] hover:text-[#c4ab66] font-bold transition-colors duration-300 flex items-center gap-1"
+                  className="text-sm text-[#aa2e2e] underline font-medium ml-2"
                 >
-                  <X className="w-4 h-4" />
                   Clear All
                 </button>
               </div>
             )}
 
-            {/* Enhanced Products Grid */}
+            {/* Products Grid */}
             {loading && products.length === 0 ? (
-              <div
-                className={`grid ${
-                  viewMode === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                    : "grid-cols-1"
-                } gap-8`}
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[...Array(pagination.limit || 12)].map((_, index) => (
                   <ProductCardSkeleton key={index} />
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white/80 backdrop-blur-sm p-16 rounded-3xl shadow-xl text-center border border-white/50"
-              >
-                <div className="text-gray-400 mb-8">
-                  <AlertCircle className="h-20 w-20 mx-auto" />
+              <div className="bg-white p-12 shadow-sm text-center border border-gray-200">
+                <div className="text-gray-400 mb-6">
+                  <AlertCircle className="h-16 w-16 mx-auto" />
                 </div>
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent mb-6">
+                <h2 className="text-2xl font-bold text-[#aa2e2e] mb-4">
                   No products found
                 </h2>
-                <p className="text-gray-600 mb-10 max-w-md mx-auto text-lg">
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
                   We couldn&apos;t find any products matching your criteria. Try
                   adjusting your filters or search term.
                 </p>
                 <Button
                   onClick={clearFilters}
-                  className="bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="bg-[#aa2e2e] hover:bg-[#8a1e1e] text-white px-8 py-3 font-semibold"
                 >
                   Clear All Filters
                 </Button>
-              </motion.div>
+              </div>
             ) : (
-              <div
-                className={`grid ${
-                  viewMode === "grid"
-                    ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                    : "grid-cols-1 md:grid-cols-2"
-                } gap-8`}
-              >
-                {products.map((product, index) => (
-                  <motion.div
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <div
                     key={product.id}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="group relative"
+                    className="bg-white shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group"
                   >
-                    {/* Background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#f01c33]/10 to-[#c4ab66]/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="relative h-64 w-full overflow-hidden">
+                      <Link href={`/products/${product.slug}`}>
+                        <Image
+                          src={
+                            product.image ||
+                            product.variants?.[0]?.images?.find(
+                              (img) => img.isPrimary
+                            )?.url ||
+                            product.variants?.[0]?.images?.[0]?.url ||
+                            "/placeholder.jpg"
+                          }
+                          alt={product.name}
+                          fill
+                          className="object-contain px-2 transition-transform group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                      </Link>
 
-                    <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden border border-white/50 group-hover:scale-105">
-                      <div className="relative h-80 w-full bg-gradient-to-br from-gray-50 to-white overflow-hidden">
-                        <Link href={`/products/${product.slug}`}>
-                          <Image
-                            src={product.image || "/product-placeholder.jpg"}
-                            alt={product.name}
-                            fill
-                            className="object-contain p-6 transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          />
-                        </Link>
+                      {product.hasSale && (
+                        <span className="absolute top-3 left-3 bg-[#aa2e2e] text-white text-xs font-bold px-3 py-1">
+                          SALE
+                        </span>
+                      )}
 
-                        {product.hasSale && (
-                          <motion.span
-                            initial={{ scale: 0, rotate: -45 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            className="absolute top-4 left-4 bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white text-sm font-bold px-4 py-2 rounded-2xl shadow-lg flex items-center gap-1"
-                          >
-                            <Sparkles className="w-3 h-3" />
-                            SALE
-                          </motion.span>
-                        )}
-
-                        <div className="absolute top-4 right-4 flex flex-col space-y-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-12 h-12 p-0 bg-white/90 backdrop-blur-sm hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white rounded-2xl shadow-lg transition-all duration-300 border border-white/50"
-                          >
-                            <Heart className="h-5 w-5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-12 h-12 p-0 bg-white/90 backdrop-blur-sm hover:bg-gradient-to-r hover:from-[#c4ab66] hover:to-[#f01c33] hover:text-white rounded-2xl shadow-lg transition-all duration-300 border border-white/50"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleQuickView(product);
-                            }}
-                          >
-                            <Eye className="h-5 w-5" />
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="p-8 bg-gradient-to-b from-white to-gray-50/30">
-                        <div className="flex items-center justify-center mb-4">
-                          <div className="flex text-[#c4ab66]">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className="h-5 w-5 transition-all duration-300"
-                                fill={
-                                  i < Math.round(product.avgRating || 0)
-                                    ? "currentColor"
-                                    : "none"
-                                }
-                              />
-                            ))}
-                          </div>
-                          <span className="text-sm text-gray-500 ml-2 font-medium">
-                            ({product.reviewCount || 0})
-                          </span>
-                        </div>
-
-                        <Link
-                          href={`/products/${product.slug}`}
-                          className="block hover:text-[#f01c33] transition-colors duration-300"
-                        >
-                          <h3 className="font-bold text-gray-900 mb-4 line-clamp-2 text-center text-xl group-hover:bg-gradient-to-r group-hover:from-[#f01c33] group-hover:to-[#c4ab66] group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
-                            {product.name}
-                          </h3>
-                        </Link>
-
-                        <div className="text-center mb-6">
-                          {product.hasSale ? (
-                            <div className="flex items-center justify-center space-x-3">
-                              <span className="font-bold text-2xl bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-                                {formatCurrency(product.basePrice)}
-                              </span>
-                              <span className="text-gray-500 line-through text-lg">
-                                {formatCurrency(product.regularPrice)}
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="font-bold text-2xl bg-gradient-to-r from-[#f01c33] to-[#c4ab66] bg-clip-text text-transparent">
-                              {formatCurrency(product.basePrice)}
-                            </span>
-                          )}
-                        </div>
-
-                        {product.flavors > 1 && (
-                          <p className="text-sm text-gray-500 text-center mb-6 font-medium">
-                            {product.flavors} variants available
-                          </p>
-                        )}
-
+                      <div className="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <Button
-                          className="group/btn w-full bg-gradient-to-r from-[#f01c33] to-[#c4ab66] hover:from-[#c4ab66] hover:to-[#f01c33] text-white font-bold py-4 rounded-2xl transition-all duration-500 shadow-lg hover:shadow-xl relative overflow-hidden"
+                          variant="ghost"
+                          size="sm"
+                          className="w-10 h-10 p-0 bg-white hover:bg-[#aa2e2e] hover:text-white border border-gray-200 transition-colors duration-300"
                           onClick={(e) => {
                             e.preventDefault();
-                            handleAddToCart(product);
+                            handleQuickView(product);
                           }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                          <span className="relative flex items-center justify-center gap-2">
-                            <ShoppingCart className="h-5 w-5 group-hover/btn:rotate-12 transition-transform duration-300" />
-                            Add to Cart
-                          </span>
+                          <Eye className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
+
+                    <div className="p-6 border-t border-gray-200">
+                      <Link
+                        href={`/products/${product.slug}`}
+                        className="block hover:text-[#aa2e2e] transition-colors"
+                      >
+                        <h3 className="font-semibold text-[#aa2e2e] mb-3 line-clamp-2 text-center">
+                          {product.name}
+                        </h3>
+                      </Link>
+
+                      <div className="flex items-center justify-center mb-3">
+                        <div className="flex text-[#b99b2f]">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className="h-4 w-4"
+                              fill={
+                                i < Math.round(product.avgRating || 0)
+                                  ? "currentColor"
+                                  : "none"
+                              }
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-gray-500 ml-2">
+                          ({product.reviewCount || 0})
+                        </span>
+                      </div>
+
+                      <div className="text-center mb-4">
+                        {product.hasSale ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <span className="font-bold text-xl text-[#aa2e2e]">
+                              {formatCurrency(product.basePrice)}
+                            </span>
+                            <span className="text-gray-500 line-through text-sm">
+                              {formatCurrency(product.regularPrice)}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="font-bold text-xl text-[#aa2e2e]">
+                            {formatCurrency(product.basePrice)}
+                          </span>
+                        )}
+                      </div>
+
+                      {product.flavors > 1 && (
+                        <p className="text-xs text-gray-500 text-center mb-4">
+                          {product.flavors} variants
+                        </p>
+                      )}
+
+                      {(!product.flavors || product.flavors === 0) &&
+                        product.variants &&
+                        product.variants.length > 1 && (
+                          <p className="text-xs text-gray-500 text-center mb-4">
+                            {product.variants.length} variants
+                          </p>
+                        )}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
 
-            {/* Enhanced Pagination */}
+            {/* Pagination */}
             {pagination.pages > 1 && (
-              <div className="flex justify-center items-center mt-16">
-                <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/50 overflow-hidden">
+              <div className="flex justify-center items-center mt-12">
+                <div className="flex items-center bg-white shadow-sm border border-gray-200 overflow-hidden">
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handlePageChange(pagination.page - 1)}
                     disabled={pagination.page === 1 || loading}
-                    className="rounded-none border-0 hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white px-6 py-4 transition-all duration-300"
+                    className="border-0 hover:bg-[#aa2e2e] hover:text-white px-4 py-3"
                   >
-                    <ChevronUp className="h-5 w-5 rotate-90" />
+                    <ChevronUp className="h-4 w-4 rotate-90" />
                   </Button>
 
                   {[...Array(pagination.pages)].map((_, i) => {
@@ -1048,10 +942,10 @@ function ProductsContent() {
                           key={page}
                           onClick={() => handlePageChange(page)}
                           disabled={loading}
-                          className={`px-6 py-4 font-bold transition-all duration-300 ${
+                          className={`px-4 py-3 font-medium transition-colors ${
                             pagination.page === page
-                              ? "bg-gradient-to-r from-[#f01c33] to-[#c4ab66] text-white"
-                              : "hover:bg-gray-50 text-gray-700"
+                              ? "bg-[#aa2e2e] text-white"
+                              : "hover:bg-gray-50 text-[#aa2e2e]"
                           }`}
                         >
                           {page}
@@ -1065,10 +959,7 @@ function ProductsContent() {
                         pagination.page < pagination.pages - 2)
                     ) {
                       return (
-                        <span
-                          key={page}
-                          className="px-6 py-4 text-gray-400 font-bold"
-                        >
+                        <span key={page} className="px-4 py-3 text-gray-400">
                           ...
                         </span>
                       );
@@ -1082,9 +973,9 @@ function ProductsContent() {
                     size="sm"
                     onClick={() => handlePageChange(pagination.page + 1)}
                     disabled={pagination.page === pagination.pages || loading}
-                    className="rounded-none border-0 hover:bg-gradient-to-r hover:from-[#f01c33] hover:to-[#c4ab66] hover:text-white px-6 py-4 transition-all duration-300"
+                    className="border-0 hover:bg-[#aa2e2e] hover:text-white px-4 py-3"
                   >
-                    <ChevronDown className="h-5 w-5 rotate-90" />
+                    <ChevronDown className="h-4 w-4 rotate-90" />
                   </Button>
                 </div>
               </div>
@@ -1109,7 +1000,7 @@ export default function ProductsPage() {
       fallback={
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center h-64">
-            <div className="w-12 h-12 border-4 border-[#f01c33] border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-4 border-[#aa2e2e] border-t-transparent animate-spin"></div>
           </div>
         </div>
       }

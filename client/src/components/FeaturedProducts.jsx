@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -11,34 +12,25 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import {
-  Star,
-  Eye,
-  Heart,
-  ShoppingCart,
-  Zap,
-  Crown,
-  Sparkles,
-  TrendingUp,
-} from "lucide-react";
+import { Star, Eye, Heart, ShoppingCart, ArrowRight } from "lucide-react";
 import ProductQuickView from "./ProductQuickView";
-import { motion } from "framer-motion";
+import { useAuth } from "@/lib/auth-context";
+import { useCart } from "@/lib/cart-context";
+import { fetchApi, formatCurrency } from "@/lib/utils";
+import { toast } from "sonner";
 
 const ProductSkeleton = () => (
-  <div className="bg-white/20 backdrop-blur-xl rounded-3xl shadow-xl overflow-hidden animate-pulse border border-white/30">
-    <div className="aspect-square bg-gradient-to-br from-white/20 to-white/30 w-full relative">
-      <div className="absolute inset-0 bg-gradient-to-t from-white/30 to-transparent"></div>
-    </div>
-    <div className="p-6 space-y-4">
+  <div className="bg-white overflow-hidden transition-all hover:shadow-lg shadow-md rounded-sm animate-pulse">
+    <div className="h-48 md:h-64 w-full bg-gray-200"></div>
+    <div className="p-3 md:p-4 space-y-3">
       <div className="flex space-x-1">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-4 w-4 bg-white/30 rounded-full"></div>
+          <div key={i} className="h-3 w-3 bg-gray-200 rounded-full"></div>
         ))}
       </div>
-      <div className="h-6 bg-gradient-to-r from-white/20 to-white/30 rounded-xl w-3/4"></div>
-      <div className="h-4 bg-white/20 rounded-lg w-1/2"></div>
-      <div className="h-8 bg-gradient-to-r from-white/20 to-white/30 rounded-xl w-2/3"></div>
-      <div className="h-12 bg-gradient-to-r from-white/20 to-white/30 rounded-2xl"></div>
+      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+      <div className="h-8 bg-gray-200 rounded"></div>
     </div>
   </div>
 );
@@ -50,326 +42,409 @@ const FeaturedProducts = ({
 }) => {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
+  const [api, setApi] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [wishlistItems, setWishlistItems] = useState({});
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState({});
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const [isAddingToCart, setIsAddingToCart] = useState({});
+  const { addToCart } = useCart();
 
-  if (!isLoading && !error && products.length === 0) {
-    return null;
-  }
+  // Fetch wishlist status for all products
+  useEffect(() => {
+    const fetchWishlistStatus = async () => {
+      if (!isAuthenticated) return;
+
+      try {
+        const response = await fetchApi("/users/wishlist", {
+          credentials: "include",
+        });
+        const items = response.data.wishlistItems.reduce((acc, item) => {
+          acc[item.productId] = true;
+          return acc;
+        }, {});
+        setWishlistItems(items);
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+      }
+    };
+
+    fetchWishlistStatus();
+  }, [isAuthenticated]);
+
+  const handleAddToWishlist = async (product, e) => {
+    e.preventDefault(); // Prevent navigation
+    if (!isAuthenticated) {
+      router.push(`/login?redirect=/products/${product.slug}`);
+      return;
+    }
+
+    setIsAddingToWishlist((prev) => ({ ...prev, [product.id]: true }));
+
+    try {
+      if (wishlistItems[product.id]) {
+        // Get wishlist to find the item ID
+        const wishlistResponse = await fetchApi("/users/wishlist", {
+          credentials: "include",
+        });
+
+        const wishlistItem = wishlistResponse.data.wishlistItems.find(
+          (item) => item.productId === product.id
+        );
+
+        if (wishlistItem) {
+          await fetchApi(`/users/wishlist/${wishlistItem.id}`, {
+            method: "DELETE",
+            credentials: "include",
+          });
+
+          setWishlistItems((prev) => ({ ...prev, [product.id]: false }));
+        }
+      } else {
+        // Add to wishlist
+        await fetchApi("/users/wishlist", {
+          method: "POST",
+          credentials: "include",
+          body: JSON.stringify({ productId: product.id }),
+        });
+
+        setWishlistItems((prev) => ({ ...prev, [product.id]: true }));
+      }
+    } catch (error) {
+      console.error("Error updating wishlist:", error);
+    } finally {
+      setIsAddingToWishlist((prev) => ({ ...prev, [product.id]: false }));
+    }
+  };
+
+  // Handle add to cart click
+  const handleAddToCart = async (product) => {
+    setIsAddingToCart((prev) => ({ ...prev, [product.id]: true }));
+    try {
+      if (!isAuthenticated) {
+        router.push(
+          `/login?redirect=${encodeURIComponent(window.location.pathname)}`
+        );
+        return;
+      }
+      // If product has no variants, show error
+      if (!product || !product.variants || product.variants.length === 0) {
+        // Try to get default variant from backend
+        const response = await fetchApi(
+          `/public/products/${product.id}/variants`
+        );
+        const variants = response.data.variants || [];
+
+        if (variants.length === 0) {
+          toast.error("This product is currently not available");
+          return;
+        }
+
+        // Use first variant as default
+        const variantId = variants[0].id;
+        await addToCart(variantId, 1);
+        toast.success(`${product.name} added to cart`);
+      } else {
+        // Get the first variant (default)
+        const variantId = product.variants[0].id;
+        await addToCart(variantId, 1);
+        toast.success(`${product.name} added to cart`);
+      }
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      toast.error("Failed to add product to cart");
+    } finally {
+      setIsAddingToCart((prev) => ({ ...prev, [product.id]: false }));
+    }
+  };
+
+  // Handle slide change
+  useEffect(() => {
+    if (!api) return;
+
+    const onSelect = () => {
+      setCurrentSlide(api.selectedScrollSnap());
+    };
+
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  // Handle opening quick view
+  const handleQuickView = (product) => {
+    setQuickViewProduct(product);
+    setQuickViewOpen(true);
+  };
 
   if (isLoading) {
     return (
-      <section className="py-16 md:py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-            {[...Array(4)].map((_, index) => (
-              <ProductSkeleton key={index} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {[...Array(8)].map((_, index) => (
+          <ProductSkeleton key={index} />
+        ))}
+      </div>
     );
   }
 
   if (error) {
     return (
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center"
-          >
-            <div className="w-24 h-24 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border border-white/40">
-              <Zap className="w-12 h-12 text-amber-700" />
-            </div>
-            <h3 className="text-2xl font-bold text-amber-900 mb-4">
-              Oops! Something went wrong
-            </h3>
-            <p className="text-amber-700 text-lg">Failed to load products</p>
-          </motion.div>
-        </div>
-      </section>
+      <div className="text-center py-8">
+        <p className="text-red-500">Failed to load products</p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">No products found</p>
+      </div>
     );
   }
 
   return (
-    <section className="py-16 md:py-20 bg-white relative overflow-hidden">
-      {/* Glassmorphism Background Elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-16 w-28 h-28 bg-white/30 backdrop-blur-md rounded-full blur-2xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/4 w-2 h-2 bg-white/60 rounded-full animate-ping"></div>
-        <div className="absolute top-1/3 right-1/3 w-1 h-1 bg-white/50 rounded-full animate-pulse"></div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
-        {/* Glassmorphism Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+    <>
+      <div className="relative">
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
         >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 bg-white/30 backdrop-blur-md px-6 py-3 rounded-full border border-white/40 mb-6 shadow-lg"
-          >
-            <TrendingUp className="w-5 h-5 text-amber-800" />
-            <span className="text-amber-800 font-bold text-sm uppercase tracking-wider">
-              Featured Products
-            </span>
-            <Sparkles className="w-5 h-5 text-amber-700" />
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-5xl md:text-6xl font-bold mb-6"
-          >
-            <span className="bg-gradient-to-r from-amber-900 via-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-lg">
-              Premium
-            </span>{" "}
-            <span className="bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent drop-shadow-lg">
-              Collection
-            </span>
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-amber-800 text-lg max-w-2xl mx-auto mb-8 drop-shadow-sm"
-          >
-            Discover our handpicked selection of premium products designed to
-            exceed your expectations
-          </motion.p>
-
-          <motion.div
-            initial={{ width: 0 }}
-            whileInView={{ width: "5rem" }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="h-1 bg-gradient-to-r from-amber-600 to-yellow-600 rounded-full mx-auto shadow-lg"
-          />
-        </motion.div>
-
-        {/* Glassmorphism Products Carousel */}
-        <div className="relative px-2 md:px-8">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent className="-ml-4 md:-ml-6">
-              {products.map((product, index) => (
-                <CarouselItem
-                  key={product.id || product.slug || Math.random().toString()}
-                  className="pl-4 md:pl-6 basis-1/2 sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+          <CarouselContent className="-ml-4">
+            {products.map((product, index) => (
+              <CarouselItem
+                key={product.id || product.slug || index}
+                className="pl-4 basis-1/2 md:basis-1/4 lg:basis-1/6 py-5 md:py-6"
+              >
+                <div
+                  key={product.id}
+                  className="bg-white overflow-hidden transition-all hover:shadow-lg shadow-md rounded-sm group"
                 >
-                  <motion.div
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="group relative h-full flex flex-col"
-                  >
-                    <div className="bg-white/20 backdrop-blur-xl rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden border border-white/30 h-full flex flex-col transform group-hover:scale-105">
-                      {/* Glassmorphism Product Image */}
-                      <div className="relative aspect-square bg-gradient-to-br from-white/10 to-white/20 overflow-hidden">
-                        <Link href={`/products/${product.slug || ""}`}>
-                          <Image
-                            src={product.image || "/product-placeholder.jpg"}
-                            alt={product.name || "Product"}
-                            fill
-                            className="object-contain p-6 transition-all duration-700 group-hover:scale-110 group-hover:rotate-2"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          />
-                        </Link>
+                  <Link href={`/products/${product.slug}`}>
+                    <div className="relative h-48 md:h-64 w-full overflow-hidden">
+                      <Image
+                        src={(() => {
+                          // Find the variant with the lowest weight
+                          let selectedVariant = null;
+                          if (product.variants && product.variants.length > 0) {
+                            selectedVariant = product.variants.reduce(
+                              (min, v) => {
+                                if (
+                                  !v.weight ||
+                                  typeof v.weight.value !== "number"
+                                )
+                                  return min;
+                                if (
+                                  !min ||
+                                  (min.weight &&
+                                    v.weight.value < min.weight.value)
+                                )
+                                  return v;
+                                return min;
+                              },
+                              null
+                            );
+                            // fallback: if no variant has weight, use first variant
+                            if (!selectedVariant)
+                              selectedVariant = product.variants[0];
+                          }
+                          if (
+                            selectedVariant &&
+                            selectedVariant.images &&
+                            selectedVariant.images.length > 0
+                          ) {
+                            const primaryImg = selectedVariant.images.find(
+                              (img) => img.isPrimary
+                            );
+                            if (primaryImg && primaryImg.url)
+                              return primaryImg.url;
+                            if (selectedVariant.images[0].url)
+                              return selectedVariant.images[0].url;
+                          }
+                          if (product.image)
+                            return product.image.startsWith("http")
+                              ? product.image
+                              : `https://desirediv-storage.blr1.digitaloceanspaces.com/${product.image}`;
+                          return "/placeholder.jpg";
+                        })()}
+                        alt={product.name}
+                        fill
+                        className="object-contain px-4 transition-transform md:group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      {product.hasSale && (
+                        <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-sm">
+                          SALE
+                        </span>
+                      )}
 
-                        {/* Glass Sale Badge */}
-                        {product.hasSale && (
-                          <motion.div
-                            initial={{ scale: 0, rotate: -45 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            className="absolute top-4 left-4 bg-white/30 backdrop-blur-md border border-white/40 text-amber-900 text-xs font-bold px-3 py-2 rounded-2xl shadow-lg flex items-center gap-1"
-                          >
-                            <Zap className="w-3 h-3" />
-                            SALE
-                          </motion.div>
-                        )}
-
-                        {/* Glass Action Icons */}
-                        <div className="absolute top-4 right-4 flex flex-col space-y-3 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 flex items-center justify-center bg-white/40 backdrop-blur-md hover:bg-white/50 hover:text-amber-800 rounded-2xl shadow-lg transition-all duration-300 border border-white/50"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log("Wishlist:", product);
-                            }}
-                          >
-                            <Heart className="h-5 w-5" />
-                          </motion.button>
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            className="w-10 h-10 flex items-center justify-center bg-white/40 backdrop-blur-md hover:bg-white/50 hover:text-amber-800 rounded-2xl shadow-lg transition-all duration-300 border border-white/50"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setQuickViewProduct(product);
-                              setQuickViewOpen(true);
-                            }}
-                          >
-                            <Eye className="h-5 w-5" />
-                          </motion.button>
-                        </div>
-
-                        {/* Floating Glass Elements */}
-                        <motion.div
-                          animate={{ y: [-3, 3, -3] }}
-                          transition={{
-                            duration: 3,
-                            repeat: Number.POSITIVE_INFINITY,
-                          }}
-                          className="absolute bottom-4 left-4 w-6 h-6 bg-white/30 backdrop-blur-sm rounded-full shadow-lg"
-                        ></motion.div>
-                      </div>
-
-                      {/* Glassmorphism Product Info */}
-                      <div className="p-6 flex-grow flex flex-col bg-gradient-to-b from-white/10 to-white/20">
-                        {/* Glass Rating */}
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="flex text-yellow-500">
-                              {[...Array(5)].map((_, i) => (
-                                <Star
-                                  key={i}
-                                  className="h-4 w-4 transition-all duration-300"
-                                  fill={
-                                    i < Math.round(product.avgRating || 0)
-                                      ? "currentColor"
-                                      : "none"
-                                  }
-                                />
-                              ))}
-                            </div>
-                            <span className="text-sm text-amber-700 font-medium">
-                              ({product.reviewCount || 0})
-                            </span>
-                          </div>
-                          {product.avgRating >= 4.5 && (
-                            <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full border border-white/30 shadow-lg">
-                              <Crown className="w-3 h-3 text-amber-700" />
-                              <span className="text-xs font-bold text-amber-700">
-                                TOP
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Product Name */}
-                        <Link
-                          href={`/products/${product.slug || ""}`}
-                          className="block mb-4"
-                        >
-                          <h3 className="font-bold text-amber-900 text-lg line-clamp-2 group-hover:bg-gradient-to-r group-hover:from-amber-800 group-hover:to-amber-700 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500 drop-shadow-sm">
-                            {product.name || "Product"}
-                          </h3>
-                        </Link>
-
-                        {/* Glass Price */}
-                        <div className="mt-auto mb-4">
-                          {product.hasSale ? (
-                            <div className="flex items-center flex-wrap gap-2">
-                              <span className="font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent text-2xl drop-shadow-sm">
-                                ₹{product.basePrice || 0}
-                              </span>
-                              <span className="text-amber-600 line-through text-lg">
-                                ₹{product.regularPrice || 0}
-                              </span>
-                              {product.discountPercentage && (
-                                <span className="text-xs bg-white/30 backdrop-blur-sm text-amber-900 px-3 py-1 rounded-full font-bold shadow-md border border-white/40">
-                                  {product.discountPercentage}% OFF
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="font-bold bg-gradient-to-r from-amber-800 to-amber-700 bg-clip-text text-transparent text-2xl drop-shadow-sm">
-                              ₹{product.basePrice || 0}
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Glass Add to Cart Button */}
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 backdrop-blur-[2px] flex justify-center py-1 md:py-3 md:bg-opacity-0 md:group-hover:bg-opacity-70 md:translate-y-full md:group-hover:translate-y-0 transition-transform">
                         <Button
-                          size="lg"
-                          className="group/btn w-full bg-white/30 backdrop-blur-md border border-white/40 hover:bg-white/40 text-amber-900 rounded-2xl transition-all duration-500 font-bold py-4 shadow-lg hover:shadow-xl relative overflow-hidden"
+                          variant="ghost"
+                          size="sm"
+                          className="text-white hover:text-white hover:bg-primary/80 rounded-full p-2"
                           onClick={(e) => {
                             e.preventDefault();
-                            console.log("Add to cart:", product);
+                            handleQuickView(product);
                           }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-1000"></div>
-                          <span className="relative flex items-center justify-center gap-2">
-                            <ShoppingCart className="h-5 w-5 group-hover/btn:rotate-12 transition-transform duration-300" />
-                            Add to Cart
-                          </span>
+                          <Eye className="h-5 w-5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={`text-white hover:text-white hover:bg-primary/80 rounded-full p-2 mx-2 ${
+                            wishlistItems[product.id] ? "text-red-500" : ""
+                          }`}
+                          onClick={(e) => handleAddToWishlist(product, e)}
+                          disabled={isAddingToWishlist[product.id]}
+                        >
+                          <Heart
+                            className={`h-5 w-5 ${
+                              wishlistItems[product.id] ? "fill-current" : ""
+                            }`}
+                          />
                         </Button>
                       </div>
                     </div>
-                  </motion.div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
+                  </Link>
 
-            {/* Glass Navigation Buttons */}
-            <CarouselPrevious className="hidden md:flex -left-6 w-14 h-14 bg-white/30 backdrop-blur-md border-2 border-white/40 text-amber-800 hover:bg-white/40 hover:text-amber-900 hover:border-white/50 transition-all duration-500 shadow-xl hover:shadow-2xl hover:scale-110" />
-            <CarouselNext className="hidden md:flex -right-6 w-14 h-14 bg-white/30 backdrop-blur-md border-2 border-white/40 text-amber-800 hover:bg-white/40 hover:text-amber-900 hover:border-white/50 transition-all duration-500 shadow-xl hover:shadow-2xl hover:scale-110" />
-          </Carousel>
-        </div>
+                  <div className="p-3 md:p-4 text-center">
+                    <div className="flex items-center justify-center mb-2">
+                      <div className="flex text-yellow-400">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className="h-3 w-3 md:h-4 md:w-4"
+                            fill={
+                              i < Math.round(product.avgRating || 0)
+                                ? "currentColor"
+                                : "none"
+                            }
+                          />
+                        ))}
+                      </div>
+                      <span className="text-xs text-gray-500 ml-1 md:ml-2">
+                        ({product.reviewCount || 0})
+                      </span>
+                    </div>
 
-        {/* Glass View All Products Button */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <Link href="/products">
-            <motion.div
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              className="group relative inline-block"
-            >
-              <div className="absolute inset-0 bg-white/20 backdrop-blur-sm rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-              <Button
-                variant="outline"
-                className="relative border-2 border-white/40 bg-white/20 backdrop-blur-md text-amber-900 hover:bg-white/30 hover:text-amber-900 hover:border-white/50 px-12 py-6 rounded-2xl transition-all duration-500 font-bold text-lg shadow-lg hover:shadow-xl"
-              >
-                <span className="flex items-center gap-3">
-                  <Sparkles className="w-6 h-6" />
-                  View All Products
-                  <TrendingUp className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
-                </span>
-              </Button>
-            </motion.div>
-          </Link>
-        </motion.div>
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="hover:text-primary"
+                    >
+                      <h3 className="font-medium uppercase mb-2 line-clamp-2 text-xs md:text-sm">
+                        {product.name}
+                      </h3>
+                      {/* Show lowest weight variant's flavor and weight */}
+                      {(() => {
+                        let selectedVariant = null;
+                        if (product.variants && product.variants.length > 0) {
+                          selectedVariant = product.variants.reduce(
+                            (min, v) => {
+                              if (
+                                !v.weight ||
+                                typeof v.weight.value !== "number"
+                              )
+                                return min;
+                              if (
+                                !min ||
+                                (min.weight &&
+                                  v.weight.value < min.weight.value)
+                              )
+                                return v;
+                              return min;
+                            },
+                            null
+                          );
+                          if (!selectedVariant)
+                            selectedVariant = product.variants[0];
+                        }
+                        if (!selectedVariant) return null;
+                        const flavor = selectedVariant.flavor?.name;
+                        const weight = selectedVariant.weight?.value;
+                        const unit = selectedVariant.weight?.unit;
+                        if (flavor || (weight && unit)) {
+                          return (
+                            <div className="text-xs text-gray-500 mb-1">
+                              {flavor}
+                              {flavor && weight && unit ? " • " : ""}
+                              {weight && unit ? `${weight} ${unit}` : ""}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
+                    </Link>
 
-        {/* Quick View Dialog */}
-        <ProductQuickView
-          product={quickViewProduct}
-          open={quickViewOpen}
-          onOpenChange={setQuickViewOpen}
-        />
+                    <div className="flex items-center justify-center mb-2 flex-col md:flex-row">
+                      {product.hasSale ? (
+                        <div className="flex items-center flex-col md:flex-row">
+                          <span className="font-bold text-base md:text-lg text-primary">
+                            {formatCurrency(product.basePrice)}
+                          </span>
+                          <span className="text-gray-500 line-through text-xs md:text-sm ml-1 md:ml-2">
+                            {formatCurrency(product.regularPrice)}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="font-bold text-base md:text-lg text-primary">
+                          {formatCurrency(product.basePrice)}
+                        </span>
+                      )}
+                    </div>
+
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      variant="outline"
+                      size="sm"
+                      className="w-full p-2"
+                      disabled={isAddingToCart[product.id]}
+                    >
+                      {isAddingToCart[product.id] ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                      ) : (
+                        <ShoppingCart className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          {/* Navigation Controls */}
+          <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-10 sm:w-10 bg-white/90 hover:bg-white hover:text-black border-gray-200 text-gray-700 shadow-lg" />
+          <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 sm:h-10 sm:w-10 bg-white/90 hover:bg-white hover:text-black border-gray-200 text-gray-700 shadow-lg" />
+        </Carousel>
       </div>
-    </section>
+
+      <div className="text-center mt-2">
+        <Link href="/products">
+          <Button
+            variant="outline"
+            size="lg"
+            className="font-medium border-primary text-primary hover:bg-primary hover:text-white group rounded-full"
+          >
+            View All Products
+            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+          </Button>
+        </Link>
+      </div>
+
+      {/* Quick View Dialog */}
+      <ProductQuickView
+        product={quickViewProduct}
+        open={quickViewOpen}
+        onOpenChange={setQuickViewOpen}
+      />
+    </>
   );
 };
 

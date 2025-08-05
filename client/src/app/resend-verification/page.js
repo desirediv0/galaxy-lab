@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import Link from "next/link";
 import { ClientOnly } from "@/components/client-only";
+import { DynamicIcon } from "@/components/dynamic-icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Mail, ArrowRight, CheckCircle, ShoppingBag } from "lucide-react";
 
 export default function ResendVerificationPage() {
   const { resendVerification } = useAuth();
@@ -55,135 +55,92 @@ export default function ResendVerificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-      {/* Header with logo */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/" className="flex items-center justify-center">
-            <div className="flex items-center space-x-2">
-              <div className="bg-red-500 p-2 rounded-lg">
-                <ShoppingBag className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-gray-800">
-                Power Fitness
-              </span>
-            </div>
-          </Link>
-        </div>
-      </div>
+    <div className="container max-w-lg mx-auto p-8">
+      <div className="bg-white shadow p-8">
+        <h1 className="text-2xl font-bold mb-4 text-center">
+          Resend Verification Email
+        </h1>
 
-      <div className="flex items-center justify-center px-4 py-12">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            {/* Header Section */}
-            <div className="bg-gradient-to-r from-red-500 to-red-600 px-8 py-8 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4">
-                <Mail className="h-8 w-8 text-white" />
+        <ClientOnly fallback={<div className="py-8">Loading...</div>}>
+          {(status === "idle" || status === "error") && (
+            <div>
+              <p className="mb-4 text-gray-600">
+                Enter your email address below and we&apos;ll send you a new
+                verification link.
+              </p>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Email Address
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email"
+                    className="w-full"
+                    required
+                  />
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={status === "submitting"}
+                >
+                  {status === "submitting" ? (
+                    <>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Verification Email"
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <Link href="/login" className="text-primary hover:underline">
+                  Back to Login
+                </Link>
               </div>
-              <h1 className="text-2xl font-bold text-white mb-2">
-                Resend Verification
-              </h1>
-              <p className="text-red-100">
-                Get a new verification link sent to your email
+            </div>
+          )}
+
+          {status === "submitting" && (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p className="mt-4 text-gray-600">
+                Sending verification email...
               </p>
             </div>
+          )}
 
-            {/* Content Section */}
-            <div className="px-8 py-8">
-              <ClientOnly
-                fallback={<div className="py-8 text-center">Loading...</div>}
+          {status === "success" && (
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="bg-green-100 p-3">
+                <DynamicIcon name="Mail" className="h-12 w-12 text-green-500" />
+              </div>
+              <p className="mt-4 text-green-600 font-medium">
+                Verification email sent successfully!
+              </p>
+              <p className="mt-2 text-gray-600">
+                Please check your email and click on the verification link.
+              </p>
+              <Link
+                href="/login"
+                className="mt-6 inline-flex items-center px-4 py-2 bg-primary text-white hover:bg-primary/90"
               >
-                {(status === "idle" || status === "error") && (
-                  <div>
-                    <p className="mb-6 text-gray-600 text-center">
-                      Enter your email address below and we&apos;ll send you a
-                      new verification link.
-                    </p>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div>
-                        <label
-                          htmlFor="email"
-                          className="block text-sm font-semibold text-gray-700 mb-2"
-                        >
-                          Email Address
-                        </label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="Enter your email"
-                          className="w-full h-12 px-4 border-2 border-gray-200 rounded-xl focus:border-red-500 focus:ring-red-500 transition-colors"
-                          required
-                        />
-                      </div>
-                      <Button
-                        type="submit"
-                        className="w-full h-12 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
-                        disabled={status === "submitting"}
-                      >
-                        {status === "submitting" ? (
-                          <div className="flex items-center space-x-2">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            <span>Sending...</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-2">
-                            <Mail className="h-4 w-4" />
-                            <span>Send Verification Email</span>
-                          </div>
-                        )}
-                      </Button>
-                    </form>
-
-                    <div className="mt-6 text-center">
-                      <Link
-                        href="/login"
-                        className="text-red-600 hover:text-red-700 font-medium transition-colors"
-                      >
-                        Back to Login
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                {status === "submitting" && (
-                  <div className="flex flex-col items-center justify-center py-8">
-                    <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-                    <p className="text-gray-600">
-                      Sending verification email...
-                    </p>
-                  </div>
-                )}
-
-                {status === "success" && (
-                  <div className="flex flex-col items-center justify-center py-8 text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                      <CheckCircle className="h-8 w-8 text-green-500" />
-                    </div>
-                    <h2 className="text-xl font-bold mb-2 text-gray-800">
-                      Email Sent Successfully!
-                    </h2>
-                    <p className="text-green-600 font-medium mb-2">
-                      Verification email sent successfully!
-                    </p>
-                    <p className="text-gray-600 mb-8">
-                      Please check your email and click on the verification
-                      link.
-                    </p>
-                    <Link href="/login">
-                      <Button className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 transform hover:scale-105">
-                        Back to Login
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                )}
-              </ClientOnly>
+                Back to Login{" "}
+                <DynamicIcon name="ArrowRight" className="ml-2 h-4 w-4" />
+              </Link>
             </div>
-          </div>
-        </div>
+          )}
+        </ClientOnly>
       </div>
     </div>
   );

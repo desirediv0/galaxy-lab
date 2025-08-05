@@ -18,9 +18,6 @@ import {
   ShoppingBag,
   PartyPopper,
   Gift,
-  Shield,
-  Truck,
-  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -76,6 +73,7 @@ export default function CheckoutPage() {
       if (response.success) {
         setAddresses(response.data.addresses || []);
 
+        // Set the default address if available
         if (response.data.addresses?.length > 0) {
           const defaultAddress = response.data.addresses.find(
             (addr) => addr.isDefault
@@ -107,7 +105,10 @@ export default function CheckoutPage() {
           credentials: "include",
         });
         if (response.success) {
+          console.log("Razorpay key fetched successfully");
           setRazorpayKey(response.data.key);
+        } else {
+          console.error("Failed to fetch Razorpay key:", response);
         }
       } catch (error) {
         console.error("Error fetching Razorpay key:", error);
@@ -119,14 +120,17 @@ export default function CheckoutPage() {
     }
   }, [isAuthenticated]);
 
+  // Handle address selection
   const handleAddressSelect = (id) => {
     setSelectedAddressId(id);
   };
 
+  // Handle payment method selection
   const handlePaymentMethodSelect = (method) => {
     setPaymentMethod(method);
   };
 
+  // Handle address form success
   const handleAddressFormSuccess = () => {
     setShowAddressForm(false);
     fetchAddresses();
@@ -148,8 +152,10 @@ export default function CheckoutPage() {
   // Enhanced confetti effect when order is successful
   useEffect(() => {
     if (successAnimation) {
+      // Trigger the celebration confetti
       fireConfetti.celebration();
 
+      // Follow with just one more cannon after 1.5 seconds for lighter effect
       const timer = setTimeout(() => {
         setConfettiCannon(true);
         fireConfetti.sides();
@@ -159,17 +165,25 @@ export default function CheckoutPage() {
     }
   }, [successAnimation]);
 
+  // Update the payment handler with enhanced audio feedback
   const handleSuccessfulPayment = (paymentResponse, orderData) => {
     setPaymentId(paymentResponse.razorpay_payment_id);
     setOrderCreated(true);
     setOrderNumber(orderData.orderNumber || "");
 
+    // Start success animation
     setSuccessAnimation(true);
+
+    // Play a single success sound
+    // Don't play both sounds as that might be too much
     playSuccessSound();
+
+    // Clear cart after successful order
     clearCart();
 
+    // Show enhanced success toast
     toast.success("Order placed successfully!", {
-      duration: 4000,
+      duration: 4000, // Reduced duration
       icon: <PartyPopper className="h-5 w-5 text-green-500" />,
       description: `Your order #${
         orderData.orderNumber || ""
@@ -188,23 +202,25 @@ export default function CheckoutPage() {
     setError("");
 
     try {
+      // Get checkout amount
       const calculatedAmount = totals.subtotal - totals.discount;
-      const amount = Math.max(
-        Number.parseFloat(calculatedAmount.toFixed(2)),
-        1
-      );
+      // Fix: Keep 2 decimal places instead of rounding to preserve exact amount
+      const amount = Math.max(parseFloat(calculatedAmount.toFixed(2)), 1);
 
+      // Show warning if original amount was less than 1
       if (calculatedAmount < 1) {
         toast.info("Minimum order amount is ₹1. Your total has been adjusted.");
       }
 
       if (paymentMethod === "RAZORPAY") {
+        // Step 1: Create Razorpay order
         const orderResponse = await fetchApi("/payment/checkout", {
           method: "POST",
           credentials: "include",
           body: JSON.stringify({
             amount,
             currency: "INR",
+            // Include coupon information for proper tracking
             couponCode: coupon?.code || null,
             couponId: coupon?.id || null,
             discountAmount: totals.discount || 0,
@@ -218,6 +234,7 @@ export default function CheckoutPage() {
         const razorpayOrder = orderResponse.data;
         setOrderId(razorpayOrder.id);
 
+        // Step 2: Load Razorpay script
         const loaded = await loadScript(
           "https://checkout.razorpay.com/v1/checkout.js"
         );
@@ -230,7 +247,7 @@ export default function CheckoutPage() {
           key: razorpayKey,
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency,
-          name: "Power Fitness - Premium Supplements for Your Fitness Journey",
+          name: "Genuine Nutrition - Premium Supplements for Your Fitness Journey",
           description: "Get high-quality supplements at the best prices.",
           order_id: razorpayOrder.id,
           prefill: {
@@ -238,20 +255,25 @@ export default function CheckoutPage() {
             email: user?.email || "",
             contact: user?.phone || "",
           },
-          handler: async (response) => {
+          handler: async function (response) {
+            // Step 4: Verify payment
             try {
               const verificationResponse = await fetchApi("/payment/verify", {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify({
+                  // Send both formats to ensure compatibility
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
+                  // Also send camelCase versions
                   razorpayOrderId: response.razorpay_order_id,
                   razorpayPaymentId: response.razorpay_payment_id,
                   razorpaySignature: response.razorpay_signature,
+                  // Include shipping and coupon information
                   shippingAddressId: selectedAddressId,
                   billingAddressSameAsShipping: true,
+                  // Also pass coupon information again to ensure it's included
                   couponCode: coupon?.code || null,
                   couponId: coupon?.id || null,
                   discountAmount: totals.discount || 0,
@@ -270,6 +292,7 @@ export default function CheckoutPage() {
             } catch (error) {
               console.error("Payment verification error:", error);
 
+              // If the error is about a previously cancelled order, guide the user
               if (
                 error.message &&
                 error.message.includes("previously cancelled")
@@ -289,7 +312,8 @@ export default function CheckoutPage() {
             color: "#F47C20",
           },
           modal: {
-            ondismiss: () => {
+            ondismiss: function () {
+              // When Razorpay modal is dismissed
               setProcessing(false);
             },
           },
@@ -298,6 +322,7 @@ export default function CheckoutPage() {
         const razorpay = new window.Razorpay(options);
         razorpay.open();
       }
+      // Add COD implementation here if required
     } catch (error) {
       console.error("Checkout error:", error);
 
@@ -305,6 +330,7 @@ export default function CheckoutPage() {
         error.message &&
         error.message.includes("order was previously cancelled")
       ) {
+        // Clear local state and guide the user
         setError(
           "This order was previously cancelled. Please refresh the page to start a new checkout."
         );
@@ -322,11 +348,9 @@ export default function CheckoutPage() {
 
   if (!isAuthenticated || loadingAddresses) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-        <div className="container mx-auto px-4 py-10">
-          <div className="flex justify-center items-center h-64">
-            <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
+      <div className="container mx-auto px-4 py-10">
+        <div className="flex justify-center items-center h-64">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
         </div>
       </div>
     );
@@ -335,84 +359,79 @@ export default function CheckoutPage() {
   // If order created successfully
   if (orderCreated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-lg mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-100 relative overflow-hidden">
-            {/* Background pattern for festive feel */}
-            <div className="absolute inset-0 bg-gradient-to-br from-red-50 to-transparent z-0"></div>
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-lg mx-auto bg-white p-8 border shadow-lg relative overflow-hidden">
+          {/* Background pattern for festive feel */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent z-0"></div>
 
-            {/* Celebration animation */}
-            <div className="relative z-10">
-              <div className="relative flex justify-center">
-                <div className="h-36 w-36 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
-                  <PartyPopper
-                    className={`h-20 w-20 text-red-600 ${
-                      confettiCannon ? "animate-pulse" : ""
-                    }`}
-                  />
-                </div>
-
-                {/* Radiating circles animation */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="animate-ping absolute h-40 w-40 rounded-full bg-red-500 opacity-20"></div>
-                  <div className="animate-ping absolute h-32 w-32 rounded-full bg-green-500 opacity-10 delay-150"></div>
-                  <div className="animate-ping absolute h-24 w-24 rounded-full bg-red-500 opacity-10 delay-300"></div>
-                </div>
+          {/* Celebration animation */}
+          <div className="relative z-10">
+            <div className="relative flex justify-center">
+              <div className="h-36 w-36 bg-primary/10 flex items-center justify-center mx-auto mb-6 animate-bounce">
+                <PartyPopper
+                  className={`h-20 w-20 text-primary ${
+                    confettiCannon ? "animate-pulse" : ""
+                  }`}
+                />
               </div>
 
-              <div className="text-center">
-                <h1 className="text-4xl font-bold mb-2 text-gray-800 animate-pulse">
-                  Woohoo!
-                </h1>
+              {/* Radiating circles animation */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="animate-ping absolute h-40 w-40 bg-primary opacity-20"></div>
+                <div className="animate-ping absolute h-32 w-32 bg-green-500 opacity-10 delay-150"></div>
+                <div className="animate-ping absolute h-24 w-24 bg-yellow-500 opacity-10 delay-300"></div>
+              </div>
+            </div>
 
-                <h2 className="text-2xl font-bold mb-2 text-gray-800">
-                  Order Confirmed!
-                </h2>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-2 text-gray-800 animate-pulse">
+                Woohoo!
+              </h1>
 
-                {orderNumber && (
-                  <div className="bg-gradient-to-r from-red-100 to-red-200 py-3 px-6 rounded-full inline-block mb-4">
-                    <p className="text-lg font-semibold text-red-700">
-                      Order #{orderNumber}
-                    </p>
-                  </div>
-                )}
+              <h2 className="text-2xl font-bold mb-2 text-gray-800">
+                Order Confirmed!
+              </h2>
 
-                <div className="my-6 flex items-center justify-center bg-green-50 p-4 rounded-xl border border-green-200">
-                  <CheckCircle className="h-8 w-8 text-green-500 mr-2" />
-                  <p className="text-xl text-green-600 font-medium">
-                    Payment Successful
+              {orderNumber && (
+                <div className="bg-primary/10 py-2 px-4 inline-block mb-3">
+                  <p className="text-lg font-semibold text-primary">
+                    Order #{orderNumber}
                   </p>
                 </div>
+              )}
 
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                  Thank you for your purchase! Your order has been successfully
-                  placed and you&apos;ll receive an email confirmation shortly.
+              <div className="my-6 flex items-center justify-center bg-green-50 p-4 border border-green-200">
+                <CheckCircle className="h-8 w-8 text-green-500 mr-2" />
+                <p className="text-xl text-green-600 font-medium">
+                  Payment Successful
                 </p>
+              </div>
 
-                <div className="mb-6 bg-blue-50 p-4 rounded-xl border border-blue-100 flex items-center justify-center space-x-2">
-                  <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
-                  <p className="text-blue-700">
-                    Redirecting to orders page in {redirectCountdown} seconds...
-                  </p>
-                </div>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Thank you for your purchase! Your order has been successfully
+                placed and you&apos;ll receive an email confirmation shortly.
+              </p>
 
-                <div className="flex justify-center gap-4">
-                  <Link href="/account/orders">
-                    <Button className="gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl">
-                      <ShoppingBag size={16} />
-                      My Orders
-                    </Button>
-                  </Link>
-                  <Link href="/products">
-                    <Button
-                      variant="outline"
-                      className="gap-2 border-red-200 text-red-600 hover:bg-red-50 rounded-xl"
-                    >
-                      <Gift size={16} />
-                      Continue Shopping
-                    </Button>
-                  </Link>
-                </div>
+              <div className="mb-6 bg-blue-50 p-4 border border-blue-100 flex items-center justify-center space-x-2">
+                <Loader2 className="h-4 w-4 text-blue-500 animate-spin" />
+                <p className="text-blue-700">
+                  Redirecting to orders page in {redirectCountdown} seconds...
+                </p>
+              </div>
+
+              <div className="flex justify-center gap-4">
+                <Link href="/account/orders">
+                  <Button className="gap-2">
+                    <ShoppingBag size={16} />
+                    My Orders
+                  </Button>
+                </Link>
+                <Link href="/products">
+                  <Button variant="outline" className="gap-2">
+                    <Gift size={16} />
+                    Continue Shopping
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -422,302 +441,258 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Secure Checkout</h1>
-          <div className="flex items-center space-x-4 text-sm text-gray-600">
-            <div className="flex items-center">
-              <Shield className="h-4 w-4 mr-1 text-green-500" />
-              <span>Secure</span>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Checkout</h1>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 flex items-start">
+          <AlertCircle className="text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+          <div>
+            <p className="text-red-700 font-semibold">Payment Failed</p>
+            <p className="text-red-600">{error}</p>
+          </div>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main checkout area */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Shipping Addresses */}
+          <div className="bg-white shadow-sm border p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold flex items-center">
+                <MapPin className="h-5 w-5 mr-2 text-primary" />
+                Shipping Address
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-primary"
+                onClick={() => setShowAddressForm(!showAddressForm)}
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add New
+              </Button>
             </div>
-            <div className="flex items-center">
-              <Truck className="h-4 w-4 mr-1 text-blue-500" />
-              <span>Free Shipping</span>
+
+            {showAddressForm && (
+              <AddressForm
+                onSuccess={handleAddressFormSuccess}
+                onCancel={() => setShowAddressForm(false)}
+                isInline={true}
+              />
+            )}
+
+            {addresses.length === 0 && !showAddressForm ? (
+              <div className="bg-yellow-50 p-4 border border-yellow-200">
+                <span className="text-yellow-700">
+                  You don&apos;t have any saved addresses.{" "}
+                  <button
+                    className="font-medium underline"
+                    onClick={() => setShowAddressForm(true)}
+                  >
+                    Add an address
+                  </button>{" "}
+                  to continue.
+                </span>
+              </div>
+            ) : (
+              <div
+                className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
+                  showAddressForm ? "mt-6" : ""
+                }`}
+              >
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className={`border p-4 cursor-pointer transition-all ${
+                      selectedAddressId === address.id
+                        ? "border-primary bg-primary/5"
+                        : "hover:border-gray-400"
+                    }`}
+                    onClick={() => handleAddressSelect(address.id)}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="font-medium">{address.name}</span>
+                      {address.isDefault && (
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-0.5">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      <p>{address.street}</p>
+                      <p>
+                        {address.city}, {address.state} {address.postalCode}
+                      </p>
+                      <p>{address.country}</p>
+                      <p className="mt-1">
+                        Phone: {address.phone || "Not provided"}
+                      </p>
+                    </div>
+                    <div className="mt-3 flex items-center">
+                      <input
+                        type="radio"
+                        name="addressSelection"
+                        checked={selectedAddressId === address.id}
+                        onChange={() => handleAddressSelect(address.id)}
+                        className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                      />
+                      <label
+                        htmlFor={`address-${address.id}`}
+                        className="ml-2 text-sm font-medium"
+                      >
+                        Ship to this address
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Payment Method */}
+          <div className="bg-white shadow-sm border p-6">
+            <h2 className="text-lg font-semibold flex items-center mb-4">
+              <CreditCard className="h-5 w-5 mr-2 text-primary" />
+              Payment Method
+            </h2>
+
+            <div className="space-y-3">
+              <div
+                className={`border p-4 cursor-pointer transition-all ${
+                  paymentMethod === "RAZORPAY"
+                    ? "border-primary bg-primary/5"
+                    : "hover:border-gray-400"
+                }`}
+                onClick={() => handlePaymentMethodSelect("RAZORPAY")}
+              >
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="razorpay"
+                    name="paymentMethod"
+                    checked={paymentMethod === "RAZORPAY"}
+                    onChange={() => handlePaymentMethodSelect("RAZORPAY")}
+                    className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                  />
+                  <label
+                    htmlFor="razorpay"
+                    className="ml-2 flex items-center flex-1"
+                  >
+                    <span className="font-medium">Pay Online</span>
+                    <span className="ml-2 text-xs bg-blue-50 text-blue-600 px-2 py-0.5">
+                      Recommended
+                    </span>
+                  </label>
+                  <span className="flex items-center">
+                    <IndianRupee className="h-4 w-4 text-primary" />
+                  </span>
+                </div>
+                <p className="text-sm text-gray-600 mt-2 ml-6">
+                  Pay securely with Credit/Debit Card, UPI, NetBanking, etc.
+                </p>
+              </div>
+
+              {/* COD option can be added here if required */}
             </div>
           </div>
         </div>
 
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start">
-            <AlertCircle className="text-red-500 mt-0.5 mr-3 flex-shrink-0" />
-            <div>
-              <p className="text-red-700 font-semibold">Payment Failed</p>
-              <p className="text-red-600">{error}</p>
-            </div>
-          </div>
-        )}
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="bg-white shadow-sm border p-4 sticky top-20">
+            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main checkout area */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Shipping Addresses */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold flex items-center text-gray-800">
-                  <MapPin className="h-6 w-6 mr-3 text-red-500" />
-                  Shipping Address
-                </h2>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:bg-red-50 rounded-xl"
-                  onClick={() => setShowAddressForm(!showAddressForm)}
-                >
-                  <Plus className="h-4 w-4 mr-1" />
-                  Add New
-                </Button>
-              </div>
-
-              {showAddressForm && (
-                <div className="mb-6">
-                  <AddressForm
-                    onSuccess={handleAddressFormSuccess}
-                    onCancel={() => setShowAddressForm(false)}
-                    isInline={true}
-                  />
-                </div>
-              )}
-
-              {addresses.length === 0 && !showAddressForm ? (
-                <div className="bg-red-50 p-4 rounded-xl border border-red-200">
-                  <span className="text-red-700">
-                    You don&apos;t have any saved addresses.{" "}
-                    <button
-                      className="font-medium underline hover:text-red-800"
-                      onClick={() => setShowAddressForm(true)}
-                    >
-                      Add an address
-                    </button>{" "}
-                    to continue.
-                  </span>
-                </div>
-              ) : (
-                <div
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
-                    showAddressForm ? "mt-6" : ""
-                  }`}
-                >
-                  {addresses.map((address) => (
-                    <div
-                      key={address.id}
-                      className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
-                        selectedAddressId === address.id
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      onClick={() => handleAddressSelect(address.id)}
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <span className="font-semibold text-gray-800">
-                          {address.name}
-                        </span>
-                        {address.isDefault && (
-                          <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">
-                            Default
-                          </span>
+            <div className="divide-y">
+              <div className="pb-4">
+                <p className="text-sm font-medium mb-2">
+                  {cart.totalQuantity} Items in Cart
+                </p>
+                <div className="max-h-52 overflow-y-auto space-y-3">
+                  {cart.items?.map((item) => (
+                    <div key={item.id} className="flex items-center gap-3">
+                      <div className="h-10 w-10 bg-gray-100 flex-shrink-0 relative">
+                        {item.product.image && (
+                          <Image
+                            src={item.product.image}
+                            alt={item.product.name}
+                            fill
+                            className="object-contain p-1"
+                          />
                         )}
                       </div>
-                      <div className="text-sm text-gray-600 space-y-1">
-                        <p>{address.street}</p>
-                        <p>
-                          {address.city}, {address.state} {address.postalCode}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {item.product.name}
                         </p>
-                        <p>{address.country}</p>
-                        <p className="mt-2">
-                          Phone: {address.phone || "Not provided"}
+                        <p className="text-xs text-gray-500">
+                          {item.quantity} × {formatCurrency(item.price)}
                         </p>
                       </div>
-                      <div className="mt-3 flex items-center">
-                        <input
-                          type="radio"
-                          name="addressSelection"
-                          checked={selectedAddressId === address.id}
-                          onChange={() => handleAddressSelect(address.id)}
-                          className="h-4 w-4 text-red-500 border-gray-300 focus:ring-red-500"
-                        />
-                        <label className="ml-2 text-sm font-medium text-gray-700">
-                          Ship to this address
-                        </label>
-                      </div>
+                      <p className="font-medium text-sm">
+                        {formatCurrency(item.subtotal)}
+                      </p>
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-
-            {/* Payment Method */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h2 className="text-xl font-bold flex items-center mb-6 text-gray-800">
-                <CreditCard className="h-6 w-6 mr-3 text-red-500" />
-                Payment Method
-              </h2>
-
-              <div className="space-y-4">
-                <div
-                  className={`border-2 rounded-xl p-4 cursor-pointer transition-all ${
-                    paymentMethod === "RAZORPAY"
-                      ? "border-red-500 bg-red-50"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  onClick={() => handlePaymentMethodSelect("RAZORPAY")}
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="razorpay"
-                      name="paymentMethod"
-                      checked={paymentMethod === "RAZORPAY"}
-                      onChange={() => handlePaymentMethodSelect("RAZORPAY")}
-                      className="h-4 w-4 text-red-500 border-gray-300 focus:ring-red-500"
-                    />
-                    <label
-                      htmlFor="razorpay"
-                      className="ml-3 flex items-center flex-1"
-                    >
-                      <span className="font-semibold text-gray-800">
-                        Pay Online
-                      </span>
-                      <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">
-                        Recommended
-                      </span>
-                    </label>
-                    <span className="flex items-center">
-                      <IndianRupee className="h-5 w-5 text-red-500" />
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 mt-2 ml-7">
-                    Pay securely with Credit/Debit Card, UPI, NetBanking, etc.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-20">
-              <h2 className="text-xl font-bold mb-6 text-gray-800">
-                Order Summary
-              </h2>
-
-              <div className="divide-y divide-gray-100">
-                <div className="pb-4">
-                  <p className="text-sm font-semibold mb-3 text-gray-700">
-                    {cart.totalQuantity} Items in Cart
-                  </p>
-                  <div className="max-h-52 overflow-y-auto space-y-3">
-                    {cart.items?.map((item) => (
-                      <div key={item.id} className="flex items-center gap-3">
-                        <div className="h-12 w-12 bg-gradient-to-br from-red-50 to-red-100 rounded-lg flex-shrink-0 relative">
-                          {item.product.image && (
-                            <Image
-                              src={item.product.image || "/placeholder.svg"}
-                              alt={item.product.name}
-                              fill
-                              className="object-contain p-1"
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium truncate text-gray-800">
-                            {item.product.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {item.quantity} × {formatCurrency(item.price)}
-                          </p>
-                        </div>
-                        <p className="font-semibold text-sm text-gray-800">
-                          {formatCurrency(item.subtotal)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="py-4 space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">
-                      {formatCurrency(totals.subtotal)}
-                    </span>
-                  </div>
-
-                  {coupon && (
-                    <div className="flex justify-between text-green-600">
-                      <span>Discount</span>
-                      <span className="font-medium">
-                        -{formatCurrency(totals.discount)}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping</span>
-                    <span className="text-green-600 font-semibold flex items-center">
-                      <Gift className="h-4 w-4 mr-1" />
-                      FREE
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-4">
-                  <div className="flex justify-between font-bold text-xl">
-                    <span className="text-gray-800">Total</span>
-                    <span className="text-red-600">
-                      {formatCurrency(totals.subtotal - totals.discount)}
-                    </span>
-                  </div>
-                </div>
               </div>
 
-              <Button
-                className="w-full mt-6 h-14 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold text-lg rounded-xl transition-all duration-200 transform hover:scale-[1.02]"
-                onClick={handleCheckout}
-                disabled={
-                  processing ||
-                  !selectedAddressId ||
-                  !paymentMethod ||
-                  addresses.length === 0
-                }
-              >
-                {processing ? (
-                  <span className="flex items-center">
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    <Shield className="mr-2 h-5 w-5" />
-                    Place Secure Order
-                  </span>
+              <div className="py-4 space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Subtotal</span>
+                  <span>{formatCurrency(totals.subtotal)}</span>
+                </div>
+
+                {coupon && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount</span>
+                    <span>-{formatCurrency(totals.discount)}</span>
+                  </div>
                 )}
-              </Button>
 
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                By placing your order, you agree to our terms and conditions.
-              </p>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Shipping</span>
+                  <span className="text-green-600 font-medium">FREE</span>
+                </div>
 
-              {/* Trust Badges */}
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div className="flex flex-col items-center">
-                    <Shield className="h-6 w-6 text-green-500 mb-1" />
-                    <span className="text-xs text-gray-600">
-                      Secure Payment
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Truck className="h-6 w-6 text-blue-500 mb-1" />
-                    <span className="text-xs text-gray-600">Free Shipping</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <Clock className="h-6 w-6 text-red-500 mb-1" />
-                    <span className="text-xs text-gray-600">Fast Delivery</span>
-                  </div>
+                {/* Tax removed */}
+              </div>
+
+              <div className="pt-4">
+                <div className="flex justify-between font-bold text-lg">
+                  <span>Total</span>
+                  <span>
+                    {formatCurrency(totals.subtotal - totals.discount)}
+                  </span>
                 </div>
               </div>
             </div>
+
+            <Button
+              className="w-full mt-6"
+              size="lg"
+              onClick={handleCheckout}
+              disabled={
+                processing ||
+                !selectedAddressId ||
+                !paymentMethod ||
+                addresses.length === 0
+              }
+            >
+              {processing ? (
+                <span className="flex items-center">
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Processing...
+                </span>
+              ) : (
+                <span>Place Order</span>
+              )}
+            </Button>
+
+            <p className="text-xs text-gray-500 mt-4 text-center">
+              By placing your order, you agree to our terms and conditions.
+            </p>
           </div>
         </div>
       </div>

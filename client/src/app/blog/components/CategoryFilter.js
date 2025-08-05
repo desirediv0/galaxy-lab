@@ -31,8 +31,10 @@ function CategoryFilterContent() {
 
   const handleCategoryClick = (slug) => {
     if (slug === activeCategory) {
+      // If clicking on the already active category, remove the filter
       router.push(`/blog`);
     } else {
+      // Otherwise, apply the filter
       router.push(`/blog?category=${slug}`);
     }
   };
@@ -41,16 +43,11 @@ function CategoryFilterContent() {
 
   return (
     <div className="mb-8">
-      <div className="flex items-center flex-wrap gap-3 justify-center">
+      <div className="flex items-center flex-wrap gap-2">
         <Button
           variant={activeCategory ? "outline" : "default"}
           size="sm"
           onClick={() => router.push("/blog")}
-          className={`rounded-full px-6 py-2 font-semibold transition-all duration-200 ${
-            !activeCategory
-              ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg transform scale-105"
-              : "border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50"
-          }`}
         >
           All Posts
         </Button>
@@ -59,16 +56,12 @@ function CategoryFilterContent() {
           <Badge
             key={category.id}
             variant={activeCategory === category.slug ? "default" : "outline"}
-            className={`px-4 py-2 text-sm cursor-pointer font-semibold transition-all duration-200 ${
-              activeCategory === category.slug
-                ? "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white shadow-lg transform scale-105"
-                : "border-2 border-yellow-200 text-yellow-600 hover:bg-yellow-50"
-            }`}
+            className="px-3 py-1 text-sm cursor-pointer hover:bg-muted transition-colors"
             onClick={() => handleCategoryClick(category.slug)}
           >
             {category.name}
             {category.postCount > 0 && (
-              <span className="ml-2 text-xs opacity-70">
+              <span className="ml-1 text-xs opacity-70">
                 ({category.postCount})
               </span>
             )}
