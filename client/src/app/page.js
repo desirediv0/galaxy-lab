@@ -42,88 +42,48 @@ const HeroSection = () => {
 
   const slides = [
     {
-      title: "PREMIUM FITNESS",
-      subtitle: "Transform Your Body With Premium Supplements",
+      title: "GALAXY LABS",
+      subtitle: "Premium Gym Supplements for Champions",
       description:
-        "High-quality ingredients backed by science to fuel your fitness journey and achieve extraordinary results",
+        "Transform your fitness journey with scientifically formulated supplements. Build muscle, boost energy, and achieve your goals with Galaxy Labs premium quality products.",
       cta: "SHOP NOW",
       ctaLink: "/products",
       image: "/c3.jpg",
-      badge: "🏆 #1 RATED",
-      offer: "GET 25% OFF",
-      stats: [
-        {
-          label: "Happy Customers",
-          value: "50K+",
-          icon: <Users className="h-6 w-6" />,
-        },
-        {
-          label: "Premium Products",
-          value: "100+",
-          icon: <Target className="h-6 w-6" />,
-        },
-        {
-          label: "5-Star Reviews",
-          value: "25K+",
-          icon: <Star className="h-6 w-6" />,
-        },
-      ],
+      badge: "🏆 #1 FITNESS BRAND",
+      offer: "GET 30% OFF",
     },
     {
-      title: "PROTEIN POWER",
-      subtitle: "Build Muscle With Advanced Protein",
+      title: "WHEY PROTEIN",
+      subtitle: "Pure Muscle Building Power",
       description:
-        "30g pure whey protein per serving with zero sugar, complete amino acid profile for maximum muscle growth",
-      cta: "EXPLORE",
+        "24g premium whey protein isolate per serving. Zero sugar, complete amino acid profile, and rapid absorption for maximum muscle growth and recovery.",
+      cta: "BUY NOW",
       ctaLink: "/category/protein",
       image: "/c3.jpg",
       badge: "🥇 BEST SELLER",
-      offer: "BUY 2 GET 1",
-      stats: [
-        {
-          label: "Protein Per Serve",
-          value: "30g",
-          icon: <Zap className="h-6 w-6" />,
-        },
-        {
-          label: "Zero Sugar",
-          value: "0g",
-          icon: <Shield className="h-6 w-6" />,
-        },
-        {
-          label: "Lab Tested",
-          value: "100%",
-          icon: <Award className="h-6 w-6" />,
-        },
-      ],
+      offer: "BUY 2 GET 1 FREE",
     },
     {
-      title: "ENERGY BOOST",
-      subtitle: "Unleash Your Workout Potential",
+      title: "PRE-WORKOUT",
+      subtitle: "Unleash Your Inner Beast",
       description:
-        "Premium pre-workout formula designed to maximize energy, focus and performance for intense training sessions",
+        "Advanced pre-workout formula with creatine, beta-alanine, and caffeine. Maximize energy, focus, and performance for intense training sessions.",
       cta: "GET ENERGIZED",
       ctaLink: "/category/pre-workout",
       image: "/c3.jpg",
-      badge: "⚡ HIGH ENERGY",
-      offer: "FREE SHAKER",
-      stats: [
-        {
-          label: "Energy Boost",
-          value: "300%",
-          icon: <Rocket className="h-6 w-6" />,
-        },
-        {
-          label: "Focus Time",
-          value: "3hrs",
-          icon: <Eye className="h-6 w-6" />,
-        },
-        {
-          label: "Clean Formula",
-          value: "100%",
-          icon: <Heart className="h-6 w-6" />,
-        },
-      ],
+      badge: "⚡ HIGH PERFORMANCE",
+      offer: "FREE SHAKER BOTTLE",
+    },
+    {
+      title: "BCAA AMINOS",
+      subtitle: "Recovery & Growth Formula",
+      description:
+        "Essential branched-chain amino acids for muscle recovery, reducing fatigue, and supporting lean muscle mass development during intense workouts.",
+      cta: "RECOVER FASTER",
+      ctaLink: "/category/amino-acids",
+      image: "/c3.jpg",
+      badge: "💪 MUSCLE RECOVERY",
+      offer: "SAVE 25%",
     },
   ];
 
@@ -354,42 +314,6 @@ const HeroSection = () => {
                           </motion.div>
                         </Link>
                       </motion.div>
-
-                      {/* Futuristic Stats */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.8 }}
-                        className="grid grid-cols-3 gap-6 pt-8 border-t border-gray-200"
-                      >
-                        {slide.stats.map((stat, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{
-                              duration: 0.5,
-                              delay: 0.9 + idx * 0.1,
-                            }}
-                            className="text-center group cursor-pointer"
-                          >
-                            <div className="flex justify-center mb-3">
-                              <div className="relative">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400/20 to-amber-400/20 rounded-2xl blur group-hover:blur-md transition-all duration-300" />
-                                <div className="relative p-3 bg-white border border-gray-200 rounded-2xl text-gray-700 group-hover:border-yellow-400/50 transition-all duration-300 shadow-lg">
-                                  {stat.icon}
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-2xl md:text-3xl font-black bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent group-hover:from-yellow-600 group-hover:to-amber-600 transition-all duration-300">
-                              {stat.value}
-                            </div>
-                            <div className="text-sm text-gray-600 font-semibold mt-1">
-                              {stat.label}
-                            </div>
-                          </motion.div>
-                        ))}
-                      </motion.div>
                     </motion.div>
 
                     {/* Futuristic Product Image */}
@@ -601,7 +525,7 @@ const FeaturedCategoriesSection = () => {
           </h3>
           <p className="text-gray-600 mb-6" style={{ lineHeight: 1.7 }}>
             {category.description ||
-              "Explore our premium collection of high-quality products"}
+              "Premium quality supplements formulated for maximum results and optimal performance"}
           </p>
 
           <Link href={`/category/${category.slug || ""}`}>
@@ -633,20 +557,20 @@ const FeaturedCategoriesSection = () => {
           <div className="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-gray-200 mb-6 shadow-lg">
             <Star className="w-5 h-5 text-yellow-500" />
             <span className="text-gray-700 font-bold text-sm uppercase tracking-wider">
-              Shop By Category
+              Galaxy Labs Categories
             </span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Discover Our Collections
+            Premium Gym Supplements
           </h2>
 
           <p
             className="text-gray-600 text-lg max-w-2xl mx-auto mb-8"
             style={{ lineHeight: 1.7 }}
           >
-            Explore our carefully curated categories featuring premium products
-            designed to elevate your lifestyle
+            Explore our scientifically formulated supplement categories designed
+            to support every aspect of your fitness journey
           </p>
         </motion.div>
 
@@ -708,26 +632,27 @@ const FeaturedProductsSection = () => {
 const BenefitsSection = () => {
   const benefits = [
     {
-      title: "Premium Quality",
+      title: "Lab-Tested Quality",
       description:
-        "Lab-tested supplements made with high-quality ingredients for maximum effectiveness.",
+        "Every Galaxy Labs supplement undergoes rigorous third-party testing for purity, potency, and safety. NSF certified for your peace of mind.",
       icon: <Award className="w-8 h-8" />,
     },
     {
-      title: "Fast Delivery",
+      title: "Fast & Free Shipping",
       description:
-        "Get your supplements delivered to your doorstep within 2-3 business days.",
+        "Get your supplements delivered to your doorstep within 2-3 business days. Free shipping on orders above ₹999 across India.",
       icon: <Truck className="w-8 h-8" />,
     },
     {
-      title: "Expert Support",
+      title: "Fitness Expert Support",
       description:
-        "Our team of fitness experts is available to help you choose the right supplements.",
+        "Our certified nutritionists and fitness experts help you choose the right supplements for your specific goals and training routine.",
       icon: <Users className="w-8 h-8" />,
     },
     {
-      title: "Secure Payments",
-      description: "Shop with confidence with our 100% secure payment gateway.",
+      title: "100% Authentic Products",
+      description:
+        "Guaranteed genuine supplements with batch tracking. No counterfeit products, only authentic Galaxy Labs quality.",
       icon: <Shield className="w-8 h-8" />,
     },
   ];
@@ -745,20 +670,21 @@ const BenefitsSection = () => {
           <div className="inline-flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-full border border-gray-200 mb-6 shadow-lg">
             <Star className="w-5 h-5 text-yellow-500" />
             <span className="text-gray-700 font-bold text-sm uppercase tracking-wider">
-              Why Choose Us
+              Why Choose Galaxy Labs
             </span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Excellence Delivered
+            Trusted by Champions
           </h2>
 
           <p
             className="text-gray-600 text-lg max-w-2xl mx-auto mb-8"
             style={{ lineHeight: 1.7 }}
           >
-            We&apos;re committed to providing you with the best fitness
-            supplements and an exceptional experience
+            Join thousands of fitness enthusiasts who trust Galaxy Labs for
+            their supplement needs. Quality, science, and results you can count
+            on.
           </p>
         </motion.div>
 
@@ -786,50 +712,126 @@ const BenefitsSection = () => {
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+};
 
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            {
-              number: "100%",
-              label: "Quality Tested",
-              icon: <Award className="w-6 h-6" />,
-            },
-            {
-              number: "1000+",
-              label: "Happy Customers",
-              icon: <Users className="w-6 h-6" />,
-            },
-            {
-              number: "50+",
-              label: "Products",
-              icon: <Star className="w-6 h-6" />,
-            },
-            {
-              number: "24/7",
-              label: "Customer Support",
-              icon: <Clock className="w-6 h-6" />,
-            },
-          ].map((stat, index) => (
+// Gym Supplements Showcase Section
+const GymSupplementsSection = () => {
+  const supplements = [
+    {
+      title: "Whey Protein",
+      description:
+        "24g pure protein isolate per serving. Perfect for muscle building and recovery.",
+      benefits: ["Muscle Growth", "Fast Recovery", "Zero Sugar"],
+      image: "🥛",
+      color: "from-blue-400 to-blue-600",
+    },
+    {
+      title: "Pre-Workout",
+      description:
+        "Advanced formula with creatine, beta-alanine, and caffeine for maximum performance.",
+      benefits: ["Energy Boost", "Focus Enhancement", "Endurance"],
+      image: "⚡",
+      color: "from-red-400 to-red-600",
+    },
+    {
+      title: "BCAA Amino Acids",
+      description:
+        "Essential branched-chain amino acids for muscle recovery and growth.",
+      benefits: ["Muscle Recovery", "Fatigue Reduction", "Lean Mass"],
+      image: "💪",
+      color: "from-green-400 to-green-600",
+    },
+    {
+      title: "Creatine Monohydrate",
+      description:
+        "Pure creatine monohydrate for strength, power, and muscle gains.",
+      benefits: ["Strength Gains", "Power Output", "Muscle Size"],
+      image: "🏋️",
+      color: "from-purple-400 to-purple-600",
+    },
+  ];
+
+  return (
+    <section className="py-20 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-3 bg-gray-50 px-6 py-3 rounded-full border border-gray-200 mb-6 shadow-lg">
+            <Target className="w-5 h-5 text-yellow-500" />
+            <span className="text-gray-700 font-bold text-sm uppercase tracking-wider">
+              Galaxy Labs Supplements
+            </span>
+          </div>
+
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+            Science-Backed Results
+          </h2>
+
+          <p
+            className="text-gray-600 text-lg max-w-2xl mx-auto mb-8"
+            style={{ lineHeight: 1.7 }}
+          >
+            Every Galaxy Labs supplement is formulated with clinically proven
+            ingredients to deliver real results
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {supplements.map((supplement, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="text-center bg-gray-50 p-6 rounded-2xl shadow-lg border border-gray-100"
+              className="group"
             >
-              <div className="flex justify-center mb-4">
-                <div className="p-3 bg-white rounded-full text-yellow-600 shadow-lg border border-gray-200">
-                  {stat.icon}
+              <div className="bg-white p-8 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 border border-gray-100">
+                <div
+                  className={`w-16 h-16 bg-gradient-to-r ${supplement.color} text-white rounded-2xl flex items-center justify-center text-2xl mx-auto mb-6 shadow-lg`}
+                >
+                  {supplement.image}
                 </div>
+
+                <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
+                  {supplement.title}
+                </h3>
+
+                <p
+                  className="text-gray-600 mb-6 text-center"
+                  style={{ lineHeight: 1.7 }}
+                >
+                  {supplement.description}
+                </p>
+
+                <div className="space-y-2 mb-6">
+                  {supplement.benefits.map((benefit, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+                      <span className="text-sm font-medium text-gray-700">
+                        {benefit}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <Link href="/products">
+                  <Button className="w-full bg-gradient-to-r from-yellow-400 to-amber-400 hover:from-amber-400 hover:to-yellow-400 text-gray-900 font-bold rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <span className="flex items-center justify-center gap-2">
+                      <ShoppingCart className="w-4 h-4" />
+                      Shop Now
+                    </span>
+                  </Button>
+                </Link>
               </div>
-              <h4 className="text-3xl font-bold text-gray-800 mb-2">
-                {stat.number}
-              </h4>
-              <p className="text-gray-600 text-sm font-bold uppercase tracking-wider">
-                {stat.label}
-              </p>
             </motion.div>
           ))}
         </div>
@@ -847,7 +849,7 @@ const TestimonialsSection = () => {
       location: "Mumbai, India",
       achievement: "Mr. India Runner-up 2024",
       quote:
-        "Galaxy Labs didn't just change my physique, it revolutionized my entire approach to training and nutrition.",
+        "Galaxy Labs Whey Protein transformed my muscle gains. The quality is unmatched and the results speak for themselves. My go-to supplement brand!",
       rating: 5,
       image: "💪",
     },
@@ -857,9 +859,9 @@ const TestimonialsSection = () => {
       location: "Delhi, India",
       achievement: "Transformed 500+ clients",
       quote:
-        "As a mother and entrepreneur, Galaxy Labs gave me the sustainable energy I needed to excel in both roles.",
+        "As a fitness coach, I recommend Galaxy Labs to all my clients. Their pre-workout gives me the energy to train clients all day while being a mom.",
       rating: 5,
-      image: "🧘‍♀️",
+      image: "🏋️‍♀️",
     },
     {
       name: "Vikram Thakur",
@@ -867,7 +869,7 @@ const TestimonialsSection = () => {
       location: "Bangalore, India",
       achievement: "Lost 25kg in 8 months",
       quote:
-        "Galaxy Labs proved that even with a demanding tech career, incredible transformations are possible.",
+        "Galaxy Labs BCAA helped me maintain muscle while cutting. Even with my hectic tech job, I achieved my dream physique. Highly recommended!",
       rating: 5,
       image: "💻",
     },
@@ -886,19 +888,20 @@ const TestimonialsSection = () => {
           <div className="inline-flex items-center gap-3 bg-white px-6 py-3 rounded-full border border-gray-200 mb-6 shadow-lg">
             <Sparkles className="w-5 h-5 text-yellow-500" />
             <span className="text-gray-700 font-bold text-sm uppercase tracking-wider">
-              Success Stories
+              Galaxy Labs Success Stories
             </span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-            Real People, Incredible Results
+            Real Results, Real Champions
           </h2>
 
           <p
             className="text-gray-600 text-lg max-w-2xl mx-auto mb-8"
             style={{ lineHeight: 1.7 }}
           >
-            Discover how our products have transformed lives across India
+            Join thousands of fitness enthusiasts who have transformed their
+            lives with Galaxy Labs premium supplements
           </p>
         </motion.div>
 
@@ -963,10 +966,10 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-
       <FeaturedCategoriesSection />
       <FeaturedProductsSection />
       <BenefitsSection />
+      <GymSupplementsSection />
       <TestimonialsSection />
     </>
   );

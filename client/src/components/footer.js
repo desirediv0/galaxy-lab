@@ -11,8 +11,6 @@ import {
   Shield,
   Truck,
   HeadphonesIcon,
-  Crown,
-  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -188,80 +186,7 @@ export function Footer() {
               ))}
             </ul>
           </motion.div>
-
-          {/* Product Categories */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <h3 className="text-xl font-bold mb-6 text-yellow-700 font-['Playfair_Display']">
-              Categories
-            </h3>
-            <div className="w-12 h-1 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full mb-8"></div>
-            <ul className="space-y-4">
-              {[
-                { label: "Whey Protein", href: "/category/whey-protein" },
-                { label: "Mass Gainers", href: "/category/mass-gainers" },
-                { label: "Pre-Workout", href: "/category/pre-workout" },
-                { label: "Creatine", href: "/category/creatine" },
-                { label: "Vitamins", href: "/category/vitamins" },
-                { label: "Fat Burners", href: "/category/fat-burners" },
-                { label: "Accessories", href: "/category/accessories" },
-              ].map((link, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={link.href}
-                    className="group flex items-center text-gray-600 hover:text-yellow-700 transition-all duration-300"
-                  >
-                    <div className="w-2 h-2 bg-yellow-400 rounded-full mr-3 group-hover:bg-yellow-600 transition-colors duration-300 group-hover:scale-150"></div>
-                    <span className="group-hover:translate-x-1 transition-transform duration-300 font-medium">
-                      {link.label}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
         </div>
-
-        {/* Newsletter Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-16 text-center"
-        >
-          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-3xl p-8 border border-yellow-200 shadow-lg">
-            <div className="flex items-center justify-center mb-4">
-              <Crown className="h-8 w-8 text-yellow-600 mr-3" />
-              <h3 className="text-2xl font-bold text-yellow-700 font-['Playfair_Display']">
-                Join the Galaxy Family
-              </h3>
-              <Sparkles className="h-8 w-8 text-yellow-600 ml-3" />
-            </div>
-            <p className="text-gray-600 mb-6 font-['Lora'] text-lg">
-              Get exclusive deals, fitness tips, and be the first to know about
-              new products!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-xl border border-yellow-200 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 outline-none transition-all duration-300 font-['Lora']"
-              />
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-gradient-to-r from-yellow-400 to-amber-400 text-gray-800 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 font-['Poppins']"
-              >
-                Subscribe
-              </motion.button>
-            </div>
-          </div>
-        </motion.div>
       </div>
 
       {/* Enhanced bottom section */}
@@ -271,14 +196,8 @@ export function Footer() {
             <div className="flex items-center">
               <Heart className="h-5 w-5 text-yellow-600 mr-2 animate-pulse" />
               <div className="text-gray-600 text-sm font-['Lora']">
-                © 2025{" "}
-                <a
-                  href="https://desirediv.com"
-                  className="text-yellow-700 hover:text-yellow-800 transition-colors duration-300 font-semibold"
-                >
-                  Desire Div
-                </a>{" "}
-                | All Rights Reserved | Made with love for fitness enthusiasts
+                © 2025 | All Rights Reserved | Made with love for fitness
+                enthusiasts
               </div>
             </div>
 

@@ -115,9 +115,11 @@ export function Navbar() {
         animate={{ y: 0, opacity: 1 }}
         className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 text-amber-900 text-center py-2 text-sm font-semibold shadow-lg"
       >
-        <div className="container mx-auto px-4 flex items-center justify-center gap-2">
+        <div className="container mx-auto px-4 flex items-center justify-center gap-2 capitalize">
           <Star className="h-4 w-4 animate-pulse" />
-          <span>Free shipping on orders above ₹999 | Use code: FREESHIP</span>
+          <span>
+            Shop for ₹999+ and receive a scratch card with exciting rewards!
+          </span>
           <Zap className="h-4 w-4 animate-bounce" />
         </div>
       </motion.div>
@@ -129,8 +131,8 @@ export function Navbar() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className={`fixed top-10 left-0 right-0 z-40 mx-auto w-[95%] max-w-7xl transition-all duration-500 ${
           isScrolled
-            ? "bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.37)]"
-            : "bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.25)]"
+            ? "bg-white/50 backdrop-blur-xl border border-white/30 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.37)]"
+            : "bg-white/40 backdrop-blur-md border border-white/20 rounded-2xl shadow-[0_8px_32px_rgba(31,38,135,0.25)]"
         }`}
       >
         <div className="flex items-center justify-between p-4">
@@ -146,7 +148,7 @@ export function Navbar() {
                 alt="Galaxy Labs"
                 width={80}
                 height={80}
-                className="object-contain transition-all duration-300 group-hover:scale-110 drop-shadow-lg"
+                className="object-contain transition-all duration-300 group-hover:scale-110"
               />
             </Link>
           </motion.div>
