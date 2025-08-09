@@ -16,6 +16,7 @@ import {
   ShoppingCart,
 } from "lucide-react";
 import ProductQuickView from "@/components/ProductQuickView";
+import ProductCard from "@/components/ProductCard";
 import { useAuth } from "@/lib/auth-context";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart-context";
@@ -40,9 +41,6 @@ export default function CategoryPage() {
   const [sortOption, setSortOption] = useState("newest");
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
-  const [wishlistItems, setWishlistItems] = useState({});
-  const [isAddingToWishlist, setIsAddingToWishlist] = useState({});
-  const [isAddingToCart, setIsAddingToCart] = useState({});
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -101,86 +99,26 @@ export default function CategoryPage() {
     }
   }, [slug, pagination.page, pagination.limit, sortOption]);
 
-  // Add handleAddToWishlist function
-  const handleAddToWishlist = async (product, e) => {
-    e.preventDefault(); // Prevent navigation
-    if (!isAuthenticated) {
-      router.push(`/login?redirect=/category/${slug}`);
-      return;
-    }
-
-    setIsAddingToWishlist((prev) => ({ ...prev, [product.id]: true }));
-
-    try {
-      if (wishlistItems[product.id]) {
-        // Get wishlist to find the item ID
-        const wishlistResponse = await fetchApi("/users/wishlist", {
-          credentials: "include",
-        });
-
-        const wishlistItem = wishlistResponse.data.wishlistItems.find(
-          (item) => item.productId === product.id
-        );
-
-        if (wishlistItem) {
-          await fetchApi(`/users/wishlist/${wishlistItem.id}`, {
-            method: "DELETE",
-            credentials: "include",
-          });
-
-          setWishlistItems((prev) => ({ ...prev, [product.id]: false }));
-          toast.success("Removed from wishlist");
-        }
-      } else {
-        // Add to wishlist
-        await fetchApi("/users/wishlist", {
-          method: "POST",
-          credentials: "include",
-          body: JSON.stringify({ productId: product.id }),
-        });
-
-        setWishlistItems((prev) => ({ ...prev, [product.id]: true }));
-        toast.success("Added to wishlist");
-      }
-    } catch (error) {
-      console.error("Error updating wishlist:", error);
-      toast.error("Failed to update wishlist");
-    } finally {
-      setIsAddingToWishlist((prev) => ({ ...prev, [product.id]: false }));
-    }
+  const handlePageChange = (newPage) => {
+    setPagination((prev) => ({ ...prev, page: newPage }));
   };
 
-  // Add useEffect to fetch wishlist status
-  useEffect(() => {
-    const fetchWishlistStatus = async () => {
-      if (!isAuthenticated) return;
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+  };
 
-      try {
-        const response = await fetchApi("/users/wishlist", {
-          credentials: "include",
-        });
-        const items = response.data.wishlistItems.reduce((acc, item) => {
-          acc[item.productId] = true;
-          return acc;
-        }, {});
-        setWishlistItems(items);
-      } catch (error) {
-        console.error("Error fetching wishlist:", error);
-      }
-    };
-
-    fetchWishlistStatus();
-  }, [isAuthenticated]);
+  const handleQuickView = (product) => {
+    setQuickViewProduct(product);
+    setQuickViewOpen(true);
+  };
 
   const handleAddToCart = async (product) => {
-    setIsAddingToCart((prev) => ({ ...prev, [product.id]: true }));
     try {
       if (!isAuthenticated) {
-        router.push(
-          `/login?redirect=${encodeURIComponent(window.location.pathname)}`
-        );
+        router.push(`/login?redirect=/category/${slug}`);
         return;
       }
+
       // If product has no variants, show error
       if (!product || !product.variants || product.variants.length === 0) {
         // Try to get default variant from backend
@@ -207,52 +145,66 @@ export default function CategoryPage() {
     } catch (err) {
       console.error("Error adding to cart:", err);
       toast.error("Failed to add product to cart");
-    } finally {
-      setIsAddingToCart((prev) => ({ ...prev, [product.id]: false }));
     }
   };
 
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > pagination.pages) return;
-    setPagination((prev) => ({ ...prev, page: newPage }));
-    // Scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  // Handle sorting
-  const handleSortChange = (e) => {
-    setSortOption(e.target.value);
-  };
-
-  // Handle quick view
-  const handleQuickView = (product) => {
-    setQuickViewProduct(product);
-    setQuickViewOpen(true);
-  };
-
-  // Loading state
-  if (loading && !category) {
+  if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent animate-spin"></div>
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, index) => (
+                <div key={index} className="bg-white rounded-lg shadow">
+                  <div className="h-64 bg-gray-200 rounded-t-lg"></div>
+                  <div className="p-4">
+                    <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  // Error state
-  if (error && !category) {
+  if (error) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-red-50 p-4 flex items-start">
-          <AlertCircle className="text-red-500 mr-3 mt-0.5" />
-          <div>
-            <h2 className="text-lg font-semibold text-red-700">
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Error Loading Category
-            </h2>
-            <p className="text-red-600">{error}</p>
+            </h1>
+            <p className="text-gray-600 mb-6">{error}</p>
+            <Link href="/products">
+              <Button>Back to Products</Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!category) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Category Not Found
+            </h1>
+            <p className="text-gray-600 mb-6">
+              The category you're looking for doesn't exist.
+            </p>
+            <Link href="/products">
+              <Button>Back to Products</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -260,342 +212,176 @@ export default function CategoryPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      {/* Category header */}
-      {category && (
-        <div className="mb-10">
-          <div className="flex items-center mb-2">
-            <Link href="/" className="text-gray-500 hover:text-primary">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <Link href="/products" className="text-gray-500 hover:text-primary">
-              Products
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-primary">{category.name}</span>
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">{category.name}</h1>
-              {category.description && (
-                <p className="text-gray-600 max-w-2xl">
-                  {category.description}
-                </p>
-              )}
-            </div>
-
-            {category.image && (
-              <div className="w-24 h-24 overflow-hidden bg-gray-100">
-                <Image
-                  src={getImageUrl(category.image)}
-                  alt={category.name}
-                  width={96}
-                  height={96}
-                  className="object-contain"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Products header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <div>
-          <p className="text-gray-600">
-            Showing {products.length} of {pagination.total} products
-          </p>
-        </div>
-
-        <div className="flex items-center mt-4 sm:mt-0">
-          <label htmlFor="sort" className="text-sm mr-2">
-            Sort by:
-          </label>
-          <select
-            id="sort"
-            name="sort"
-            className="border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
-            onChange={handleSortChange}
-            value={sortOption}
-          >
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="name-asc">Name: A-Z</option>
-            <option value="name-desc">Name: Z-A</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Products Grid */}
-      {products.length === 0 ? (
-        <div className="bg-white p-8 shadow-sm text-center border">
-          <div className="text-gray-400 mb-4">
-            <AlertCircle className="h-12 w-12 mx-auto" />
-          </div>
-          <h2 className="text-xl font-semibold mb-3">No products found</h2>
-          <p className="text-gray-600 mb-6">
-            There are no products in this category yet.
-          </p>
-          <Link href="/products">
-            <Button>Browse All Products</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white overflow-hidden transition-all hover:shadow-lg shadow-md group"
-            >
-              <Link href={`/products/${product.slug}`}>
-                <div className="relative h-48 md:h-64 w-full overflow-hidden">
-                  <Image
-                    src={(() => {
-                      // Find the variant with the lowest weight
-                      let selectedVariant = null;
-                      if (product.variants && product.variants.length > 0) {
-                        selectedVariant = product.variants.reduce((min, v) => {
-                          if (!v.weight || typeof v.weight.value !== "number")
-                            return min;
-                          if (
-                            !min ||
-                            (min.weight && v.weight.value < min.weight.value)
-                          )
-                            return v;
-                          return min;
-                        }, null);
-                        // fallback: if no variant has weight, use first variant
-                        if (!selectedVariant)
-                          selectedVariant = product.variants[0];
-                      }
-                      if (
-                        selectedVariant &&
-                        selectedVariant.images &&
-                        selectedVariant.images.length > 0
-                      ) {
-                        const primaryImg = selectedVariant.images.find(
-                          (img) => img.isPrimary
-                        );
-                        if (primaryImg && primaryImg.url) {
-                          return primaryImg.url.startsWith("http")
-                            ? primaryImg.url
-                            : `https://desirediv-storage.blr1.digitaloceanspaces.com/${primaryImg.url}`;
-                        }
-                        if (selectedVariant.images[0].url) {
-                          return selectedVariant.images[0].url.startsWith(
-                            "http"
-                          )
-                            ? selectedVariant.images[0].url
-                            : `https://desirediv-storage.blr1.digitaloceanspaces.com/${selectedVariant.images[0].url}`;
-                        }
-                      }
-                      if (product.image) {
-                        return product.image.startsWith("http")
-                          ? product.image
-                          : `https://desirediv-storage.blr1.digitaloceanspaces.com/${product.image}`;
-                      }
-                      return "/placeholder.jpg";
-                    })()}
-                    alt={product.name}
-                    fill
-                    className="object-contain px-4 transition-transform md:group-hover:scale-105 scale-150 md:scale-100"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
-                  {product.hasSale && (
-                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1">
-                      SALE
-                    </span>
-                  )}
-
-                  <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 backdrop-blur-[2px] flex justify-center py-1 md:py-3 md:bg-opacity-0 md:group-hover:bg-opacity-70 md:translate-y-full md:group-hover:translate-y-0 transition-transform">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-white hover:text-white hover:bg-primary/80 p-2"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleQuickView(product);
-                      }}
-                    >
-                      <Eye className="h-5 w-5" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={`text-white hover:text-white hover:bg-primary/80 p-2 mx-2 ${
-                        wishlistItems[product.id] ? "text-red-500" : ""
-                      }`}
-                      onClick={(e) => handleAddToWishlist(product, e)}
-                      disabled={isAddingToWishlist[product.id]}
-                    >
-                      <Heart
-                        className={`h-5 w-5 ${
-                          wishlistItems[product.id] ? "fill-current" : ""
-                        }`}
-                      />
-                    </Button>
-                  </div>
-                </div>
-              </Link>
-
-              <div className="p-3 md:p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <div className="flex text-yellow-400">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-3 w-3 md:h-4 md:w-4"
-                        fill={
-                          i < Math.round(product.avgRating || 0)
-                            ? "currentColor"
-                            : "none"
-                        }
-                      />
-                    ))}
-                  </div>
-                  <span className="text-xs text-gray-500 ml-1 md:ml-2">
-                    ({product.reviewCount || 0})
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Category Header */}
+        <div className="mb-8">
+          <nav className="flex mb-4" aria-label="Breadcrumb">
+            <ol className="inline-flex items-center space-x-1 md:space-x-3">
+              <li className="inline-flex items-center">
+                <Link
+                  href="/products"
+                  className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-primary"
+                >
+                  Products
+                </Link>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <ChevronDown className="w-4 h-4 text-gray-400 rotate-[-90deg]" />
+                  <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">
+                    {category.name}
                   </span>
                 </div>
+              </li>
+            </ol>
+          </nav>
 
-                <Link
-                  href={`/products/${product.slug}`}
-                  className="hover:text-primary"
-                >
-                  <h3 className="font-medium uppercase mb-2 line-clamp-2 text-xs md:text-sm">
-                    {product.name}
-                  </h3>
-                  {/* Show lowest weight variant's flavor and weight */}
-                  {(() => {
-                    let selectedVariant = null;
-                    if (product.variants && product.variants.length > 0) {
-                      selectedVariant = product.variants.reduce((min, v) => {
-                        if (!v.weight || typeof v.weight.value !== "number")
-                          return min;
-                        if (
-                          !min ||
-                          (min.weight && v.weight.value < min.weight.value)
-                        )
-                          return v;
-                        return min;
-                      }, null);
-                      if (!selectedVariant)
-                        selectedVariant = product.variants[0];
-                    }
-                    if (!selectedVariant) return null;
-                    const flavor = selectedVariant.flavor?.name;
-                    const weight = selectedVariant.weight?.value;
-                    const unit = selectedVariant.weight?.unit;
-                    if (flavor || (weight && unit)) {
-                      return (
-                        <div className="text-xs text-gray-500 mb-1">
-                          {flavor}
-                          {flavor && weight && unit ? " • " : ""}
-                          {weight && unit ? `${weight} ${unit}` : ""}
-                        </div>
-                      );
-                    }
-                    return null;
-                  })()}
-                </Link>
-
-                <div className="flex items-center justify-center mb-2 flex-col md:flex-row">
-                  {product.hasSale ? (
-                    <div className="flex items-center flex-col md:flex-row">
-                      <span className="font-bold text-base md:text-lg text-primary">
-                        {formatCurrency(product.basePrice)}
-                      </span>
-                      <span className="text-gray-500 line-through text-xs md:text-sm ml-1 md:ml-2">
-                        {formatCurrency(product.regularPrice)}
-                      </span>
-                    </div>
-                  ) : (
-                    <span className="font-bold text-base md:text-lg text-primary">
-                      {formatCurrency(product.basePrice)}
-                    </span>
-                  )}
-                </div>
-
-                <Button
-                  onClick={() => handleAddToCart(product)}
-                  variant="outline"
-                  size="sm"
-                  className="w-full p-2"
-                  disabled={isAddingToCart[product.id]}
-                >
-                  {isAddingToCart[product.id] ? (
-                    <div className="animate-spin h-4 w-4 border-b-2 border-primary"></div>
-                  ) : (
-                    <ShoppingCart className="h-4 w-4" />
-                  )}
-                </Button>
+          <div className="bg-white rounded-lg shadow-sm p-6 border">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                  {category.name}
+                </h1>
+                {category.description && (
+                  <p className="text-gray-600">{category.description}</p>
+                )}
               </div>
+              {category.image && (
+                <div className="hidden md:block">
+                  <Image
+                    src={getImageUrl(category.image)}
+                    alt={category.name}
+                    width={100}
+                    height={100}
+                    className="rounded-lg object-cover"
+                  />
+                </div>
+              )}
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Pagination */}
-      {pagination.pages > 1 && (
-        <div className="flex justify-center items-center mt-10">
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
-            >
-              <ChevronUp className="h-4 w-4 rotate-90" />
-            </Button>
-
-            {[...Array(pagination.pages)].map((_, i) => {
-              const page = i + 1;
-              // Show first page, last page, and pages around the current page
-              if (
-                page === 1 ||
-                page === pagination.pages ||
-                (page >= pagination.page - 1 && page <= pagination.page + 1)
-              ) {
-                return (
-                  <Button
-                    key={page}
-                    variant={pagination.page === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handlePageChange(page)}
-                    className="w-8 h-8 p-0"
-                  >
-                    {page}
-                  </Button>
-                );
-              }
-
-              // Show ellipsis for skipped pages
-              if (
-                (page === 2 && pagination.page > 3) ||
-                (page === pagination.pages - 1 &&
-                  pagination.page < pagination.pages - 2)
-              ) {
-                return <span key={page}>...</span>;
-              }
-
-              return null;
-            })}
-
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === pagination.pages}
-            >
-              <ChevronDown className="h-4 w-4 rotate-90" />
-            </Button>
           </div>
         </div>
-      )}
 
-      {/* Product Quick View */}
+        {/* Products header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <div>
+            <p className="text-gray-600">
+              Showing {products.length} of {pagination.total} products
+            </p>
+          </div>
+
+          <div className="flex items-center mt-4 sm:mt-0">
+            <label htmlFor="sort" className="text-sm mr-2">
+              Sort by:
+            </label>
+            <select
+              id="sort"
+              name="sort"
+              className="border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+              onChange={handleSortChange}
+              value={sortOption}
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="name-asc">Name: A-Z</option>
+              <option value="name-desc">Name: Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Products Grid */}
+        {products.length === 0 ? (
+          <div className="bg-white p-8 shadow-sm text-center border">
+            <div className="text-gray-400 mb-4">
+              <AlertCircle className="h-12 w-12 mx-auto" />
+            </div>
+            <h2 className="text-xl font-semibold mb-3">No products found</h2>
+            <p className="text-gray-600 mb-6">
+              There are no products in this category yet.
+            </p>
+            <Link href="/products">
+              <Button>Browse All Products</Button>
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onQuickView={handleQuickView}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {pagination.pages > 1 && (
+          <div className="flex justify-center items-center mt-12">
+            <div className="flex items-center bg-white shadow border border-gray-200 overflow-hidden rounded-lg">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1 || loading}
+                className="border-0 hover:bg-primary hover:text-white px-4 py-3"
+              >
+                <ChevronUp className="h-4 w-4 rotate-90" />
+              </Button>
+
+              {[...Array(pagination.pages)].map((_, i) => {
+                const page = i + 1;
+                if (
+                  page === 1 ||
+                  page === pagination.pages ||
+                  (page >= pagination.page - 1 && page <= pagination.page + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      disabled={loading}
+                      className={`px-4 py-3 text-sm font-medium border-0 ${
+                        page === pagination.page
+                          ? "bg-primary text-white"
+                          : "hover:bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (
+                  page === pagination.page - 2 ||
+                  page === pagination.page + 2
+                ) {
+                  return (
+                    <span
+                      key={page}
+                      className="px-2 py-3 text-gray-500 text-sm"
+                    >
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.pages || loading}
+                className="border-0 hover:bg-primary hover:text-white px-4 py-3"
+              >
+                <ChevronUp className="h-4 w-4 -rotate-90" />
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Quick View Dialog */}
       <ProductQuickView
         product={quickViewProduct}
         open={quickViewOpen}

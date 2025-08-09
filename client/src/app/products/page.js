@@ -10,12 +10,13 @@ import { Input } from "@/components/ui/input";
 import { DynamicIcon } from "@/components/dynamic-icon";
 import { useCart } from "@/lib/cart-context";
 import ProductQuickView from "@/components/ProductQuickView";
+import ProductCard from "@/components/ProductCard";
 import { toast } from "sonner";
 
 // Product Card Skeleton
 function ProductCardSkeleton() {
   return (
-    <div className="bg-white shadow border border-gray-200 overflow-hidden animate-pulse">
+    <div className="bg-white shadow border border-gray-200 overflow-hidden animate-pulse rounded-lg">
       <div className="h-64 w-full bg-gray-200"></div>
       <div className="p-6">
         <div className="flex justify-center mb-3">
@@ -859,111 +860,12 @@ function ProductsContent() {
             ) : (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map((product) => (
-                  <div
+                  <ProductCard
                     key={product.id}
-                    className="bg-white shadow hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-200 group"
-                  >
-                    <div className="relative h-64 w-full overflow-hidden">
-                      <Link href={`/products/${product.slug}`}>
-                        <Image
-                          src={
-                            product.image ||
-                            product.variants?.[0]?.images?.find(
-                              (img) => img.isPrimary
-                            )?.url ||
-                            product.variants?.[0]?.images?.[0]?.url ||
-                            "/placeholder.jpg"
-                          }
-                          alt={product.name}
-                          fill
-                          className="object-contain px-2 transition-transform group-hover:scale-105"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        />
-                      </Link>
-
-                      {product.hasSale && (
-                        <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1">
-                          SALE
-                        </span>
-                      )}
-
-                      <div className="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="w-10 h-10 p-0 bg-white hover:bg-primary hover:text-white border border-gray-200 transition-colors duration-300"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleQuickView(product);
-                          }}
-                        >
-                          <DynamicIcon name="Eye" className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="p-6 border-t border-gray-200">
-                      <Link
-                        href={`/products/${product.slug}`}
-                        className="block hover:text-primary transition-colors"
-                      >
-                        <h3 className="font-semibold text-primary mb-3 line-clamp-2 text-center">
-                          {product.name}
-                        </h3>
-                      </Link>
-
-                      <div className="flex items-center justify-center mb-3">
-                        <div className="flex text-yellow-500">
-                          {[...Array(5)].map((_, i) => (
-                            <DynamicIcon
-                              key={i}
-                              name="Star"
-                              className="h-4 w-4"
-                              fill={
-                                i < Math.round(product.avgRating || 0)
-                                  ? "currentColor"
-                                  : "none"
-                              }
-                            />
-                          ))}
-                        </div>
-                        <span className="text-xs text-gray-500 ml-2">
-                          ({product.reviewCount || 0})
-                        </span>
-                      </div>
-
-                      <div className="text-center mb-4">
-                        {product.hasSale ? (
-                          <div className="flex items-center justify-center space-x-2">
-                            <span className="font-bold text-xl text-primary">
-                              {formatCurrency(product.basePrice)}
-                            </span>
-                            <span className="text-gray-500 line-through text-sm">
-                              {formatCurrency(product.regularPrice)}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="font-bold text-xl text-primary">
-                            {formatCurrency(product.basePrice)}
-                          </span>
-                        )}
-                      </div>
-
-                      {product.flavors > 1 && (
-                        <p className="text-xs text-gray-500 text-center mb-4">
-                          {product.flavors} variants
-                        </p>
-                      )}
-
-                      {(!product.flavors || product.flavors === 0) &&
-                        product.variants &&
-                        product.variants.length > 1 && (
-                          <p className="text-xs text-gray-500 text-center mb-4">
-                            {product.variants.length} variants
-                          </p>
-                        )}
-                    </div>
-                  </div>
+                    product={product}
+                    onAddToCart={handleAddToCart}
+                    onQuickView={handleQuickView}
+                  />
                 ))}
               </div>
             )}

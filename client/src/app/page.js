@@ -119,68 +119,60 @@ const TestimonialsSection = () => {
   useEffect(() => {
     const fetchTestimonials = async () => {
       try {
-        setLoading(true);
-        const response = await fetchApi("/public/testimonials");
-        if (response?.data?.testimonials) {
-          setTestimonials(response.data.testimonials);
-        } else {
-          // Fallback testimonials if API doesn't return data
-          setTestimonials([
-            {
-              id: 1,
-              name: "Yatharth S.",
-              role: "Bodybuilding Gold Medalist",
-              quote:
-                "Galaxy Labs products are always authentic and delivery is super quick. Highly recommended!",
-              rating: 5,
-              verified: true,
-            },
-            {
-              id: 2,
-              name: "Pratik G.",
-              role: "Rowing Athlete",
-              quote:
-                "Been a customer for 2 years. Never disappointed with quality or service.",
-              rating: 4.5,
-              verified: true,
-            },
-            {
-              id: 3,
-              name: "Monika L.",
-              role: "Fitness Influencer",
-              quote:
-                "Shipping is fast and the supplements are genuine. Trustworthy site!",
-              rating: 5,
-              verified: true,
-            },
-            {
-              id: 4,
-              name: "Amit K.",
-              role: "Gym Trainer",
-              quote:
-                "My clients and I both use Galaxy Labs. Great results every time.",
-              rating: 5,
-              verified: true,
-            },
-            {
-              id: 5,
-              name: "Sneha P.",
-              role: "Yoga Coach",
-              quote:
-                "Clean ingredients and good offers. I always buy from here.",
-              rating: 4,
-              verified: true,
-            },
-            {
-              id: 6,
-              name: "Rohit S.",
-              role: "Sports Nutritionist",
-              quote: "Customer support is helpful and products are top-notch.",
-              rating: 5,
-              verified: true,
-            },
-          ]);
-        }
+        setTestimonials([
+          {
+            id: 1,
+            name: "Yatharth S.",
+            role: "Bodybuilding Gold Medalist",
+            quote:
+              "Galaxy Labs products are always authentic and delivery is super quick. Highly recommended!",
+            rating: 5,
+            verified: true,
+          },
+          {
+            id: 2,
+            name: "Pratik G.",
+            role: "Rowing Athlete",
+            quote:
+              "Been a customer for 2 years. Never disappointed with quality or service.",
+            rating: 4.5,
+            verified: true,
+          },
+          {
+            id: 3,
+            name: "Monika L.",
+            role: "Fitness Influencer",
+            quote:
+              "Shipping is fast and the supplements are genuine. Trustworthy site!",
+            rating: 5,
+            verified: true,
+          },
+          {
+            id: 4,
+            name: "Amit K.",
+            role: "Gym Trainer",
+            quote:
+              "My clients and I both use Galaxy Labs. Great results every time.",
+            rating: 5,
+            verified: true,
+          },
+          {
+            id: 5,
+            name: "Sneha P.",
+            role: "Yoga Coach",
+            quote: "Clean ingredients and good offers. I always buy from here.",
+            rating: 4,
+            verified: true,
+          },
+          {
+            id: 6,
+            name: "Rohit S.",
+            role: "Sports Nutritionist",
+            quote: "Customer support is helpful and products are top-notch.",
+            rating: 5,
+            verified: true,
+          },
+        ]);
       } catch (error) {
         console.error("Error fetching testimonials:", error);
         // Fallback testimonials on error

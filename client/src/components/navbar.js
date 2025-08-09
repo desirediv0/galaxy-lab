@@ -12,7 +12,6 @@ import {
   ShoppingCart,
   Heart,
   Search,
-  Crown,
   Zap,
   Star,
   Phone,
@@ -27,7 +26,6 @@ import { ClientOnly } from "@/components/client-only";
 import { toast, Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { logo } from "@/assets";
 
 const menuItems = [
   { name: "Home", href: "/" },
@@ -39,7 +37,7 @@ const menuItems = [
 
 export function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { cart } = useCart();
+  const { cart, getCartItemCount } = useCart();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -279,17 +277,10 @@ export function Navbar() {
                     className="p-2 rounded-lg bg-amber-100 text-amber-700 hover:bg-amber-200 transition-all duration-300 relative group"
                   >
                     <ShoppingCart className="h-5 w-5 group-hover:rotate-12 transition-transform duration-300" />
-                    {cart && cart.items?.length > 0 && (
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="absolute -top-2 -right-2 bg-amber-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center font-bold"
-                      >
-                        {cart.items.reduce(
-                          (acc, item) => acc + item.quantity,
-                          0
-                        )}
-                      </motion.span>
+                    {getCartItemCount() > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                        {getCartItemCount()}
+                      </span>
                     )}
                   </motion.div>
                 </Link>
@@ -643,7 +634,7 @@ export function Navbar() {
 
       {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
-        <div className="grid grid-cols-5 gap-1 p-2">
+        <div className="grid grid-cols-4 gap-1 p-2">
           <Link
             href="/"
             className={`flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 ${
@@ -693,9 +684,9 @@ export function Navbar() {
             }`}
           >
             <ShoppingCart className="h-6 w-6" />
-            {cart && cart.items?.length > 0 && (
-              <span className="absolute -top-1 -right-1 bg-amber-500 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center font-bold">
-                {cart.items.reduce((acc, item) => acc + item.quantity, 0)}
+            {getCartItemCount() > 0 && (
+              <span className="absolute -top-1 -right-1 bg-primary text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {getCartItemCount()}
               </span>
             )}
             <span className="text-xs mt-1 font-medium">Cart</span>
@@ -720,23 +711,6 @@ export function Navbar() {
             </svg>
             <span className="text-xs mt-1 font-medium">More</span>
           </button>
-
-          <motion.a
-            href="https://genuinenutrition.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 hover:bg-gray-50"
-          >
-            <Image
-              src={logo}
-              alt="Genuine Nutrition"
-              width={150}
-              height={150}
-              className="h-[75px] w-[75px] object-contain"
-            />
-          </motion.a>
         </div>
       </div>
 
